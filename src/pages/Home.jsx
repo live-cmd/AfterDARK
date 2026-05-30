@@ -200,7 +200,7 @@ const SHOWS = [
   {
     month: 'JUN',
     day: '28',
-    name: 'Cool J's AfterDARK',
+    name: "Cool J's AfterDARK",
     venue: 'Bear, DE',
     time: 'Doors 7PM · Show 8PM',
     desc: 'Delaware's longest-running comedy show returns.',

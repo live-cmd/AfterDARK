@@ -203,7 +203,7 @@ const SHOWS = [
     name: "Cool J's AfterDARK",
     venue: 'Bear, DE',
     time: 'Doors 7PM · Show 8PM',
-    desc: 'Delaware's longest-running comedy show returns.',
+    desc: "Delaware's longest-running comedy show returns.",
     soldOut: false,
   },
   {

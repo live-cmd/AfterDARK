@@ -42,7 +42,7 @@
 }
 
 .nav__logo-img-wrap {
-  height: calc(var(--nav-height) - 12px);
+  height: calc(var(--nav-height) - 4px);
   display: flex;
   align-items: center;
 }

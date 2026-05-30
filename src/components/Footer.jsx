@@ -14,8 +14,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__brand">
             <div className="footer__logo">
-              <span className="footer__logo-cj">Cool J's</span>
-              <span className="footer__logo-name">AfterDARK</span>
+              <img
+                src={require('../assets/cooljsscript.png')}
+                alt="Cool J's"
+                className="footer__logo-script"
+              />
+              <div className="footer__logo-ad">
+                <span className="footer__logo-after">AFTER</span><span className="footer__logo-dark">DARK</span>
+              </div>
             </div>
             <p className="footer__tagline">Everything Changes AfterDARK</p>
             <p className="footer__sub">

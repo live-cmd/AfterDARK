@@ -32,9 +32,20 @@ export default function Nav() {
 
         {/* Logo */}
         <Link to="/" className="nav__logo">
-          <span className="nav__logo-cj">Cool J's</span>
-          <span className="nav__logo-after">After</span>
-          <span className="nav__logo-dark">DARK</span>
+          <div className="nav__logo-img-wrap">
+            <img
+              src={require('../assets/cooljsscript.png')}
+              alt="Cool J's"
+              className="nav__logo-script"
+            />
+          </div>
+          <div className="nav__logo-divider" />
+          <div className="nav__logo-text">
+            <div className="nav__logo-ad">
+              <span className="nav__logo-after">AFTER</span><span className="nav__logo-dark">DARK</span>
+            </div>
+            <div className="nav__logo-tag">LIVE ENTERTAINMENT</div>
+          </div>
         </Link>
 
         {/* Desktop links */}

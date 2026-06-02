@@ -16,13 +16,13 @@ export default function Home() {
           <h1 className="hero__headline display">
             Everything<br />
             Changes<br />
-            <span className="text-gold">AfterDARK</span>
+            <span className="text-blue">AfterDARK</span>
           </h1>
           <p className="hero__sub">
             Get off the couch, we'll handle the rest.
           </p>
           <div className="hero__actions">
-            <Link to="/tickets" className="btn btn-gold">Get Tickets</Link>
+            <Link to="/tickets" className="btn btn-blue">Get Tickets</Link>
             <Link to="/events" className="btn btn-outline-white">See All Shows</Link>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function Home() {
       <section className="section shows">
         <div className="container">
           <p className="section-label">On The Calendar</p>
-          <span className="gold-line" />
+          <span className="blue-line" />
           <h2 className="shows__title">Upcoming Shows</h2>
 
           <div className="shows__grid">
@@ -65,7 +65,7 @@ export default function Home() {
                 <div className="show-card__action">
                   {show.soldOut
                     ? <span className="show-card__sold-out">Sold Out</span>
-                    : <Link to="/tickets" className="btn btn-outline-gold">Tickets</Link>
+                    : <Link to="/tickets" className="btn btn-outline-blue">Tickets</Link>
                   }
                 </div>
               </div>
@@ -83,10 +83,10 @@ export default function Home() {
         <div className="pillars__bg" />
         <div className="container">
           <p className="section-label text-center">Why AfterDARK</p>
-          <span className="gold-line centered" />
+          <span className="blue-line centered" />
           <h2 className="pillars__title text-center">
             A Night Out That Actually<br />
-            <span className="text-gold">Delivers</span>
+            <span className="text-blue">Delivers</span>
           </h2>
           <div className="pillars__grid">
             {PILLARS.map((p, i) => (
@@ -105,17 +105,17 @@ export default function Home() {
         <div className="container private__inner">
           <div className="private__text">
             <p className="section-label">Private Events</p>
-            <span className="gold-line" />
+            <span className="blue-line" />
             <h2 className="private__title">
               Make It a<br />
-              <span className="text-gold">Private Show</span>
+              <span className="text-blue">Private Show</span>
             </h2>
             <p className="private__desc">
               Birthdays. Corporate events. Celebrations. We bring Delaware's
               best comedy talent to your private event — fully customized,
               professionally produced, unforgettable.
             </p>
-            <Link to="/private-events" className="btn btn-gold">Request a Quote</Link>
+            <Link to="/private-events" className="btn btn-blue">Request a Quote</Link>
           </div>
           <div className="private__visual">
             <div className="private__card">
@@ -128,7 +128,7 @@ export default function Home() {
                 <li>✓ Flexible Venue Options</li>
                 <li>✓ Full Event Coordination</li>
               </ul>
-              <Link to="/private-events" className="btn btn-outline-gold" style={{width:'100%'}}>
+              <Link to="/private-events" className="btn btn-outline-blue" style={{width:'100%'}}>
                 Learn More
               </Link>
             </div>
@@ -159,7 +159,7 @@ export default function Home() {
       <section className="section email-signup">
         <div className="container email-signup__inner">
           <p className="section-label text-center">Stay in the Loop</p>
-          <span className="gold-line centered" />
+          <span className="blue-line centered" />
           <h2 className="email-signup__title text-center">
             Never Miss a Show
           </h2>
@@ -175,7 +175,7 @@ export default function Home() {
               aria-label="Email address"
               required
             />
-            <button type="submit" className="btn btn-gold">
+            <button type="submit" className="btn btn-blue">
               Sign Me Up
             </button>
           </form>

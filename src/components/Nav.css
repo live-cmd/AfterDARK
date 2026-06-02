@@ -16,7 +16,7 @@
 
 .nav--scrolled {
   background: rgba(10, 10, 10, 0.96);
-  border-bottom-color: rgba(201, 168, 76, 0.15);
+  border-bottom-color: rgba(0, 191, 255, 0.15);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -57,7 +57,7 @@
 .nav__logo-divider {
   width: 1px;
   height: 40px;
-  background: rgba(201, 168, 76, 0.3);
+  background: rgba(0, 191, 255, 0.3);
   margin: 0 16px;
   flex-shrink: 0;
 }
@@ -172,7 +172,7 @@
   right: 0;
   bottom: 0;
   background: var(--black-deep);
-  border-top: 1px solid rgba(201, 168, 76, 0.15);
+  border-top: 1px solid rgba(0, 191, 255, 0.15);
   overflow-y: auto;
   opacity: 0;
   pointer-events: none;

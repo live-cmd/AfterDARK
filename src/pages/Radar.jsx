@@ -13,7 +13,7 @@ export default function Radar() {
   return (
     <div className="page-shell">
       <div className="container">
-        <h1 className="page-shell__title display text-blue">Radar</h1>
+        <h1 className="page-shell__title display text-purple">Radar</h1>
         <p className="page-shell__sub text-dim">Coming soon — this page is under construction.</p>
       </div>
     </div>

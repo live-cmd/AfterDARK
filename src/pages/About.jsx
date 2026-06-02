@@ -13,7 +13,7 @@ export default function About() {
   return (
     <div className="page-shell">
       <div className="container">
-        <h1 className="page-shell__title display text-gold">About</h1>
+        <h1 className="page-shell__title display text-blue">About</h1>
         <p className="page-shell__sub text-dim">Coming soon — this page is under construction.</p>
       </div>
     </div>

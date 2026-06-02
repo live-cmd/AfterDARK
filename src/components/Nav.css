@@ -82,7 +82,7 @@
 }
 
 .nav__logo-dark {
-  color: var(--gold);
+  color: var(--blue);
 }
 
 .nav__logo-tag {
@@ -91,7 +91,7 @@
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold-dark);
+  color: var(--blue-dark);
   line-height: 1;
 }
 
@@ -122,7 +122,7 @@
 }
 
 .nav__link--active {
-  color: var(--gold);
+  color: var(--blue);
 }
 
 /* CTA */
@@ -205,7 +205,7 @@
 
 .nav__mobile-link:hover,
 .nav__mobile-link--active {
-  color: var(--gold);
+  color: var(--blue);
 }
 
 .nav__mobile-cta {

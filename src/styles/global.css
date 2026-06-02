@@ -210,7 +210,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- UTILITY ---- */
 .text-blue { color: var(--blue); }
-.text-blue { color: var(--purple); }
+.text-purple { color: var(--purple); }
 .text-dim  { color: var(--white-dim); }
 .text-center { text-align: center; }
 

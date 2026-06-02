@@ -11,14 +11,14 @@
   --black-deep:   #0a0a0a;
   --black-mid:    #181818;
   --black-light:  #222222;
-  --gold:         #C9A84C;
-  --gold-light:   #E2C47A;
-  --gold-dark:    #A07830;
-  --blue:         #00BFFF;
-  --blue-dim:     #0099CC;
+  --blue:         #C00BFFF;
+  --blue-light:   #4FCFFA;
+  --blue-dark:    #09C;
+  --purple:         #904dc9;
+  --purple-dim:     #68309f;
   --white:        #F5F5F5;
   --white-dim:    #AAAAAA;
-  --red-accent:   #FF4444;
+  --gold-accent:   #C9A84C;
 
   --font-display: 'Bebas Neue', sans-serif;
   --font-heading: 'Oswald', sans-serif;

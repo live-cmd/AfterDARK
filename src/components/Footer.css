@@ -55,7 +55,7 @@
 }
 
 .footer__logo-dark {
-  color: var(--gold);
+  color: var(--blue);
 }
 
 .footer__tagline {
@@ -93,10 +93,10 @@
 }
 
 .footer__social:hover {
-  border-color: var(--gold);
-  color: var(--gold);
+  border-color: var(--blue);
+  color: var(--blue);
   background: rgba(201, 168, 76, 0.08);
-  box-shadow: var(--gold-glow);
+  box-shadow: var(--blue-glow);
 }
 
 /* Nav */
@@ -112,7 +112,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--blue);
   margin-bottom: 20px;
 }
 
@@ -155,7 +155,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--blue);
   opacity: 0.6;
 }
 

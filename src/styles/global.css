@@ -127,33 +127,33 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-gold {
-  background: var(--gold);
+  background: var(--blue);
   color: var(--black);
 }
 .btn-gold:hover {
-  background: var(--gold-light);
-  box-shadow: var(--gold-glow);
+  background: var(--blue-light);
+  box-shadow: var(--blue-glow);
   transform: translateY(-2px);
 }
 
 .btn-outline-gold {
   background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--gold);
+  color: var(--blue);
+  border: 1px solid var(--blue);
 }
 .btn-outline-gold:hover {
-  background: var(--gold);
+  background: var(--blue);
   color: var(--black);
-  box-shadow: var(--gold-glow);
+  box-shadow: var(--blue-glow);
   transform: translateY(-2px);
 }
 
 .btn-blue {
-  background: var(--blue);
+  background: var(--purple);
   color: var(--black);
 }
 .btn-blue:hover {
-  box-shadow: var(--blue-glow);
+  box-shadow: var(--purple-glow);
   transform: translateY(-2px);
 }
 
@@ -172,7 +172,7 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
   width: 60px;
   height: 3px;
-  background: var(--gold);
+  background: var(--blue);
   margin-bottom: 24px;
 }
 
@@ -187,7 +187,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--blue);
   margin-bottom: 12px;
 }
 
@@ -209,8 +209,8 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
 
 /* ---- UTILITY ---- */
-.text-gold { color: var(--gold); }
-.text-blue { color: var(--blue); }
+.text-gold { color: var(--blue); }
+.text-blue { color: var(--purple); }
 .text-dim  { color: var(--white-dim); }
 .text-center { text-align: center; }
 

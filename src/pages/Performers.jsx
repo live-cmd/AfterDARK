@@ -13,7 +13,7 @@ export default function Performers() {
   return (
     <div className="page-shell">
       <div className="container">
-        <h1 className="page-shell__title display text-gold">Performers</h1>
+        <h1 className="page-shell__title display text-blue">Performers</h1>
         <p className="page-shell__sub text-dim">Coming soon — this page is under construction.</p>
       </div>
     </div>

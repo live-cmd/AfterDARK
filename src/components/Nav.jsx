@@ -95,7 +95,7 @@ export default function Nav() {
               {label}
             </NavLink>
           ))}
-          <Link to="/tickets" className="btn btn-gold nav__mobile-cta">
+          <Link to="/tickets" className="btn btn-blue nav__mobile-cta">
             Get Tickets
           </Link>
         </nav>

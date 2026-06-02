@@ -142,14 +142,14 @@ export default function Home() {
           <div className="radar-cta__badge">NEW</div>
           <h2 className="radar-cta__title">
             Discover What's Happening<br />
-            <span className="text-blue">Tonight, Right Now</span>
+            <span className="text-purple">Tonight, Right Now</span>
           </h2>
           <p className="radar-cta__desc">
             AfterDARK Radar — the app built for people who decide what
             they're doing within 72 hours. Find live events near you, instantly.
           </p>
           <div className="radar-cta__actions">
-            <Link to="/radar" className="btn btn-blue">Download the App</Link>
+            <Link to="/radar" className="btn btn-purple">Download the App</Link>
             <Link to="/radar" className="btn btn-outline-white">Learn More</Link>
           </div>
         </div>

@@ -94,7 +94,7 @@
 
 /* ── TICKER ── */
 .ticker {
-  background: var(--gold);
+  background: var(--blue);
   padding: 12px 0;
   overflow: hidden;
   white-space: nowrap;
@@ -140,13 +140,13 @@
   padding: 28px 32px;
   background: var(--black-mid);
   border: 1px solid rgba(255,255,255,0.05);
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--blue);
   transition: var(--transition);
 }
 
 .show-card:hover {
   background: var(--black-light);
-  border-left-color: var(--gold-light);
+  border-left-color: var(--blue-light);
   transform: translateX(4px);
 }
 
@@ -161,7 +161,7 @@
   font-family: var(--font-heading);
   font-size: 0.7rem;
   letter-spacing: 0.2em;
-  color: var(--gold);
+  color: var(--blue);
   margin-bottom: 4px;
 }
 
@@ -180,7 +180,7 @@
 
 .show-card__meta {
   font-size: 0.8rem;
-  color: var(--gold);
+  color: var(--blue);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-family: var(--font-heading);
@@ -295,7 +295,7 @@
   font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--blue);
   margin-bottom: 8px;
 }
 
@@ -350,7 +350,7 @@
 
 .radar-cta__badge {
   display: inline-block;
-  background: var(--blue);
+  background: var(--purple);
   color: var(--black);
   font-family: var(--font-heading);
   font-size: 0.7rem;
@@ -420,7 +420,7 @@
 }
 
 .email-signup__input:focus {
-  border-color: var(--gold);
+  border-color: var(--blue);
   box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
 }
 

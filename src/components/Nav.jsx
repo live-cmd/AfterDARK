@@ -65,7 +65,7 @@ export default function Nav() {
         </nav>
 
         {/* CTA */}
-        <Link to="/tickets" className="btn btn-gold nav__cta">
+        <Link to="/tickets" className="btn btn-blue nav__cta">
           Get Tickets
         </Link>
 

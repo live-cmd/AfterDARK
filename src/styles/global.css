@@ -18,7 +18,7 @@
   --purple-dim:     #68309f;
   --white:        #F5F5F5;
   --white-dim:    #AAAAAA;
-  --gold-accent:   #C9A84C;
+  --blue-accent:   #C9A84C;
 
   --font-display: 'Bebas Neue', sans-serif;
   --font-heading: 'Oswald', sans-serif;
@@ -126,22 +126,22 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
 }
 
-.btn-gold {
+.btn-blue {
   background: var(--blue);
   color: var(--black);
 }
-.btn-gold:hover {
+.btn-blue:hover {
   background: var(--blue-light);
   box-shadow: var(--blue-glow);
   transform: translateY(-2px);
 }
 
-.btn-outline-gold {
+.btn-outline-blue {
   background: transparent;
   color: var(--blue);
   border: 1px solid var(--blue);
 }
-.btn-outline-gold:hover {
+.btn-outline-blue:hover {
   background: var(--blue);
   color: var(--black);
   box-shadow: var(--blue-glow);
@@ -167,8 +167,8 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(245, 245, 245, 0.05);
 }
 
-/* ---- GOLD ACCENT LINE ---- */
-.gold-line {
+/* ---- blue ACCENT LINE ---- */
+.blue-line {
   display: block;
   width: 60px;
   height: 3px;
@@ -176,7 +176,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 24px;
 }
 
-.gold-line.centered {
+.blue-line.centered {
   margin: 0 auto 24px;
 }
 
@@ -209,7 +209,7 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
 /* ---- UTILITY ---- */
-.text-gold { color: var(--blue); }
+.text-blue { color: var(--blue); }
 .text-blue { color: var(--purple); }
 .text-dim  { color: var(--white-dim); }
 .text-center { text-align: center; }
@@ -235,7 +235,7 @@ h1, h2, h3, h4, h5, h6 {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-@keyframes pulseGold {
+@keyframes pulseblue {
   0%, 100% { box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.4); }
   50%       { box-shadow: 0 0 0 12px rgba(0, 191, 255, 0); }
 }

@@ -1,21 +1,172 @@
-import './PageShell.css';
+import { Link } from 'react-router-dom';
+import { getUpcomingShows, getFeaturedShow } from '../data/shows';
+import './Tickets.css';
 
 export default function Tickets() {
-  const titles = {
-    Events: 'Upcoming Events',
-    Performers: 'Performers',
-    Tickets: 'Get Tickets',
-    PrivateEvents: 'Private Events',
-    Radar: 'AfterDARK Radar',
-    About: 'Our Story',
-    Submit: 'Performer Submissions',
-  };
+  const upcoming = getUpcomingShows();
+  const featured = getFeaturedShow();
+
   return (
-    <div className="page-shell">
-      <div className="container">
-        <h1 className="page-shell__title display text-blue">Tickets</h1>
-        <p className="page-shell__sub text-dim">Coming soon — this page is under construction.</p>
-      </div>
+    <div className="tickets-page">
+
+      {/* ── HERO ── */}
+      <section className="tickets-hero">
+        <div className="tickets-hero__bg" />
+        <div className="container tickets-hero__content">
+          <p className="section-label">Secure Your Seat</p>
+          <h1 className="display text-blue tickets-hero__title">
+            Get<br />Tickets
+          </h1>
+          <p className="tickets-hero__sub text-dim">
+            All tickets sold through Eventbrite — secure checkout, instant confirmation.
+          </p>
+        </div>
+      </section>
+
+      {/* ── FEATURED SHOW ── */}
+      {featured && (
+        <section className="tickets-featured section">
+          <div className="container">
+            <p className="section-label">Next Up</p>
+            <span className="blue-line" />
+            <div className="tickets-featured__card">
+              <div className="tickets-featured__left">
+                <div className="tickets-featured__date-block">
+                  <span className="tickets-featured__month">{featured.month}</span>
+                  <span className="tickets-featured__day">{featured.day}</span>
+                  <span className="tickets-featured__year">{featured.year}</span>
+                </div>
+              </div>
+              <div className="tickets-featured__body">
+                <h2 className="tickets-featured__name">{featured.name}</h2>
+                <p className="tickets-featured__meta">
+                  {featured.venue} · {featured.time}
+                </p>
+                <p className="tickets-featured__desc">{featured.longDesc}</p>
+                <div className="tickets-featured__actions">
+                  {featured.soldOut ? (
+                    <span className="tickets-sold-out">Sold Out</span>
+                  ) : (
+                    <a
+                      href={featured.eventbriteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-blue tickets-featured__cta"
+                    >
+                      Get Tickets on Eventbrite ↗
+                    </a>
+                  )}
+                  <Link to="/events" className="btn btn-outline-white">
+                    View All Shows
+                  </Link>
+                </div>
+                <p className="tickets-eventbrite-note text-dim">
+                  You'll be taken to Eventbrite to complete your purchase securely.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── ALL UPCOMING SHOWS ── */}
+      <section className="tickets-all section">
+        <div className="container">
+          <p className="section-label">All Upcoming Shows</p>
+          <span className="blue-line" />
+
+          <div className="tickets-list">
+            {upcoming.map(show => (
+              <div key={show.id} className="ticket-row">
+                <div className="ticket-row__date">
+                  <span className="ticket-row__month">{show.month}</span>
+                  <span className="ticket-row__day">{show.day}</span>
+                </div>
+                <div className="ticket-row__info">
+                  <h3 className="ticket-row__name">{show.name}</h3>
+                  <p className="ticket-row__meta text-dim">{show.venue} · {show.time}</p>
+                </div>
+                <div className="ticket-row__action">
+                  {show.soldOut ? (
+                    <span className="tickets-sold-out">Sold Out</span>
+                  ) : (
+                    <a
+                      href={show.eventbriteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline-blue"
+                    >
+                      Tickets ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="tickets-faq section">
+        <div className="container tickets-faq__inner">
+          <p className="section-label">Good to Know</p>
+          <span className="blue-line" />
+          <div className="tickets-faq__grid">
+            {FAQ.map((item, i) => (
+              <div key={i} className="faq-item">
+                <h4 className="faq-item__q">{item.q}</h4>
+                <p className="faq-item__a text-dim">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRIVATE EVENTS CTA ── */}
+      <section className="tickets-private section">
+        <div className="container tickets-private__inner">
+          <div>
+            <p className="section-label">Private Events</p>
+            <h3 className="tickets-private__title">
+              Want the Whole Show<br />
+              <span className="text-blue">to Yourself?</span>
+            </h3>
+            <p className="text-dim">
+              Book AfterDARK for your private event. Birthdays, corporate nights,
+              celebrations — fully produced and unforgettable.
+            </p>
+          </div>
+          <Link to="/private-events" className="btn btn-blue">Request a Quote</Link>
+        </div>
+      </section>
+
     </div>
   );
 }
+
+const FAQ = [
+  {
+    q: 'Where do I buy tickets?',
+    a: 'All tickets are sold through Eventbrite. Click any "Get Tickets" button and you\'ll be taken directly to the secure checkout page.',
+  },
+  {
+    q: 'Is there a will-call or door policy?',
+    a: 'Yes — you can show your Eventbrite confirmation on your phone at the door. We recommend arriving by doors open time to get your seat.',
+  },
+  {
+    q: 'What\'s the refund policy?',
+    a: 'Refund policies are managed through Eventbrite and vary by show. Check the individual event page for details before purchasing.',
+  },
+  {
+    q: 'Are shows 21+?',
+    a: 'Most AfterDARK shows are 18+. Age requirements are listed on each event page on Eventbrite.',
+  },
+  {
+    q: 'Can I buy tickets at the door?',
+    a: 'Door tickets may be available if the show is not sold out, but we strongly recommend buying in advance to guarantee your seat.',
+  },
+  {
+    q: 'What time should I arrive?',
+    a: 'Doors open at 7PM, show starts at 8PM. We recommend arriving by 7:30PM to settle in.',
+  },
+];

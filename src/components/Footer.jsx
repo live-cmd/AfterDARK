@@ -25,7 +25,7 @@ export default function Footer() {
             </div>
             <p className="footer__tagline">Everything Changes AfterDARK</p>
             <p className="footer__sub">
-              Delaware's longest-running comedy show. Live entertainment,
+              Home of Delaware's longest-running comedy show. Live entertainment,
               live laughs, live community.
             </p>
             <div className="footer__socials">
@@ -71,7 +71,7 @@ export default function Footer() {
             <div className="footer__col">
               <h4 className="footer__col-title">Contact</h4>
               <ul>
-                <li><a href="mailto:info@cooljsafterdark.com">info@cooljsafterdark.com</a></li>
+                <li><a href="mailto:live@cooljsafterdark.com">live@cooljsafterdark.com</a></li>
                 <li><span className="footer__location">Bear, Delaware</span></li>
               </ul>
             </div>

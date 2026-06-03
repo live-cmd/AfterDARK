@@ -17,7 +17,7 @@ export default function Events() {
       <section className="events-hero">
         <div className="events-hero__bg" />
         <div className="container events-hero__content">
-          <p className="section-label">Live Comedy · Bear, Delaware</p>
+          <p className="section-label">Live Entertainment · Bear, Delaware</p>
           <h1 className="display text-blue events-hero__title">
             Upcoming<br />Shows
           </h1>

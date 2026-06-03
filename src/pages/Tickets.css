@@ -1,0 +1,293 @@
+/* ============================================
+   AFTERDARK — Tickets Page
+   ============================================ */
+
+/* ── HERO ── */
+.tickets-hero {
+  position: relative;
+  padding: 140px 0 80px;
+  overflow: hidden;
+}
+
+.tickets-hero__bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 70% at 100% 50%, rgba(0, 191, 255, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 50% at 0% 80%, rgba(144, 77, 201, 0.05) 0%, transparent 70%);
+}
+
+.tickets-hero__content {
+  position: relative;
+  z-index: 1;
+}
+
+.tickets-hero__title {
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: 0.9;
+  margin: 12px 0 24px;
+}
+
+.tickets-hero__sub {
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  max-width: 400px;
+}
+
+/* ── FEATURED SHOW ── */
+.tickets-featured__card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 60px;
+  align-items: start;
+  padding: 48px;
+  background: var(--black-mid);
+  border: 1px solid rgba(0, 191, 255, 0.15);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.tickets-featured__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue), transparent);
+}
+
+.tickets-featured__date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 80px;
+}
+
+.tickets-featured__month {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--blue);
+  text-transform: uppercase;
+}
+
+.tickets-featured__day {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--white);
+  margin: 4px 0;
+}
+
+.tickets-featured__year {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  color: var(--white-dim);
+  letter-spacing: 0.1em;
+}
+
+.tickets-featured__name {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.tickets-featured__meta {
+  font-size: 0.9rem;
+  color: var(--white-dim);
+  letter-spacing: 0.03em;
+  margin-bottom: 16px;
+}
+
+.tickets-featured__desc {
+  font-size: 0.95rem;
+  color: var(--white-dim);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 28px;
+}
+
+.tickets-featured__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.tickets-featured__cta {
+  font-size: 1rem;
+  padding: 16px 36px;
+}
+
+.tickets-eventbrite-note {
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+/* ── TICKETS LIST ── */
+.tickets-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: var(--transition-fast);
+}
+
+.ticket-row:hover {
+  background: rgba(0, 191, 255, 0.02);
+}
+
+.ticket-row__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ticket-row__month {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--blue);
+  text-transform: uppercase;
+}
+
+.ticket-row__day {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--white);
+}
+
+.ticket-row__name {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.ticket-row__meta {
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+/* ── SOLD OUT ── */
+.tickets-sold-out {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--white-dim);
+}
+
+/* ── FAQ ── */
+.tickets-faq__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 60px;
+  margin-top: 40px;
+}
+
+.faq-item__q {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+
+.faq-item__a {
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* ── PRIVATE CTA ── */
+.tickets-private__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 60px 48px;
+  background: var(--black-mid);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tickets-private__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--white);
+  margin: 8px 0 12px;
+  line-height: 1.1;
+}
+
+.tickets-private p {
+  max-width: 480px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .tickets-hero {
+    padding: 120px 0 60px;
+  }
+
+  .tickets-featured__card {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px 24px;
+  }
+
+  .tickets-featured__date-block {
+    flex-direction: row;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .tickets-featured__day {
+    font-size: 3.5rem;
+  }
+
+  .ticket-row {
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+  }
+
+  .ticket-row__action {
+    grid-column: 2;
+  }
+
+  .tickets-faq__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .tickets-private__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 24px;
+  }
+}

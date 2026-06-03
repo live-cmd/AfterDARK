@@ -12,7 +12,7 @@ export default function Home() {
           <div className="hero__noise" />
         </div>
         <div className="container hero__content">
-          <p className="section-label hero__eyebrow">Delaware's Longest-Running Comedy Show</p>
+          <p className="section-label hero__eyebrow">Home of Delaware's Longest-Running Comedy Show</p>
           <h1 className="hero__headline display">
             Everything<br />
             Changes<br />

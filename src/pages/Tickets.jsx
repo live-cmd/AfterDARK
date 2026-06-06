@@ -1,15 +1,33 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getUpcomingShows, getFeaturedShow } from '../data/shows';
+import { supabase } from '../lib/supabaseClient';
 import './Tickets.css';
 
 export default function Tickets() {
-  const upcoming = getUpcomingShows();
-  const featured = getFeaturedShow();
+  const [shows, setShows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchShows() {
+      const { data } = await supabase
+        .from('shows')
+        .select('*')
+        .order('date', { ascending: true });
+      setShows(data || []);
+      setLoading(false);
+    }
+    fetchShows();
+  }, []);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcoming = shows.filter(s => new Date(s.date + 'T00:00:00') >= today);
+  const featured = upcoming.find(s => s.featured) || upcoming[0];
 
   return (
     <div className="tickets-page">
 
-      {/* ── HERO ── */}
+      {/* HERO */}
       <section className="tickets-hero">
         <div className="tickets-hero__bg" />
         <div className="container tickets-hero__content">
@@ -23,8 +41,8 @@ export default function Tickets() {
         </div>
       </section>
 
-      {/* ── FEATURED SHOW ── */}
-      {featured && (
+      {/* FEATURED SHOW */}
+      {!loading && featured && (
         <section className="tickets-featured section">
           <div className="container">
             <p className="section-label">Next Up</p>
@@ -39,26 +57,17 @@ export default function Tickets() {
               </div>
               <div className="tickets-featured__body">
                 <h2 className="tickets-featured__name">{featured.name}</h2>
-                <p className="tickets-featured__meta">
-                  {featured.venue} · {featured.time}
-                </p>
-                <p className="tickets-featured__desc">{featured.longDesc}</p>
+                <p className="tickets-featured__meta">{featured.venue} · {featured.time}</p>
+                <p className="tickets-featured__desc">{featured.description}</p>
                 <div className="tickets-featured__actions">
-                  {featured.soldOut ? (
+                  {featured.sold_out ? (
                     <span className="tickets-sold-out">Sold Out</span>
                   ) : (
-                    <a
-                      href={featured.eventbriteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-blue tickets-featured__cta"
-                    >
+                    <a href={featured.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-blue tickets-featured__cta">
                       Get Tickets on Eventbrite ↗
                     </a>
                   )}
-                  <Link to="/events" className="btn btn-outline-white">
-                    View All Shows
-                  </Link>
+                  <Link to="/events" className="btn btn-outline-white">View All Shows</Link>
                 </div>
                 <p className="tickets-eventbrite-note text-dim">
                   You'll be taken to Eventbrite to complete your purchase securely.
@@ -69,44 +78,42 @@ export default function Tickets() {
         </section>
       )}
 
-      {/* ── ALL UPCOMING SHOWS ── */}
+      {/* ALL UPCOMING SHOWS */}
       <section className="tickets-all section">
         <div className="container">
           <p className="section-label">All Upcoming Shows</p>
           <span className="blue-line" />
-
-          <div className="tickets-list">
-            {upcoming.map(show => (
-              <div key={show.id} className="ticket-row">
-                <div className="ticket-row__date">
-                  <span className="ticket-row__month">{show.month}</span>
-                  <span className="ticket-row__day">{show.day}</span>
+          {loading ? (
+            <p className="text-dim" style={{padding:'40px 0'}}>Loading shows...</p>
+          ) : (
+            <div className="tickets-list">
+              {upcoming.map(show => (
+                <div key={show.id} className="ticket-row">
+                  <div className="ticket-row__date">
+                    <span className="ticket-row__month">{show.month}</span>
+                    <span className="ticket-row__day">{show.day}</span>
+                  </div>
+                  <div className="ticket-row__info">
+                    <h3 className="ticket-row__name">{show.name}</h3>
+                    <p className="ticket-row__meta text-dim">{show.venue} · {show.time}</p>
+                  </div>
+                  <div className="ticket-row__action">
+                    {show.sold_out ? (
+                      <span className="tickets-sold-out">Sold Out</span>
+                    ) : (
+                      <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-blue">
+                        Tickets ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
-                <div className="ticket-row__info">
-                  <h3 className="ticket-row__name">{show.name}</h3>
-                  <p className="ticket-row__meta text-dim">{show.venue} · {show.time}</p>
-                </div>
-                <div className="ticket-row__action">
-                  {show.soldOut ? (
-                    <span className="tickets-sold-out">Sold Out</span>
-                  ) : (
-                    <a
-                      href={show.eventbriteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-outline-blue"
-                    >
-                      Tickets ↗
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ── FAQ ── */}
+      {/* FAQ */}
       <section className="tickets-faq section">
         <div className="container tickets-faq__inner">
           <p className="section-label">Good to Know</p>
@@ -122,7 +129,7 @@ export default function Tickets() {
         </div>
       </section>
 
-      {/* ── PRIVATE EVENTS CTA ── */}
+      {/* PRIVATE CTA */}
       <section className="tickets-private section">
         <div className="container tickets-private__inner">
           <div>
@@ -131,10 +138,7 @@ export default function Tickets() {
               Want the Whole Show<br />
               <span className="text-blue">to Yourself?</span>
             </h3>
-            <p className="text-dim">
-              Book AfterDARK for your private event. Birthdays, corporate nights,
-              celebrations — fully produced and unforgettable.
-            </p>
+            <p className="text-dim">Book AfterDARK for your private event. Birthdays, corporate nights, celebrations — fully produced and unforgettable.</p>
           </div>
           <Link to="/private-events" className="btn btn-blue">Request a Quote</Link>
         </div>
@@ -145,28 +149,10 @@ export default function Tickets() {
 }
 
 const FAQ = [
-  {
-    q: 'Where do I buy tickets?',
-    a: 'All tickets are sold through Eventbrite. Click any "Get Tickets" button and you\'ll be taken directly to the secure checkout page.',
-  },
-  {
-    q: 'Is there a will-call or door policy?',
-    a: 'Yes — you can show your Eventbrite confirmation on your phone at the door. We recommend arriving by doors open time to get your seat.',
-  },
-  {
-    q: 'What\'s the refund policy?',
-    a: 'Refund policies are managed through Eventbrite and vary by show. Check the individual event page for details before purchasing.',
-  },
-  {
-    q: 'Are shows 21+?',
-    a: 'Most AfterDARK shows are 18+. Age requirements are listed on each event page on Eventbrite.',
-  },
-  {
-    q: 'Can I buy tickets at the door?',
-    a: 'Door tickets may be available if the show is not sold out, but we strongly recommend buying in advance to guarantee your seat.',
-  },
-  {
-    q: 'What time should I arrive?',
-    a: 'Doors open at 7PM, show starts at 8PM. We recommend arriving by 7:30PM to settle in.',
-  },
+  { q: 'Where do I buy tickets?', a: 'All tickets are sold through Eventbrite. Click any "Get Tickets" button and you\'ll be taken directly to the secure checkout page.' },
+  { q: 'Is there a will-call or door policy?', a: 'Yes — show your Eventbrite confirmation on your phone at the door. We recommend arriving by doors open time to get your seat.' },
+  { q: 'What\'s the refund policy?', a: 'Refund policies are managed through Eventbrite and vary by show. Check the individual event page for details before purchasing.' },
+  { q: 'Are shows 21+?', a: 'Most AfterDARK shows are 18+. Age requirements are listed on each event page on Eventbrite.' },
+  { q: 'Can I buy tickets at the door?', a: 'Door tickets may be available if the show is not sold out, but we strongly recommend buying in advance to guarantee your seat.' },
+  { q: 'What time should I arrive?', a: 'Doors open at 7PM, show starts at 8PM. We recommend arriving by 7:30PM to settle in.' },
 ];

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import './Admin.css';
 
@@ -28,6 +28,9 @@ export default function Admin() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(null);
   const [message, setMessage] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadPreview, setUploadPreview] = useState('');
+  const fileInputRef = useRef();
 
   useEffect(() => {
     if (authed) fetchShows();
@@ -59,6 +62,58 @@ export default function Admin() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
+  }
+
+  async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setMessage('❌ Please upload a JPG, PNG, WebP, or GIF image.');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('❌ Image must be under 5MB.');
+      return;
+    }
+
+    setUploading(true);
+    setMessage('');
+
+    // Create unique filename
+    const ext = file.name.split('.').pop();
+    const fileName = `shows/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+
+    const { data, error } = await supabase.storage
+      .from('afterdark-media')
+      .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+    if (error) {
+      setMessage('❌ Upload failed: ' + error.message);
+      setUploading(false);
+      return;
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('afterdark-media')
+      .getPublicUrl(fileName);
+
+    const publicUrl = urlData.publicUrl;
+    setForm(prev => ({ ...prev, image_url: publicUrl }));
+    setUploadPreview(publicUrl);
+    setMessage('✓ Image uploaded successfully.');
+    setUploading(false);
+  }
+
+  function clearImage() {
+    setForm(prev => ({ ...prev, image_url: '' }));
+    setUploadPreview('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
   function parseDate(dateStr) {
@@ -103,6 +158,7 @@ export default function Admin() {
       setMessage(editingId ? '✓ Show updated.' : '✓ Show added.');
       setForm(EMPTY_FORM);
       setEditingId(null);
+      setUploadPreview('');
       fetchShows();
     }
     setSaving(false);
@@ -122,6 +178,7 @@ export default function Admin() {
       sold_out: show.sold_out || false,
       tags: (show.tags || []).join(', '),
     });
+    setUploadPreview(show.image_url || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -129,6 +186,7 @@ export default function Admin() {
     setForm(EMPTY_FORM);
     setEditingId(null);
     setMessage('');
+    setUploadPreview('');
   }
 
   async function handleDelete(id) {
@@ -154,7 +212,7 @@ export default function Admin() {
     fetchShows();
   }
 
-  // ── LOGIN SCREEN ──
+  // LOGIN SCREEN
   if (!authed) {
     return (
       <div className="admin-login">
@@ -173,16 +231,14 @@ export default function Admin() {
               autoFocus
             />
             {authError && <p className="admin-error">{authError}</p>}
-            <button type="submit" className="admin-btn-primary">
-              Enter
-            </button>
+            <button type="submit" className="admin-btn-primary">Enter</button>
           </form>
         </div>
       </div>
     );
   }
 
-  // ── ADMIN DASHBOARD ──
+  // ADMIN DASHBOARD
   return (
     <div className="admin-page">
       <div className="admin-header">
@@ -191,15 +247,13 @@ export default function Admin() {
             <span className="admin-header__brand">AfterDARK</span>
             <span className="admin-header__label">Show Manager</span>
           </div>
-          <button className="admin-btn-ghost" onClick={() => setAuthed(false)}>
-            Sign Out
-          </button>
+          <button className="admin-btn-ghost" onClick={() => setAuthed(false)}>Sign Out</button>
         </div>
       </div>
 
       <div className="admin-body">
 
-        {/* ── FORM ── */}
+        {/* FORM */}
         <section className="admin-section">
           <h2 className="admin-section__title">
             {editingId ? 'Edit Show' : 'Add New Show'}
@@ -213,139 +267,116 @@ export default function Admin() {
             <div className="admin-form__row">
               <div className="admin-form__field">
                 <label className="admin-label">Show Name *</label>
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  placeholder="e.g. Cool J's AfterDARK"
-                  required
-                />
+                <input name="name" value={form.name} onChange={handleFormChange} className="admin-input" placeholder="e.g. Cool J's AfterDARK" required />
               </div>
               <div className="admin-form__field">
                 <label className="admin-label">Date *</label>
-                <input
-                  type="date"
-                  name="date"
-                  value={form.date}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  required
-                />
+                <input type="date" name="date" value={form.date} onChange={handleFormChange} className="admin-input" required />
               </div>
             </div>
 
             <div className="admin-form__row">
               <div className="admin-form__field">
                 <label className="admin-label">Venue</label>
-                <input
-                  name="venue"
-                  value={form.venue}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  placeholder="Bear, DE"
-                />
+                <input name="venue" value={form.venue} onChange={handleFormChange} className="admin-input" placeholder="Bear, DE" />
               </div>
               <div className="admin-form__field">
                 <label className="admin-label">Time</label>
-                <input
-                  name="time"
-                  value={form.time}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  placeholder="Doors 7PM · Show 8PM"
-                />
+                <input name="time" value={form.time} onChange={handleFormChange} className="admin-input" placeholder="Doors 7PM · Show 8PM" />
               </div>
             </div>
 
             <div className="admin-form__field">
               <label className="admin-label">Description</label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleFormChange}
-                className="admin-input admin-textarea"
-                placeholder="Show description..."
-                rows={3}
-              />
+              <textarea name="description" value={form.description} onChange={handleFormChange} className="admin-input admin-textarea" placeholder="Show description..." rows={3} />
             </div>
 
-            <div className="admin-form__row">
-              <div className="admin-form__field">
-                <label className="admin-label">Image URL</label>
+            {/* IMAGE UPLOAD */}
+            <div className="admin-form__field">
+              <label className="admin-label">Show Image</label>
+              <div className="admin-upload">
+                {uploadPreview ? (
+                  <div className="admin-upload__preview">
+                    <img src={uploadPreview} alt="Preview" className="admin-upload__img" />
+                    <div className="admin-upload__preview-actions">
+                      <button type="button" className="admin-pill" onClick={() => fileInputRef.current.click()} disabled={uploading}>
+                        Replace Image
+                      </button>
+                      <button type="button" className="admin-pill admin-pill--delete" onClick={clearImage}>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="admin-upload__dropzone" onClick={() => fileInputRef.current.click()}>
+                    <div className="admin-upload__icon">↑</div>
+                    <p className="admin-upload__text">
+                      {uploading ? 'Uploading...' : 'Click to upload image'}
+                    </p>
+                    <p className="admin-upload__hint">JPG, PNG, WebP — max 5MB</p>
+                  </div>
+                )}
                 <input
-                  name="image_url"
-                  value={form.image_url}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  placeholder="https://lh3.googleusercontent.com/d/..."
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
                 />
-              </div>
-              <div className="admin-form__field">
-                <label className="admin-label">Eventbrite URL</label>
-                <input
-                  name="eventbrite_url"
-                  value={form.eventbrite_url}
-                  onChange={handleFormChange}
-                  className="admin-input"
-                  placeholder="https://www.eventbrite.com/e/..."
-                />
+                {form.image_url && (
+                  <div className="admin-upload__url">
+                    <label className="admin-label">Image URL</label>
+                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="Or paste a URL directly" />
+                  </div>
+                )}
+                {!uploadPreview && (
+                  <div className="admin-upload__url">
+                    <label className="admin-label">Or paste image URL directly</label>
+                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="https://lh3.googleusercontent.com/d/..." />
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="admin-form__field">
+              <label className="admin-label">Eventbrite URL</label>
+              <input name="eventbrite_url" value={form.eventbrite_url} onChange={handleFormChange} className="admin-input" placeholder="https://www.eventbrite.com/e/..." />
+            </div>
+
+            <div className="admin-form__field">
               <label className="admin-label">Tags (comma separated)</label>
-              <input
-                name="tags"
-                value={form.tags}
-                onChange={handleFormChange}
-                className="admin-input"
-                placeholder="Live Comedy, Summer, July"
-              />
+              <input name="tags" value={form.tags} onChange={handleFormChange} className="admin-input" placeholder="Live Comedy, Summer, July" />
             </div>
 
             <div className="admin-form__toggles">
               <label className="admin-toggle">
-                <input
-                  type="checkbox"
-                  name="featured"
-                  checked={form.featured}
-                  onChange={handleFormChange}
-                />
+                <input type="checkbox" name="featured" checked={form.featured} onChange={handleFormChange} />
                 <span className="admin-toggle__track" />
                 <span className="admin-toggle__label">Featured Show</span>
               </label>
               <label className="admin-toggle">
-                <input
-                  type="checkbox"
-                  name="sold_out"
-                  checked={form.sold_out}
-                  onChange={handleFormChange}
-                />
+                <input type="checkbox" name="sold_out" checked={form.sold_out} onChange={handleFormChange} />
                 <span className="admin-toggle__track" />
                 <span className="admin-toggle__label">Sold Out</span>
               </label>
             </div>
 
             <div className="admin-form__actions">
-              <button type="submit" className="admin-btn-primary" disabled={saving}>
+              <button type="submit" className="admin-btn-primary" disabled={saving || uploading}>
                 {saving ? 'Saving...' : editingId ? 'Update Show' : 'Add Show'}
               </button>
               {editingId && (
-                <button type="button" className="admin-btn-ghost" onClick={handleCancel}>
-                  Cancel
-                </button>
+                <button type="button" className="admin-btn-ghost" onClick={handleCancel}>Cancel</button>
               )}
             </div>
           </form>
         </section>
 
-        {/* ── SHOWS LIST ── */}
+        {/* SHOWS LIST */}
         <section className="admin-section">
           <h2 className="admin-section__title">
             Current Shows {shows.length > 0 && <span className="admin-count">{shows.length}</span>}
           </h2>
-
           {loading ? (
             <p className="admin-loading">Loading shows...</p>
           ) : shows.length === 0 ? (
@@ -354,6 +385,7 @@ export default function Admin() {
             <div className="admin-shows">
               {shows.map(show => (
                 <div key={show.id} className={`admin-show-row ${show.featured ? 'admin-show-row--featured' : ''}`}>
+                  <div className="admin-show-row__thumb" style={show.image_url ? { backgroundImage: `url(${show.image_url})` } : {}} />
                   <div className="admin-show-row__date">
                     <span className="admin-show-row__month">{show.month}</span>
                     <span className="admin-show-row__day">{show.day}</span>
@@ -369,30 +401,10 @@ export default function Admin() {
                     </div>
                   </div>
                   <div className="admin-show-row__actions">
-                    <button
-                      className={`admin-pill ${show.featured ? 'admin-pill--active' : ''}`}
-                      onClick={() => toggleFeatured(show)}
-                      title="Toggle Featured"
-                    >
-                      ★
-                    </button>
-                    <button
-                      className={`admin-pill ${show.sold_out ? 'admin-pill--sold-out' : ''}`}
-                      onClick={() => toggleSoldOut(show)}
-                      title="Toggle Sold Out"
-                    >
-                      {show.sold_out ? 'Sold Out' : 'Available'}
-                    </button>
-                    <button className="admin-pill" onClick={() => handleEdit(show)}>
-                      Edit
-                    </button>
-                    <button
-                      className="admin-pill admin-pill--delete"
-                      onClick={() => handleDelete(show.id)}
-                      disabled={deleting === show.id}
-                    >
-                      {deleting === show.id ? '...' : 'Delete'}
-                    </button>
+                    <button className={`admin-pill ${show.featured ? 'admin-pill--active' : ''}`} onClick={() => toggleFeatured(show)} title="Toggle Featured">★</button>
+                    <button className={`admin-pill ${show.sold_out ? 'admin-pill--sold-out' : ''}`} onClick={() => toggleSoldOut(show)}>{show.sold_out ? 'Sold Out' : 'Available'}</button>
+                    <button className="admin-pill" onClick={() => handleEdit(show)}>Edit</button>
+                    <button className="admin-pill admin-pill--delete" onClick={() => handleDelete(show.id)} disabled={deleting === show.id}>{deleting === show.id ? '...' : 'Delete'}</button>
                   </div>
                 </div>
               ))}

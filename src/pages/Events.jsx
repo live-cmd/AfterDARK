@@ -1,23 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SHOWS, getUpcomingShows } from '../data/shows';
+import { supabase } from '../lib/supabaseClient';
 import './Events.css';
 
 export default function Events() {
-  const [filter, setFilter] = useState('all');
-  const upcoming = getUpcomingShows();
-  const past = SHOWS.filter(s => !getUpcomingShows().includes(s));
+  const [filter, setFilter] = useState('upcoming');
+  const [shows, setShows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
+  useEffect(() => {
+    fetchShows();
+  }, []);
+
+  async function fetchShows() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('shows')
+      .select('*')
+      .order('date', { ascending: true });
+    if (error) {
+      setError(true);
+    } else {
+      setShows(data || []);
+    }
+    setLoading(false);
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcoming = shows.filter(s => new Date(s.date + 'T00:00:00') >= today);
+  const past = shows.filter(s => new Date(s.date + 'T00:00:00') < today);
+  const featured = upcoming.find(s => s.featured) || upcoming[0];
   const displayed = filter === 'past' ? past : upcoming;
 
   return (
     <div className="events-page">
 
-      {/* ── HERO ── */}
+      {/* HERO */}
       <section className="events-hero">
         <div className="events-hero__bg" />
         <div className="container events-hero__content">
-          <p className="section-label">Live Entertainment · Bear, Delaware</p>
+          <p className="section-label">Live Comedy · Live Entertainment · Bear, Delaware</p>
           <h1 className="display text-blue events-hero__title">
             Upcoming<br />Shows
           </h1>
@@ -27,12 +52,12 @@ export default function Events() {
         </div>
       </section>
 
-      {/* ── FILTER TABS ── */}
+      {/* FILTER TABS */}
       <div className="events-tabs">
         <div className="container events-tabs__inner">
           <button
-            className={`events-tab ${filter === 'all' ? 'events-tab--active' : ''}`}
-            onClick={() => setFilter('all')}
+            className={`events-tab ${filter === 'upcoming' ? 'events-tab--active' : ''}`}
+            onClick={() => setFilter('upcoming')}
           >
             Upcoming
           </button>
@@ -45,66 +70,101 @@ export default function Events() {
         </div>
       </div>
 
-      {/* ── SHOW LIST ── */}
+      {/* CONTENT */}
       <section className="events-list section">
         <div className="container">
-          {displayed.length === 0 ? (
+
+          {loading && <div className="events-loading"><p className="text-dim">Loading shows...</p></div>}
+          {error && <div className="events-empty"><p className="text-dim">Couldn't load shows right now. Check back soon.</p></div>}
+          {!loading && !error && displayed.length === 0 && (
             <div className="events-empty">
-              <p className="text-dim">No shows to display right now. Check back soon.</p>
+              <p className="text-dim">{filter === 'past' ? 'No past shows to display.' : 'No upcoming shows right now. Check back soon.'}</p>
             </div>
-          ) : (
-            <div className="events-grid">
-              {displayed.map((show, i) => (
-                <article key={show.id} className={`event-card ${show.featured ? 'event-card--featured' : ''} ${show.soldOut ? 'event-card--sold-out' : ''}`}>
+          )}
 
-                  {show.featured && (
-                    <div className="event-card__badge">Featured</div>
-                  )}
-
-                  <div className="event-card__date">
-                    <span className="event-card__month">{show.month}</span>
-                    <span className="event-card__day">{show.day}</span>
-                    <span className="event-card__year">{show.year}</span>
-                  </div>
-
-                  <div className="event-card__body">
-                    <h2 className="event-card__name">{show.name}</h2>
-                    <p className="event-card__meta">
-                      <span>{show.venue}</span>
-                      <span className="event-card__dot">·</span>
-                      <span>{show.time}</span>
-                    </p>
-                    <p className="event-card__desc">{show.longDesc}</p>
-                    <div className="event-card__tags">
-                      {show.tags.map(tag => (
-                        <span key={tag} className="event-card__tag">{tag}</span>
-                      ))}
+          {!loading && !error && displayed.length > 0 && filter === 'upcoming' && (
+            <>
+              {featured && (
+                <div className="events-featured">
+                  <div className="events-featured__img" style={featured.image_url ? { backgroundImage: `url(${featured.image_url})` } : {}}>
+                    <div className="events-featured__overlay" />
+                    <div className="events-featured__badge">Featured</div>
+                    <div className="events-featured__content">
+                      <div className="events-featured__left">
+                        <div className="events-featured__date">
+                          <span className="events-featured__month">{featured.month}</span>
+                          <span className="events-featured__day">{featured.day}</span>
+                          <span className="events-featured__year">{featured.year}</span>
+                        </div>
+                        <h2 className="events-featured__name">{featured.name}</h2>
+                        <p className="events-featured__meta">{featured.venue} · {featured.time}</p>
+                      </div>
+                      <div className="events-featured__action">
+                        {featured.sold_out ? (
+                          <span className="event-sold-out">Sold Out</span>
+                        ) : (
+                          <a href={featured.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-blue">Get Tickets</a>
+                        )}
+                      </div>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  <div className="event-card__action">
-                    {show.soldOut ? (
-                      <span className="event-card__sold-out">Sold Out</span>
-                    ) : filter === 'past' ? (
-                      <span className="event-card__past">Show Completed</span>
-                    ) : (
-                      <a
-                        href={show.eventbriteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-blue"
-                      >
-                        Get Tickets
-                      </a>
-                    )}
+              <p className="events-all-label section-label">All Upcoming Shows</p>
+              <div className="events-grid">
+                {displayed.map(show => (
+                  <div key={show.id} className="event-row">
+                    <div className="event-row__thumb" style={show.image_url ? { backgroundImage: `url(${show.image_url})` } : {}} />
+                    <div className="event-row__date">
+                      <span className="event-row__month">{show.month}</span>
+                      <span className="event-row__day">{show.day}</span>
+                      <span className="event-row__year">{show.year}</span>
+                    </div>
+                    <div className="event-row__info">
+                      <h3 className="event-row__name">{show.name}</h3>
+                      <p className="event-row__meta text-dim">{show.venue} · {show.time}</p>
+                      {show.tags?.length > 0 && (
+                        <div className="event-row__tags">
+                          {show.tags.map(tag => <span key={tag} className="event-row__tag">{tag}</span>)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="event-row__action">
+                      {show.sold_out ? (
+                        <span className="event-sold-out">Sold Out</span>
+                      ) : (
+                        <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-blue">Tickets</a>
+                      )}
+                    </div>
                   </div>
+                ))}
+              </div>
+            </>
+          )}
 
-                </article>
+          {!loading && !error && displayed.length > 0 && filter === 'past' && (
+            <div className="events-grid">
+              {displayed.map(show => (
+                <div key={show.id} className="event-row event-row--past">
+                  <div className="event-row__thumb" style={show.image_url ? { backgroundImage: `url(${show.image_url})` } : {}} />
+                  <div className="event-row__date">
+                    <span className="event-row__month">{show.month}</span>
+                    <span className="event-row__day">{show.day}</span>
+                    <span className="event-row__year">{show.year}</span>
+                  </div>
+                  <div className="event-row__info">
+                    <h3 className="event-row__name">{show.name}</h3>
+                    <p className="event-row__meta text-dim">{show.venue} · {show.time}</p>
+                  </div>
+                  <div className="event-row__action">
+                    <span className="event-past">Show Completed</span>
+                  </div>
+                </div>
               ))}
             </div>
           )}
 
-          {/* ── PRIVATE EVENTS CTA ── */}
           <div className="events-private-cta">
             <div className="events-private-cta__inner">
               <p className="section-label">Looking for Something Different?</p>
@@ -116,7 +176,6 @@ export default function Events() {
 
         </div>
       </section>
-
     </div>
   );
 }

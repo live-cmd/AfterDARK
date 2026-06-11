@@ -1,23 +1,65 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Tickets.css';
+
+function getTicketCTA(show, variant = 'list') {
+  const btnClass = variant === 'featured' ? 'btn btn-blue tickets-featured__cta' : 'btn btn-outline-blue';
+  const label = variant === 'featured' ? 'Get Tickets on Eventbrite ↗' : 'Tickets ↗';
+
+  if (show.sold_out) return <span className="tickets-sold-out">Sold Out</span>;
+  if (show.is_private) return <Link to="/private-events" className={btnClass}>Request Booking</Link>;
+  if (show.is_free) return <span className="tickets-free">Free Admission</span>;
+  return (
+    <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className={btnClass}>
+      {label}
+    </a>
+  );
+}
 
 export default function Tickets() {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    async function fetchShows() {
-      const { data } = await supabase
-        .from('shows')
-        .select('*')
-        .order('date', { ascending: true });
-      setShows(data || []);
-      setLoading(false);
-    }
     fetchShows();
   }, []);
+
+  async function fetchShows() {
+    setLoading(true);
+    setError(false);
+
+    try {
+      const [supabaseResult, ebResult] = await Promise.allSettled([
+        supabase.from('shows').select('*').order('date', { ascending: true }),
+        fetchEventbriteEvents()
+      ]);
+
+      const supabaseShows =
+        supabaseResult.status === 'fulfilled' && !supabaseResult.value.error
+          ? supabaseResult.value.data || []
+          : [];
+
+      const ebShows = ebResult.status === 'fulfilled' ? ebResult.value : [];
+
+      const ebKeys = new Set(ebShows.map(e => `${e.date}|${e.name.toLowerCase()}`));
+      const filteredSupabase = supabaseShows.filter(
+        s => !ebKeys.has(`${s.date}|${s.name?.toLowerCase()}`)
+      );
+
+      const merged = [...ebShows, ...filteredSupabase].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      setShows(merged);
+    } catch {
+      setError(true);
+    }
+
+    setLoading(false);
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -60,18 +102,14 @@ export default function Tickets() {
                 <p className="tickets-featured__meta">{featured.venue} · {featured.time}</p>
                 <p className="tickets-featured__desc">{featured.description}</p>
                 <div className="tickets-featured__actions">
-                  {featured.sold_out ? (
-                    <span className="tickets-sold-out">Sold Out</span>
-                  ) : (
-                    <a href={featured.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-blue tickets-featured__cta">
-                      Get Tickets on Eventbrite ↗
-                    </a>
-                  )}
+                  {getTicketCTA(featured, 'featured')}
                   <Link to="/events" className="btn btn-outline-white">View All Shows</Link>
                 </div>
-                <p className="tickets-eventbrite-note text-dim">
-                  You'll be taken to Eventbrite to complete your purchase securely.
-                </p>
+                {!featured.is_private && !featured.is_free && !featured.sold_out && (
+                  <p className="tickets-eventbrite-note text-dim">
+                    You'll be taken to Eventbrite to complete your purchase securely.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -85,6 +123,10 @@ export default function Tickets() {
           <span className="blue-line" />
           {loading ? (
             <p className="text-dim" style={{padding:'40px 0'}}>Loading shows...</p>
+          ) : error ? (
+            <p className="text-dim" style={{padding:'40px 0'}}>Couldn't load shows right now. Check back soon.</p>
+          ) : upcoming.length === 0 ? (
+            <p className="text-dim" style={{padding:'40px 0'}}>No upcoming shows right now. Check back soon.</p>
           ) : (
             <div className="tickets-list">
               {upcoming.map(show => (
@@ -98,13 +140,7 @@ export default function Tickets() {
                     <p className="ticket-row__meta text-dim">{show.venue} · {show.time}</p>
                   </div>
                   <div className="ticket-row__action">
-                    {show.sold_out ? (
-                      <span className="tickets-sold-out">Sold Out</span>
-                    ) : (
-                      <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-blue">
-                        Tickets ↗
-                      </a>
-                    )}
+                    {getTicketCTA(show, 'list')}
                   </div>
                 </div>
               ))}

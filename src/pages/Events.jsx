@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Events.css';
 
 export default function Events() {
@@ -15,15 +16,42 @@ export default function Events() {
 
   async function fetchShows() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('shows')
-      .select('*')
-      .order('date', { ascending: true });
-    if (error) {
+    setError(false);
+
+    try {
+      // Fetch Supabase and Eventbrite in parallel
+      const [supabaseResult, eventbriteEvents] = await Promise.allSettled([
+        supabase.from('shows').select('*').order('date', { ascending: true }),
+        fetchEventbriteEvents()
+      ]);
+
+      const supabaseShows =
+        supabaseResult.status === 'fulfilled' && !supabaseResult.value.error
+          ? supabaseResult.value.data || []
+          : [];
+
+      const ebShows =
+        eventbriteEvents.status === 'fulfilled' ? eventbriteEvents.value : [];
+
+      // Merge: dedupe by date+name, Eventbrite takes precedence for ticketed shows
+      const ebKeys = new Set(ebShows.map(e => `${e.date}|${e.name.toLowerCase()}`));
+      const filteredSupabase = supabaseShows.filter(
+        s => !ebKeys.has(`${s.date}|${s.name?.toLowerCase()}`)
+      );
+
+      const merged = [...ebShows, ...filteredSupabase].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      if (merged.length === 0 && supabaseResult.status === 'rejected' && eventbriteEvents.status === 'rejected') {
+        setError(true);
+      } else {
+        setShows(merged);
+      }
+    } catch {
       setError(true);
-    } else {
-      setShows(data || []);
     }
+
     setLoading(false);
   }
 
@@ -34,6 +62,14 @@ export default function Events() {
   const past = shows.filter(s => new Date(s.date + 'T00:00:00') < today);
   const featured = upcoming.find(s => s.featured) || upcoming[0];
   const displayed = filter === 'past' ? past : upcoming;
+
+  function getTicketCTA(show, size = 'normal') {
+    const btnClass = size === 'featured' ? 'btn btn-blue' : 'btn btn-outline-blue';
+    if (show.sold_out) return <span className="event-sold-out">Sold Out</span>;
+    if (show.is_private) return <Link to="/private-events" className={btnClass}>Request Booking</Link>;
+    if (show.is_free) return <span className="event-free">Free Admission</span>;
+    return <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className={btnClass}>{size === 'featured' ? 'Get Tickets' : 'Tickets'}</a>;
+  }
 
   return (
     <div className="events-page">
@@ -100,11 +136,7 @@ export default function Events() {
                         <p className="events-featured__meta">{featured.venue} · {featured.time}</p>
                       </div>
                       <div className="events-featured__action">
-                        {featured.sold_out ? (
-                          <span className="event-sold-out">Sold Out</span>
-                        ) : (
-                          <a href={featured.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-blue">Get Tickets</a>
-                        )}
+                        {getTicketCTA(featured, 'featured')}
                       </div>
                     </div>
                   </div>
@@ -131,11 +163,7 @@ export default function Events() {
                       )}
                     </div>
                     <div className="event-row__action">
-                      {show.sold_out ? (
-                        <span className="event-sold-out">Sold Out</span>
-                      ) : (
-                        <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-blue">Tickets</a>
-                      )}
+                      {getTicketCTA(show)}
                     </div>
                   </div>
                 ))}

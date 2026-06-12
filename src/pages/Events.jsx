@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Events.css';
+import EventSchema from '../components/EventSchema';
 
 export default function Events() {
   const [filter, setFilter] = useState('upcoming');
@@ -73,6 +74,7 @@ export default function Events() {
 
   return (
     <div className="events-page">
+      <EventSchema shows={shows} />
 
       {/* HERO */}
       <section className="events-hero">

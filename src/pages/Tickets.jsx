@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Tickets.css';
+import EventSchema from '../components/EventSchema';
 
 function getTicketCTA(show, variant = 'list') {
   const btnClass = variant === 'featured' ? 'btn btn-blue tickets-featured__cta' : 'btn btn-outline-blue';
@@ -68,6 +69,7 @@ export default function Tickets() {
 
   return (
     <div className="tickets-page">
+      <EventSchema shows={shows} />
 
       {/* HERO */}
       <section className="tickets-hero">

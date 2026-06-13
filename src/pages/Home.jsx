@@ -75,6 +75,7 @@ export default function Home() {
                     <span className="show-card__day">{show.day}</span>
                   </div>
                   <div className="show-card__info">
+                    <span className="show-card__live">Live</span>
                     <h3 className="show-card__name">{show.name}</h3>
                     <p className="show-card__meta">{show.venue} &bull; {show.time}</p>
                     <p className="show-card__desc">{show.desc}</p>
@@ -97,12 +98,6 @@ export default function Home() {
       </section>
 
       {/* ── PHOTO STRIP ── */}
-      {/*
-       * TODO: Source 4–6 real photos from past shows.
-       * Ideal mix: crowd laughing, performer on mic, drinks on table, people mingling.
-       * Drop files into public/gallery/ and update GALLERY_PHOTOS below.
-       * Until real photos are available, slots render as styled placeholder tiles.
-       */}
       <section className="photo-strip" aria-label="AfterDARK atmosphere">
         <div className="photo-strip__track">
           {GALLERY_PHOTOS.map((photo, i) => (
@@ -240,7 +235,6 @@ export default function Home() {
   );
 }
 
-/* ── SAMPLE DATA (replace with live Eventbrite data) ── */
 const SHOWS = [
   {
     month: 'JUN',
@@ -271,18 +265,6 @@ const SHOWS = [
   },
 ];
 
-/* ── GALLERY PHOTOS ── */
-/* TODO: Replace src values with real photo paths once assets are ready.
- * Recommended shots:
- *   1. Crowd laughing — wide shot, energy visible
- *   2. Performer on mic — stage lights, crowd visible behind
- *   3. Drinks on table — cocktails/mocktails, atmospheric lighting
- *   4. People at tables — groups having a good time
- *   5. Comedian close-up — mid-set, mic in hand
- *   6. Venue atmosphere — room shot before show, mood lighting
- *
- * Drop files into public/gallery/ and set src: '/gallery/filename.jpg'
- */
 const GALLERY_PHOTOS = [
   { src: null, alt: 'Crowd laughing at AfterDARK' },
   { src: null, alt: 'Performer on stage' },

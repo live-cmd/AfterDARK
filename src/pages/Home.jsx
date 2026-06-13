@@ -9,14 +9,10 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className="hero">
         <div className="hero__bg">
-          {/*
-           * TODO: Replace with a high-energy crowd/stage photo.
-           * Ideal shot: wide angle, people in seats or standing, stage lights visible.
-           * Drop file into public/ and update the src below.
-           */}
+          {/* Hero photo: wide crowd/stage shot from Wix gallery. Replace with higher-res original when available. */}
           <div
             className="hero__photo"
-            style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/og-image.jpg)` }}
+            style={{ backgroundImage: `url(https://static.wixstatic.com/media/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg/v1/fill/w_2500,h_1875,al_c/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg)` }}
           />
           <div className="hero__overlay" />
           <div className="hero__spotlights">
@@ -104,13 +100,9 @@ export default function Home() {
             <div
               key={i}
               className="photo-strip__tile"
-              style={photo.src ? { backgroundImage: `url(${process.env.PUBLIC_URL}${photo.src})` } : {}}
+              style={{ backgroundImage: `url(${photo.src})` }}
               aria-label={photo.alt}
-            >
-              {!photo.src && (
-                <span className="photo-strip__placeholder-label">{photo.alt}</span>
-              )}
-            </div>
+            />
           ))}
         </div>
       </section>
@@ -265,13 +257,36 @@ const SHOWS = [
   },
 ];
 
+/*
+ * Gallery photos sourced from Wix gallery (publicly hosted).
+ * TODO: Replace with self-hosted originals in public/gallery/ for performance.
+ * Priority replacements: hero crowd shot, performer on mic, drinks.
+ */
 const GALLERY_PHOTOS = [
-  { src: null, alt: 'Crowd laughing at AfterDARK' },
-  { src: null, alt: 'Performer on stage' },
-  { src: null, alt: 'Drinks and good vibes' },
-  { src: null, alt: 'Audience enjoying the show' },
-  { src: null, alt: 'Comedian mid-set' },
-  { src: null, alt: 'AfterDARK venue atmosphere' },
+  {
+    src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg',
+    alt: 'AfterDARK crowd',
+  },
+  {
+    src: 'https://static.wixstatic.com/media/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg/v1/fill/w_1200,h_900,q_90/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg',
+    alt: 'Performer on stage',
+  },
+  {
+    src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg',
+    alt: 'AfterDARK atmosphere',
+  },
+  {
+    src: 'https://static.wixstatic.com/media/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg',
+    alt: 'Audience enjoying the show',
+  },
+  {
+    src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg',
+    alt: 'Comedy night crowd',
+  },
+  {
+    src: 'https://static.wixstatic.com/media/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg/v1/fill/w_900,h_900,q_90/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg',
+    alt: 'AfterDARK show moment',
+  },
 ];
 
 const PILLARS = [

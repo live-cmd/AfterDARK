@@ -1,15 +1,64 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import ScrollReveal from '../components/ScrollReveal';
 import './Home.css';
 
+const EVENT_SLIDES = [
+  {
+    label: 'Comedy Night',
+    desc: 'Headliners, features, and open mic sets from the Mid-Atlantic\'s best.',
+    icon: '🎤',
+    color: '#00BFFF',
+  },
+  {
+    label: 'Spoken Word',
+    desc: 'Raw, powerful, and personal. Poetry that hits different AfterDARK.',
+    icon: '📝',
+    color: '#C9A84C',
+  },
+  {
+    label: 'Karaoke',
+    desc: 'Your stage. Your song. No judgment — just vibes.',
+    icon: '🎶',
+    color: '#904dc9',
+  },
+  {
+    label: 'Open Mic',
+    desc: 'New voices, fresh material. The room that built Delaware\'s scene.',
+    icon: '🎙️',
+    color: '#00BFFF',
+  },
+  {
+    label: 'An Evening With',
+    desc: 'Intimate concert series featuring one artist, one night, one room.',
+    icon: '🎵',
+    color: '#C9A84C',
+  },
+];
+
 export default function Home() {
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setSlideIndex(i => (i + 1) % EVENT_SLIDES.length);
+        setFading(false);
+      }, 500);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const slide = EVENT_SLIDES[slideIndex];
+
   return (
     <div className="home">
 
       {/* ── HERO ── */}
       <section className="hero">
         <div className="hero__bg">
-          {/* Hero photo: wide crowd/stage shot from Wix gallery. Replace with higher-res original when available. */}
           <div
             className="hero__photo"
             style={{ backgroundImage: `url(https://static.wixstatic.com/media/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg/v1/fill/w_2500,h_1875,al_c/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg)` }}
@@ -21,21 +70,48 @@ export default function Home() {
           </div>
           <div className="hero__noise" />
         </div>
+
         <div className="container hero__content">
-          <p className="section-label hero__eyebrow">Home of Delaware's Longest-Running Comedy Show</p>
-          <h1 className="hero__headline display">
-            Everything<br />
-            Changes<br />
-            <span className="text-blue">AfterDARK</span>
-          </h1>
-          <p className="hero__sub">
-            Get off the couch, we'll handle the rest.
-          </p>
-          <div className="hero__actions">
-            <Link to="/tickets" className="btn btn-blue">Get Tickets</Link>
-            <Link to="/events" className="btn btn-outline-white">See All Shows</Link>
+          {/* Left: tagline */}
+          <div className="hero__left">
+            <p className="section-label hero__eyebrow">Home of Delaware's Longest-Running Comedy Show</p>
+            <h1 className="hero__headline display">
+              Everything<br />
+              Changes<br />
+              <span className="text-blue">AfterDARK</span>
+            </h1>
+            <p className="hero__sub">
+              Get off the couch, we'll handle the rest.
+            </p>
+            <div className="hero__actions">
+              <Link to="/tickets" className="btn btn-blue">Get Tickets</Link>
+              <Link to="/events" className="btn btn-outline-white">See All Shows</Link>
+            </div>
+          </div>
+
+          {/* Right: rotating event slideshow */}
+          <div className="hero__right">
+            <div className={`event-slide ${fading ? 'event-slide--fading' : ''}`}
+              style={{ '--slide-color': slide.color }}
+            >
+              <div className="event-slide__dots">
+                {EVENT_SLIDES.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
+                    onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 500); }}
+                    aria-label={EVENT_SLIDES[i].label}
+                  />
+                ))}
+              </div>
+              <div className="event-slide__icon">{slide.icon}</div>
+              <div className="event-slide__label">{slide.label}</div>
+              <p className="event-slide__desc">{slide.desc}</p>
+              <Link to="/events" className="event-slide__link">See upcoming →</Link>
+            </div>
           </div>
         </div>
+
         <div className="hero__scroll">
           <span>Scroll</span>
           <div className="hero__scroll-line" />
@@ -45,9 +121,9 @@ export default function Home() {
       {/* ── TICKER ── */}
       <div className="ticker">
         <div className="ticker__track">
-          {Array(8).fill(null).map((_, i) => (
+          {Array(6).fill(null).map((_, i) => (
             <span key={i} className="ticker__item">
-              Live Comedy &bull; Bear, Delaware &bull; Doors Open 7PM &bull; Show Starts 8PM &bull;&nbsp;
+              Live Comedy &bull; Spoken Word &bull; Karaoke &bull; Open Mic &bull; An Evening With &bull; Bear, Delaware &bull;&nbsp;
             </span>
           ))}
         </div>
@@ -200,9 +276,7 @@ export default function Home() {
           <ScrollReveal>
             <p className="section-label text-center">Stay in the Loop</p>
             <span className="blue-line centered" />
-            <h2 className="email-signup__title text-center">
-              Never Miss a Show
-            </h2>
+            <h2 className="email-signup__title text-center">Never Miss a Show</h2>
             <p className="email-signup__desc text-center">
               Get early access to tickets, exclusive offers, and AfterDARK news
               delivered straight to your inbox.
@@ -215,9 +289,7 @@ export default function Home() {
                 aria-label="Email address"
                 required
               />
-              <button type="submit" className="btn btn-blue">
-                Sign Me Up
-              </button>
+              <button type="submit" className="btn btn-blue">Sign Me Up</button>
             </form>
           </ScrollReveal>
         </div>
@@ -228,86 +300,23 @@ export default function Home() {
 }
 
 const SHOWS = [
-  {
-    month: 'JUN',
-    day: '14',
-    name: 'AfterDARK Summer Kickoff',
-    venue: 'Bear, DE',
-    time: 'Doors 7PM · Show 8PM',
-    desc: 'Kick off summer the right way. Headliner TBA.',
-    soldOut: false,
-  },
-  {
-    month: 'JUN',
-    day: '28',
-    name: "Cool J's AfterDARK",
-    venue: 'Bear, DE',
-    time: 'Doors 7PM · Show 8PM',
-    desc: "Delaware's longest-running comedy show returns.",
-    soldOut: false,
-  },
-  {
-    month: 'JUL',
-    day: '12',
-    name: 'Independence Laughs',
-    venue: 'Bear, DE',
-    time: 'Doors 7PM · Show 8PM',
-    desc: 'A July tradition. Fire comedy, no fireworks required.',
-    soldOut: false,
-  },
+  { month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: 'Kick off summer the right way. Headliner TBA.', soldOut: false },
+  { month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: "Delaware's longest-running comedy show returns.", soldOut: false },
+  { month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: 'A July tradition. Fire comedy, no fireworks required.', soldOut: false },
 ];
 
-/*
- * Gallery photos sourced from Wix gallery (publicly hosted).
- * TODO: Replace with self-hosted originals in public/gallery/ for performance.
- * Priority replacements: hero crowd shot, performer on mic, drinks.
- */
 const GALLERY_PHOTOS = [
-  {
-    src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg',
-    alt: 'AfterDARK crowd',
-  },
-  {
-    src: 'https://static.wixstatic.com/media/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg/v1/fill/w_1200,h_900,q_90/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg',
-    alt: 'Performer on stage',
-  },
-  {
-    src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg',
-    alt: 'AfterDARK atmosphere',
-  },
-  {
-    src: 'https://static.wixstatic.com/media/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg',
-    alt: 'Audience enjoying the show',
-  },
-  {
-    src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg',
-    alt: 'Comedy night crowd',
-  },
-  {
-    src: 'https://static.wixstatic.com/media/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg/v1/fill/w_900,h_900,q_90/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg',
-    alt: 'AfterDARK show moment',
-  },
+  { src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg', alt: 'AfterDARK crowd' },
+  { src: 'https://static.wixstatic.com/media/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg/v1/fill/w_1200,h_900,q_90/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg', alt: 'Performer on stage' },
+  { src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg', alt: 'AfterDARK atmosphere' },
+  { src: 'https://static.wixstatic.com/media/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg', alt: 'Audience enjoying the show' },
+  { src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg', alt: 'Comedy night crowd' },
+  { src: 'https://static.wixstatic.com/media/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg/v1/fill/w_900,h_900,q_90/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg', alt: 'AfterDARK show moment' },
 ];
 
 const PILLARS = [
-  {
-    icon: '🎤',
-    name: 'Real Comedians',
-    desc: 'Professional talent from the Mid-Atlantic and beyond — comics who actually make you laugh.',
-  },
-  {
-    icon: '🏆',
-    name: '7+ Years Running',
-    desc: "Delaware's longest-running comedy show. We've been here since before it was cool.",
-  },
-  {
-    icon: '🌙',
-    name: 'AfterDARK Energy',
-    desc: 'The night has a different feel. We built our show around it — and so did your city.',
-  },
-  {
-    icon: '🎟️',
-    name: 'Easy Ticketing',
-    desc: 'Grab your seat in seconds. Reserve ahead or show up — we make it simple.',
-  },
+  { icon: '🎤', name: 'Real Comedians', desc: 'Professional talent from the Mid-Atlantic and beyond — comics who actually make you laugh.' },
+  { icon: '🏆', name: '7+ Years Running', desc: "Delaware's longest-running comedy show. We've been here since before it was cool." },
+  { icon: '🌙', name: 'AfterDARK Energy', desc: 'The night has a different feel. We built our show around it — and so did your city.' },
+  { icon: '🎟️', name: 'Easy Ticketing', desc: 'Grab your seat in seconds. Reserve ahead or show up — we make it simple.' },
 ];

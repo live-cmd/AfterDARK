@@ -12,9 +12,12 @@ export default function Home() {
           {/*
            * TODO: Replace with a high-energy crowd/stage photo.
            * Ideal shot: wide angle, people in seats or standing, stage lights visible.
-           * Drop file into public/ and update the url() below in Home.css → .hero__photo
+           * Drop file into public/ and update the src below.
            */}
-          <div className="hero__photo" />
+          <div
+            className="hero__photo"
+            style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/og-image.jpg)` }}
+          />
           <div className="hero__overlay" />
           <div className="hero__spotlights">
             <div className="spotlight spotlight--left" />
@@ -106,7 +109,7 @@ export default function Home() {
             <div
               key={i}
               className="photo-strip__tile"
-              style={photo.src ? { backgroundImage: `url(${photo.src})` } : {}}
+              style={photo.src ? { backgroundImage: `url(${process.env.PUBLIC_URL}${photo.src})` } : {}}
               aria-label={photo.alt}
             >
               {!photo.src && (

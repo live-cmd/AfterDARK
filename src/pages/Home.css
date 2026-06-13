@@ -18,13 +18,10 @@
   z-index: 0;
 }
 
-/* TODO: Once you have a hero photo, replace the background below:
-   background-image: url('/your-hero-photo.jpg');
-   Using og-image.jpg as temporary placeholder. */
+/* background-image set via inline style in Home.jsx using process.env.PUBLIC_URL */
 .hero__photo {
   position: absolute;
   inset: 0;
-  background-image: url('/og-image.jpg');
   background-size: cover;
   background-position: center top;
   filter: brightness(0.35) saturate(0.8);
@@ -309,7 +306,6 @@
   padding: 16px;
 }
 
-/* Placeholder shimmer for tiles without a real photo */
 .photo-strip__tile:not([style*="background-image"]) {
   background: linear-gradient(135deg, var(--black-mid) 0%, var(--black-light) 50%, var(--black-mid) 100%);
   background-size: 200% 200%;

@@ -58,20 +58,15 @@ const PILLARS = [
 
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
-  const [fading, setFading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setSlideIndex(i => (i + 1) % EVENT_SLIDES.length);
-        setFading(false);
-      }, 800);
+      setSlideIndex(i => (i + 1) % EVENT_SLIDES.length);
     }, 6000);
     return () => clearInterval(interval);
   }, []);
 
-  const slide = EVENT_SLIDES[slideIndex];
+  const goTo = (i) => setSlideIndex(i);
 
   return (
     <div className="home">
@@ -115,24 +110,31 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: clean photo slideshow, no text overlay */}
+          {/* Right: true crossfade slideshow */}
           <div className="hero__right">
-            <div
-              className={`event-slide ${fading ? 'event-slide--fading' : ''}`}
-              style={{ '--slide-color': slide.color }}
-            >
+            <div className="event-slideshow">
+              {/* Colored top accent — updates instantly with active slide */}
               <div
-                className="event-slide__photo"
-                style={{ backgroundImage: `url(${slide.image})` }}
+                className="event-slideshow__accent"
+                style={{ background: EVENT_SLIDES[slideIndex].color }}
               />
-              <div className="event-slide__border-top" />
-              <div className="event-slide__dots">
-                {EVENT_SLIDES.map((_, i) => (
+              {/* All slides stacked; active one is opacity:1 */}
+              {EVENT_SLIDES.map((slide, i) => (
+                <div
+                  key={i}
+                  className={`event-slideshow__photo ${i === slideIndex ? 'event-slideshow__photo--active' : ''}`}
+                  style={{ backgroundImage: `url(${slide.image})` }}
+                />
+              ))}
+              {/* Dots */}
+              <div className="event-slideshow__dots">
+                {EVENT_SLIDES.map((slide, i) => (
                   <button
                     key={i}
-                    className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
-                    onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 800); }}
-                    aria-label={EVENT_SLIDES[i].label}
+                    className={`event-slideshow__dot ${i === slideIndex ? 'event-slideshow__dot--active' : ''}`}
+                    style={i === slideIndex ? { background: slide.color, width: '24px' } : {}}
+                    onClick={() => goTo(i)}
+                    aria-label={slide.label}
                   />
                 ))}
               </div>

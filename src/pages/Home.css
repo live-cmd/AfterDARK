@@ -105,9 +105,9 @@
   line-height: 0.88;
 }
 
-/* Martini glass — 40% larger than before (0.7em → 0.98em) */
+/* Martini glass — 0.98em * 1.2 = 1.176em */
 .hero__martini {
-  height: 0.98em;
+  height: 1.176em;
   width: auto;
   display: inline-block;
   vertical-align: middle;
@@ -146,19 +146,16 @@
   height: 540px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  /* Soft vignette blend into black on all edges */
   box-shadow:
     0 24px 80px rgba(0,0,0,0.8),
     0 0 0 1px rgba(255,255,255,0.04),
     inset 0 0 60px rgba(0,0,0,0.4);
 }
 
-/* All photos stacked — inactive opacity:0, active opacity:1 */
 .event-slideshow__photo {
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
   opacity: 0;
   transition: opacity 2.5s ease;
   transform: scale(1.05);
@@ -168,7 +165,6 @@
   opacity: 1;
 }
 
-/* Colored accent bar at top */
 .event-slideshow__accent {
   position: absolute;
   top: 0;
@@ -179,7 +175,6 @@
   transition: background 0.6s ease;
 }
 
-/* Multi-directional edge fade to blend into black */
 .event-slideshow::before {
   content: '';
   position: absolute;
@@ -192,7 +187,6 @@
   border-radius: var(--radius-lg);
 }
 
-/* Navigation dots */
 .event-slideshow__dots {
   position: absolute;
   bottom: 20px;

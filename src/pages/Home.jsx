@@ -9,7 +9,7 @@ const SUPABASE_IMG = (filename) =>
 const EVENT_SLIDES = [
   {
     label: 'Comedy Night',
-    desc: 'Headliners, features, and open mic sets from the Mid-Atlantic\'s best.',
+    desc: "Headliners, features, and open mic sets from the Mid-Atlantic's best.",
     color: '#00BFFF',
     image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'),
   },
@@ -27,7 +27,7 @@ const EVENT_SLIDES = [
   },
   {
     label: 'Open Mic',
-    desc: 'New voices, fresh material. The room that built Delaware\'s scene.',
+    desc: "New voices, fresh material. The room that built Delaware's scene.",
     color: '#00BFFF',
     image: SUPABASE_IMG('open-mic_behind-stage.JPG'),
   },
@@ -41,9 +41,47 @@ const EVENT_SLIDES = [
 
 const REVIEWS = [
   { author: 'Sheryl I Shackelford', text: 'Went for comedy. Left needing stitches!! 🤣 Great owners, Amazing drinks, mature vibe. Its on my calendar for every week now.' },
-  { author: 'Trina', text: 'Always a great show! Worth more than $25 for these comedy shows! Never say there\'s not anything to do in Delaware!! This the spot!!!' },
+  { author: 'Trina', text: "Always a great show! Worth more than $25 for these comedy shows! Never say there's not anything to do in Delaware!! This the spot!!!" },
   { author: 'Miranda Matthews', text: 'Always a great experience! The owners and staff are lovely people. Best water ice and the nightlife is always fun! Their comedy shows are fantastic.' },
-  { author: 'Autumn Hayes', text: 'It was the best decision I made that night. I love the intimate close knit vibe of the place. The comedians were hilarious. Can\'t wait to come back!' },
+  { author: 'Autumn Hayes', text: "It was the best decision I made that night. I love the intimate close knit vibe of the place. The comedians were hilarious. Can't wait to come back!" },
+];
+
+const SHOWS = [
+  {
+    month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: 'Kick off summer the right way. Headliner TBA.',
+    tags: ['Comedy', 'All Ages', 'Bear, DE'],
+    soldOut: false,
+  },
+  {
+    month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: "Delaware's longest-running comedy show returns.",
+    tags: ['Comedy', 'Open Mic', 'Bear, DE'],
+    soldOut: false,
+  },
+  {
+    month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: 'A July tradition. Fire comedy, no fireworks required.',
+    tags: ['Comedy', 'Special Event', 'Bear, DE'],
+    soldOut: false,
+  },
+];
+
+const GALLERY_PHOTOS = [
+  { src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg', alt: 'AfterDARK crowd' },
+  { src: SUPABASE_IMG('comedy_comedy@cooljs-brand-card.png'), alt: "Comedy Night at Cool J's AfterDARK", isBrandCard: true },
+  { src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg', alt: 'AfterDARK atmosphere' },
+  { src: SUPABASE_IMG('karaoke_brand-card.png'), alt: 'Karaoke at AfterDARK', isBrandCard: true },
+  { src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg', alt: 'Comedy night crowd' },
+  { src: SUPABASE_IMG('open-mic_brand-card.png'), alt: 'Open Mic at AfterDARK', isBrandCard: true },
+  { src: SUPABASE_IMG('spoken-word_brand-card.png'), alt: 'Spoken Word at AfterDARK', isBrandCard: true },
+];
+
+const PILLARS = [
+  { icon: '🎤', name: 'Real Comedians', desc: 'Professional talent from the Mid-Atlantic and beyond — comics who actually make you laugh.' },
+  { icon: '🏆', name: '7+ Years Running', desc: "Delaware's longest-running comedy show. We've been here since before it was cool." },
+  { icon: '🌙', name: 'AfterDARK Energy', desc: 'The night has a different feel. We built our show around it — and so did your city.' },
+  { icon: '🎟️', name: 'Easy Ticketing', desc: 'Grab your seat in seconds. Reserve ahead or show up — we make it simple.' },
 ];
 
 export default function Home() {
@@ -90,7 +128,7 @@ export default function Home() {
               <span className="hero__changes-line">
                 Changes
                 <img
-                  src={`https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/Afterdark_martini-glass-2.png`}
+                  src="https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/Afterdark_martini-glass-2.png"
                   alt=""
                   className="hero__martini"
                   aria-hidden="true"
@@ -340,44 +378,3 @@ export default function Home() {
     </div>
   );
 }
-
-const SHOWS = [
-  {
-    month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: 'Kick off summer the right way. Headliner TBA.',
-    tags: ['Comedy', 'All Ages', 'Bear, DE'],
-    soldOut: false
-  },
-  {
-    month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: "Delaware's longest-running comedy show returns.",
-    tags: ['Comedy', 'Open Mic', 'Bear, DE'],
-    soldOut: false
-  },
-  {
-    month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: 'A July tradition. Fire comedy, no fireworks required.',
-    tags: ['Comedy', 'Special Event', 'Bear, DE'],
-    soldOut: false
-  },
-];
-
-const SUPABASE_IMG = (filename) =>
-  `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
-
-const GALLERY_PHOTOS = [
-  { src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg', alt: 'AfterDARK crowd' },
-  { src: SUPABASE_IMG('comedy_comedy@cooljs-brand-card.png'), alt: 'Comedy Night at Cool J\'s AfterDARK', isBrandCard: true },
-  { src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg', alt: 'AfterDARK atmosphere' },
-  { src: SUPABASE_IMG('karaoke_brand-card.png'), alt: 'Karaoke at AfterDARK', isBrandCard: true },
-  { src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg', alt: 'Comedy night crowd' },
-  { src: SUPABASE_IMG('open-mic_brand-card.png'), alt: 'Open Mic at AfterDARK', isBrandCard: true },
-  { src: SUPABASE_IMG('spoken-word_brand-card.png'), alt: 'Spoken Word at AfterDARK', isBrandCard: true },
-];
-
-const PILLARS = [
-  { icon: '🎤', name: 'Real Comedians', desc: 'Professional talent from the Mid-Atlantic and beyond — comics who actually make you laugh.' },
-  { icon: '🏆', name: '7+ Years Running', desc: "Delaware's longest-running comedy show. We've been here since before it was cool." },
-  { icon: '🌙', name: 'AfterDARK Energy', desc: 'The night has a different feel. We built our show around it — and so did your city.' },
-  { icon: '🎟️', name: 'Easy Ticketing', desc: 'Grab your seat in seconds. Reserve ahead or show up — we make it simple.' },
-];

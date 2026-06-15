@@ -7,36 +7,11 @@ const SUPABASE_IMG = (filename) =>
   `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
 
 const EVENT_SLIDES = [
-  {
-    label: 'Comedy Night',
-    desc: "Headliners, features, and open mic sets from the Mid-Atlantic's best.",
-    color: '#00BFFF',
-    image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'),
-  },
-  {
-    label: 'Spoken Word',
-    desc: 'Raw, powerful, and personal. Poetry that hits different AfterDARK.',
-    color: '#C9A84C',
-    image: SUPABASE_IMG('spoken-word_poet-1.JPG'),
-  },
-  {
-    label: 'Karaoke',
-    desc: 'Your stage. Your song. No judgment — just vibes.',
-    color: '#904dc9',
-    image: SUPABASE_IMG('karaoke_crowd-shot.jpeg'),
-  },
-  {
-    label: 'Open Mic',
-    desc: "New voices, fresh material. The room that built Delaware's scene.",
-    color: '#00BFFF',
-    image: SUPABASE_IMG('open-mic_behind-stage.JPG'),
-  },
-  {
-    label: 'Live Music',
-    desc: 'Intimate concert series featuring one artist, one night, one room.',
-    color: '#C9A84C',
-    image: SUPABASE_IMG('dancing_party-goers.jpeg'),
-  },
+  { color: '#00BFFF', image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'), label: 'Comedy Night' },
+  { color: '#C9A84C', image: SUPABASE_IMG('spoken-word_poet-1.JPG'), label: 'Spoken Word' },
+  { color: '#904dc9', image: SUPABASE_IMG('karaoke_crowd-shot.jpeg'), label: 'Karaoke' },
+  { color: '#00BFFF', image: SUPABASE_IMG('open-mic_behind-stage.JPG'), label: 'Open Mic' },
+  { color: '#C9A84C', image: SUPABASE_IMG('dancing_party-goers.jpeg'), label: 'Live Music' },
 ];
 
 const REVIEWS = [
@@ -50,20 +25,17 @@ const SHOWS = [
   {
     month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
     desc: 'Kick off summer the right way. Headliner TBA.',
-    tags: ['Comedy', 'All Ages', 'Bear, DE'],
-    soldOut: false,
+    tags: ['Comedy', 'All Ages', 'Bear, DE'], soldOut: false,
   },
   {
     month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
     desc: "Delaware's longest-running comedy show returns.",
-    tags: ['Comedy', 'Open Mic', 'Bear, DE'],
-    soldOut: false,
+    tags: ['Comedy', 'Open Mic', 'Bear, DE'], soldOut: false,
   },
   {
     month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
     desc: 'A July tradition. Fire comedy, no fireworks required.',
-    tags: ['Comedy', 'Special Event', 'Bear, DE'],
-    soldOut: false,
+    tags: ['Comedy', 'Special Event', 'Bear, DE'], soldOut: false,
   },
 ];
 
@@ -94,8 +66,8 @@ export default function Home() {
       setTimeout(() => {
         setSlideIndex(i => (i + 1) % EVENT_SLIDES.length);
         setFading(false);
-      }, 500);
-    }, 3500);
+      }, 800);
+    }, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -120,7 +92,6 @@ export default function Home() {
         </div>
 
         <div className="container hero__content">
-          {/* Left: tagline */}
           <div className="hero__left">
             <p className="section-label hero__eyebrow">Home of Delaware's Longest-Running Comedy Show</p>
             <h1 className="hero__headline display">
@@ -128,7 +99,7 @@ export default function Home() {
               <span className="hero__changes-line">
                 Changes
                 <img
-                  src="https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/Afterdark_martini-glass-2.png"
+                  src={SUPABASE_IMG('Afterdark_martini-glass-2.png')}
                   alt=""
                   className="hero__martini"
                   aria-hidden="true"
@@ -137,16 +108,14 @@ export default function Home() {
               <br />
               <span className="text-blue">AfterDARK</span>
             </h1>
-            <p className="hero__sub">
-              Get off the couch, we'll handle the rest.
-            </p>
+            <p className="hero__sub">Get off the couch, we'll handle the rest.</p>
             <div className="hero__actions">
               <Link to="/tickets" className="btn btn-blue">Get Tickets</Link>
               <Link to="/events" className="btn btn-outline-white">See All Shows</Link>
             </div>
           </div>
 
-          {/* Right: rotating photo slideshow */}
+          {/* Right: clean photo slideshow, no text overlay */}
           <div className="hero__right">
             <div
               className={`event-slide ${fading ? 'event-slide--fading' : ''}`}
@@ -156,21 +125,16 @@ export default function Home() {
                 className="event-slide__photo"
                 style={{ backgroundImage: `url(${slide.image})` }}
               />
-              <div className="event-slide__overlay" />
-              <div className="event-slide__content">
-                <div className="event-slide__dots">
-                  {EVENT_SLIDES.map((_, i) => (
-                    <button
-                      key={i}
-                      className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
-                      onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 500); }}
-                      aria-label={EVENT_SLIDES[i].label}
-                    />
-                  ))}
-                </div>
-                <div className="event-slide__label">{slide.label}</div>
-                <p className="event-slide__desc">{slide.desc}</p>
-                <Link to="/events" className="event-slide__link">See upcoming →</Link>
+              <div className="event-slide__border-top" />
+              <div className="event-slide__dots">
+                {EVENT_SLIDES.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
+                    onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 800); }}
+                    aria-label={EVENT_SLIDES[i].label}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -206,7 +170,6 @@ export default function Home() {
             <span className="blue-line" />
             <h2 className="shows__title">Upcoming Shows</h2>
           </ScrollReveal>
-
           <div className="shows__grid">
             {SHOWS.map((show, i) => (
               <ScrollReveal key={i} delay={i * 80}>
@@ -242,7 +205,6 @@ export default function Home() {
               </ScrollReveal>
             ))}
           </div>
-
           <div className="shows__more">
             <Link to="/events" className="btn btn-outline-white">View Full Calendar</Link>
           </div>
@@ -296,14 +258,10 @@ export default function Home() {
             <div className="private__text">
               <p className="section-label">Private Events</p>
               <span className="blue-line" />
-              <h2 className="private__title">
-                Make It a<br />
-                <span className="text-blue">Private Show</span>
-              </h2>
+              <h2 className="private__title">Make It a<br /><span className="text-blue">Private Show</span></h2>
               <p className="private__desc">
-                Birthdays. Corporate events. Celebrations. We bring Delaware's
-                best comedy talent to your private event — fully customized,
-                professionally produced, unforgettable.
+                Birthdays. Corporate events. Celebrations. We bring Delaware's best comedy talent
+                to your private event — fully customized, professionally produced, unforgettable.
               </p>
               <Link to="/private-events" className="btn btn-blue">Request a Quote</Link>
             </div>
@@ -320,9 +278,7 @@ export default function Home() {
                   <li>✓ Flexible Venue Options</li>
                   <li>✓ Full Event Coordination</li>
                 </ul>
-                <Link to="/private-events" className="btn btn-outline-blue" style={{width:'100%'}}>
-                  Learn More
-                </Link>
+                <Link to="/private-events" className="btn btn-outline-blue" style={{width:'100%'}}>Learn More</Link>
               </div>
             </div>
           </ScrollReveal>
@@ -334,13 +290,10 @@ export default function Home() {
         <div className="container radar-cta__inner">
           <ScrollReveal>
             <div className="radar-cta__badge">NEW</div>
-            <h2 className="radar-cta__title">
-              Discover What's Happening<br />
-              <span className="text-purple">Tonight, Right Now</span>
-            </h2>
+            <h2 className="radar-cta__title">Discover What's Happening<br /><span className="text-purple">Tonight, Right Now</span></h2>
             <p className="radar-cta__desc">
-              AfterDARK Radar — the app built for people who decide what
-              they're doing within 72 hours. Find live events near you, instantly.
+              AfterDARK Radar — the app built for people who decide what they're doing within 72 hours.
+              Find live events near you, instantly.
             </p>
             <div className="radar-cta__actions">
               <Link to="/radar" className="btn btn-purple">Download the App</Link>
@@ -358,17 +311,10 @@ export default function Home() {
             <span className="blue-line centered" />
             <h2 className="email-signup__title text-center">Never Miss a Show</h2>
             <p className="email-signup__desc text-center">
-              Get early access to tickets, exclusive offers, and AfterDARK news
-              delivered straight to your inbox.
+              Get early access to tickets, exclusive offers, and AfterDARK news delivered straight to your inbox.
             </p>
             <form className="email-signup__form" onSubmit={e => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="email-signup__input"
-                aria-label="Email address"
-                required
-              />
+              <input type="email" placeholder="your@email.com" className="email-signup__input" aria-label="Email address" required />
               <button type="submit" className="btn btn-blue">Sign Me Up</button>
             </form>
           </ScrollReveal>

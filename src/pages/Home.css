@@ -105,9 +105,9 @@
   line-height: 0.88;
 }
 
-/* Martini glass — aligned to text baseline */
+/* Martini glass — 1.176em × 1.2 = 1.411em */
 .hero__martini {
-  height: 1.176em;
+  height: 1.411em;
   width: auto;
   display: inline-block;
   vertical-align: bottom;

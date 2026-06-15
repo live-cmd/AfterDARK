@@ -62,7 +62,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setSlideIndex(i => (i + 1) % EVENT_SLIDES.length);
-    }, 6000);
+    }, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -113,12 +113,10 @@ export default function Home() {
           {/* Right: true crossfade slideshow */}
           <div className="hero__right">
             <div className="event-slideshow">
-              {/* Colored top accent — updates instantly with active slide */}
               <div
                 className="event-slideshow__accent"
                 style={{ background: EVENT_SLIDES[slideIndex].color }}
               />
-              {/* All slides stacked; active one is opacity:1 */}
               {EVENT_SLIDES.map((slide, i) => (
                 <div
                   key={i}
@@ -126,7 +124,6 @@ export default function Home() {
                   style={{ backgroundImage: `url(${slide.image})` }}
                 />
               ))}
-              {/* Dots */}
               <div className="event-slideshow__dots">
                 {EVENT_SLIDES.map((slide, i) => (
                   <button

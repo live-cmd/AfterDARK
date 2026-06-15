@@ -148,18 +148,17 @@
   box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
 }
 
-/* All photos stacked on top of each other */
+/* All photos stacked — inactive opacity:0, active opacity:1 */
 .event-slideshow__photo {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 2.5s ease;
   transform: scale(1.05);
 }
 
-/* Active photo fades in */
 .event-slideshow__photo--active {
   opacity: 1;
 }

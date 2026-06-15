@@ -1,5 +1,6 @@
 /* ============================================
    NAV — AfterDARK
+   PR 6: Cool J's script back to blue
    ============================================ */
 
 .nav {
@@ -52,6 +53,8 @@
   width: auto;
   object-fit: contain;
   display: block;
+  /* Tint the script image to electric blue */
+  filter: brightness(0) saturate(100%) invert(58%) sepia(98%) saturate(1200%) hue-rotate(170deg) brightness(105%);
 }
 
 .nav__logo-divider {

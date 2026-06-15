@@ -3,37 +3,47 @@ import { useState, useEffect } from 'react';
 import ScrollReveal from '../components/ScrollReveal';
 import './Home.css';
 
+const SUPABASE_IMG = (filename) =>
+  `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
+
 const EVENT_SLIDES = [
   {
     label: 'Comedy Night',
     desc: 'Headliners, features, and open mic sets from the Mid-Atlantic\'s best.',
-    icon: '🎤',
     color: '#00BFFF',
+    image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'),
   },
   {
     label: 'Spoken Word',
     desc: 'Raw, powerful, and personal. Poetry that hits different AfterDARK.',
-    icon: '📝',
     color: '#C9A84C',
+    image: SUPABASE_IMG('spoken-word_poet-1.JPG'),
   },
   {
     label: 'Karaoke',
     desc: 'Your stage. Your song. No judgment — just vibes.',
-    icon: '🎶',
     color: '#904dc9',
+    image: SUPABASE_IMG('karaoke_crowd-shot.jpeg'),
   },
   {
     label: 'Open Mic',
     desc: 'New voices, fresh material. The room that built Delaware\'s scene.',
-    icon: '🎙️',
     color: '#00BFFF',
+    image: SUPABASE_IMG('open-mic_behind-stage.JPG'),
   },
   {
-    label: 'An Evening With',
+    label: 'Live Music',
     desc: 'Intimate concert series featuring one artist, one night, one room.',
-    icon: '🎵',
     color: '#C9A84C',
+    image: SUPABASE_IMG('dancing_party-goers.jpeg'),
   },
+];
+
+const REVIEWS = [
+  { author: 'Sheryl I Shackelford', text: 'Went for comedy. Left needing stitches!! 🤣 Great owners, Amazing drinks, mature vibe. Its on my calendar for every week now.' },
+  { author: 'Trina', text: 'Always a great show! Worth more than $25 for these comedy shows! Never say there\'s not anything to do in Delaware!! This the spot!!!' },
+  { author: 'Miranda Matthews', text: 'Always a great experience! The owners and staff are lovely people. Best water ice and the nightlife is always fun! Their comedy shows are fantastic.' },
+  { author: 'Autumn Hayes', text: 'It was the best decision I made that night. I love the intimate close knit vibe of the place. The comedians were hilarious. Can\'t wait to come back!' },
 ];
 
 export default function Home() {
@@ -77,7 +87,16 @@ export default function Home() {
             <p className="section-label hero__eyebrow">Home of Delaware's Longest-Running Comedy Show</p>
             <h1 className="hero__headline display">
               Everything<br />
-              Changes<br />
+              <span className="hero__changes-line">
+                Changes
+                <img
+                  src={`https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/Afterdark_martini-glass-2.png`}
+                  alt=""
+                  className="hero__martini"
+                  aria-hidden="true"
+                />
+              </span>
+              <br />
               <span className="text-blue">AfterDARK</span>
             </h1>
             <p className="hero__sub">
@@ -89,25 +108,32 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right: rotating event slideshow */}
+          {/* Right: rotating photo slideshow */}
           <div className="hero__right">
-            <div className={`event-slide ${fading ? 'event-slide--fading' : ''}`}
+            <div
+              className={`event-slide ${fading ? 'event-slide--fading' : ''}`}
               style={{ '--slide-color': slide.color }}
             >
-              <div className="event-slide__dots">
-                {EVENT_SLIDES.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
-                    onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 500); }}
-                    aria-label={EVENT_SLIDES[i].label}
-                  />
-                ))}
+              <div
+                className="event-slide__photo"
+                style={{ backgroundImage: `url(${slide.image})` }}
+              />
+              <div className="event-slide__overlay" />
+              <div className="event-slide__content">
+                <div className="event-slide__dots">
+                  {EVENT_SLIDES.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`event-slide__dot ${i === slideIndex ? 'event-slide__dot--active' : ''}`}
+                      onClick={() => { setFading(true); setTimeout(() => { setSlideIndex(i); setFading(false); }, 500); }}
+                      aria-label={EVENT_SLIDES[i].label}
+                    />
+                  ))}
+                </div>
+                <div className="event-slide__label">{slide.label}</div>
+                <p className="event-slide__desc">{slide.desc}</p>
+                <Link to="/events" className="event-slide__link">See upcoming →</Link>
               </div>
-              <div className="event-slide__icon">{slide.icon}</div>
-              <div className="event-slide__label">{slide.label}</div>
-              <p className="event-slide__desc">{slide.desc}</p>
-              <Link to="/events" className="event-slide__link">See upcoming →</Link>
             </div>
           </div>
         </div>
@@ -121,9 +147,14 @@ export default function Home() {
       {/* ── TICKER ── */}
       <div className="ticker">
         <div className="ticker__track">
-          {Array(6).fill(null).map((_, i) => (
-            <span key={i} className="ticker__item">
-              Live Comedy &bull; Spoken Word &bull; Karaoke &bull; Open Mic &bull; An Evening With &bull; Bear, Delaware &bull;&nbsp;
+          {Array(3).fill(null).map((_, i) => (
+            <span key={i} className="ticker__segment">
+              <span className="ticker__item ticker__item--show">Live Comedy &bull; Spoken Word &bull; Karaoke &bull; Open Mic &bull; Bear, Delaware &bull;</span>
+              {REVIEWS.map((r, j) => (
+                <span key={j} className="ticker__item ticker__item--review">
+                  ★★★★★ &ldquo;{r.text}&rdquo; — {r.author} &bull;
+                </span>
+              ))}
             </span>
           ))}
         </div>
@@ -151,11 +182,22 @@ export default function Home() {
                     <h3 className="show-card__name">{show.name}</h3>
                     <p className="show-card__meta">{show.venue} &bull; {show.time}</p>
                     <p className="show-card__desc">{show.desc}</p>
+                    <div className="show-card__tags">
+                      {show.tags.map((tag, t) => (
+                        <span key={t} className="show-card__tag">{tag}</span>
+                      ))}
+                    </div>
                   </div>
                   <div className="show-card__action">
                     {show.soldOut
                       ? <span className="show-card__sold-out">Sold Out</span>
-                      : <Link to="/tickets" className="btn btn-outline-blue">Tickets</Link>
+                      : (
+                        <Link to="/tickets" className="show-card__ticket-btn">
+                          <span className="show-card__ticket-notch show-card__ticket-notch--left" />
+                          <span className="show-card__ticket-text">🎟 Tickets</span>
+                          <span className="show-card__ticket-notch show-card__ticket-notch--right" />
+                        </Link>
+                      )
                     }
                   </div>
                 </div>
@@ -175,7 +217,7 @@ export default function Home() {
           {GALLERY_PHOTOS.map((photo, i) => (
             <div
               key={i}
-              className="photo-strip__tile"
+              className={`photo-strip__tile${photo.isBrandCard ? ' photo-strip__tile--brand' : ''}`}
               style={{ backgroundImage: `url(${photo.src})` }}
               aria-label={photo.alt}
             />
@@ -300,18 +342,37 @@ export default function Home() {
 }
 
 const SHOWS = [
-  { month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: 'Kick off summer the right way. Headliner TBA.', soldOut: false },
-  { month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: "Delaware's longest-running comedy show returns.", soldOut: false },
-  { month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM', desc: 'A July tradition. Fire comedy, no fireworks required.', soldOut: false },
+  {
+    month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: 'Kick off summer the right way. Headliner TBA.',
+    tags: ['Comedy', 'All Ages', 'Bear, DE'],
+    soldOut: false
+  },
+  {
+    month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: "Delaware's longest-running comedy show returns.",
+    tags: ['Comedy', 'Open Mic', 'Bear, DE'],
+    soldOut: false
+  },
+  {
+    month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
+    desc: 'A July tradition. Fire comedy, no fireworks required.',
+    tags: ['Comedy', 'Special Event', 'Bear, DE'],
+    soldOut: false
+  },
 ];
+
+const SUPABASE_IMG = (filename) =>
+  `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
 
 const GALLERY_PHOTOS = [
   { src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg', alt: 'AfterDARK crowd' },
-  { src: 'https://static.wixstatic.com/media/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg/v1/fill/w_1200,h_900,q_90/711317_d44794f792134d5a9dfceabe60a917d6f003.jpg', alt: 'Performer on stage' },
+  { src: SUPABASE_IMG('comedy_comedy@cooljs-brand-card.png'), alt: 'Comedy Night at Cool J\'s AfterDARK', isBrandCard: true },
   { src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg', alt: 'AfterDARK atmosphere' },
-  { src: 'https://static.wixstatic.com/media/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_f4979ac0d007446fb52d115f00931016~mv2.jpeg', alt: 'Audience enjoying the show' },
+  { src: SUPABASE_IMG('karaoke_brand-card.png'), alt: 'Karaoke at AfterDARK', isBrandCard: true },
   { src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg', alt: 'Comedy night crowd' },
-  { src: 'https://static.wixstatic.com/media/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg/v1/fill/w_900,h_900,q_90/711317_1958580cd0ad48a8bcaa480220c94af3~mv2.jpeg', alt: 'AfterDARK show moment' },
+  { src: SUPABASE_IMG('open-mic_brand-card.png'), alt: 'Open Mic at AfterDARK', isBrandCard: true },
+  { src: SUPABASE_IMG('spoken-word_brand-card.png'), alt: 'Spoken Word at AfterDARK', isBrandCard: true },
 ];
 
 const PILLARS = [

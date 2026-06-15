@@ -100,18 +100,19 @@
 
 .hero__changes-line {
   display: inline-flex;
-  align-items: center;
-  gap: 0.2em;
+  align-items: flex-end;
+  gap: 0.15em;
   line-height: 0.88;
 }
 
-/* Martini glass — 0.98em * 1.2 = 1.176em */
+/* Martini glass — aligned to text baseline */
 .hero__martini {
   height: 1.176em;
   width: auto;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: bottom;
   object-fit: contain;
+  margin-bottom: -0.05em;
 }
 
 .hero__sub {

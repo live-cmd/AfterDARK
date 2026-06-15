@@ -7,11 +7,12 @@ const SUPABASE_IMG = (filename) =>
   `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
 
 const EVENT_SLIDES = [
-  { color: '#00BFFF', image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'), label: 'Comedy Night' },
-  { color: '#C9A84C', image: SUPABASE_IMG('spoken-word_poet-1.JPG'), label: 'Spoken Word' },
-  { color: '#904dc9', image: SUPABASE_IMG('karaoke_crowd-shot.jpeg'), label: 'Karaoke' },
-  { color: '#00BFFF', image: SUPABASE_IMG('open-mic_behind-stage.JPG'), label: 'Open Mic' },
-  { color: '#C9A84C', image: SUPABASE_IMG('dancing_party-goers.jpeg'), label: 'Live Music' },
+  { color: '#00BFFF', image: SUPABASE_IMG('comedy_comedian-onstage-1.jpeg'), label: 'Comedy Night', position: 'center' },
+  { color: '#C9A84C', image: SUPABASE_IMG('spoken-word_poet-1.JPG'), label: 'Spoken Word', position: 'center' },
+  { color: '#904dc9', image: SUPABASE_IMG('karaoke_crowd-shot.jpeg'), label: 'Karaoke', position: 'right center' },
+  { color: '#00BFFF', image: SUPABASE_IMG('open-mic_behind-stage.JPG'), label: 'Open Mic', position: 'center' },
+  { color: '#C9A84C', image: SUPABASE_IMG('dancing_party-goers.jpeg'), label: 'Live Music', position: 'center' },
+  { color: '#00BFFF', image: SUPABASE_IMG('dancing_Dj.jpeg'), label: 'DJ Night', position: 'center' },
 ];
 
 const REVIEWS = [
@@ -121,7 +122,7 @@ export default function Home() {
                 <div
                   key={i}
                   className={`event-slideshow__photo ${i === slideIndex ? 'event-slideshow__photo--active' : ''}`}
-                  style={{ backgroundImage: `url(${slide.image})` }}
+                  style={{ backgroundImage: `url(${slide.image})`, backgroundPosition: slide.position }}
                 />
               ))}
               <div className="event-slideshow__dots">

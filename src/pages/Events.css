@@ -77,7 +77,7 @@
   height: 280px;
   background: linear-gradient(135deg, #0a1628 0%, #001a3a 40%, #003366 100%);
   background-size: cover;
-  background-position: center;
+  background-position: top center; /* Show top of image (performer's face/head) */
   position: relative;
   display: flex;
   align-items: flex-end;

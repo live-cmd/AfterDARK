@@ -20,7 +20,6 @@ export default function Events() {
     setError(false);
 
     try {
-      // Fetch Supabase and Eventbrite in parallel
       const [supabaseResult, eventbriteEvents] = await Promise.allSettled([
         supabase.from('shows').select('*').order('date', { ascending: true }),
         fetchEventbriteEvents()
@@ -34,7 +33,6 @@ export default function Events() {
       const ebShows =
         eventbriteEvents.status === 'fulfilled' ? eventbriteEvents.value : [];
 
-      // Merge: dedupe by date+name, Eventbrite takes precedence for ticketed shows
       const ebKeys = new Set(ebShows.map(e => `${e.date}|${e.name.toLowerCase()}`));
       const filteredSupabase = supabaseShows.filter(
         s => !ebKeys.has(`${s.date}|${s.name?.toLowerCase()}`)
@@ -65,11 +63,22 @@ export default function Events() {
   const displayed = filter === 'past' ? past : upcoming;
 
   function getTicketCTA(show, size = 'normal') {
-    const btnClass = size === 'featured' ? 'btn btn-blue' : 'btn btn-outline-blue';
     if (show.sold_out) return <span className="event-sold-out">Sold Out</span>;
-    if (show.is_private) return <Link to="/private-events" className={btnClass}>Request Booking</Link>;
+    if (show.is_private) return <Link to="/private-events" className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">Request Booking</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></Link>;
     if (show.is_free) return <span className="event-free">Free Admission</span>;
-    return <a href={show.eventbrite_url} target="_blank" rel="noopener noreferrer" className={btnClass}>{size === 'featured' ? 'Get Tickets' : 'Tickets'}</a>;
+    if (size === 'featured') {
+      const href = show.eventbrite_url || '/tickets';
+      const isExternal = href.startsWith('http');
+      return isExternal
+        ? <a href={href} target="_blank" rel="noopener noreferrer" className="btn btn-blue">Get Tickets</a>
+        : <Link to={href} className="btn btn-blue">Get Tickets</Link>;
+    }
+    // Normal ticket button — styled as ticket shape
+    const href = show.eventbrite_url || '/tickets';
+    const isExternal = href.startsWith('http');
+    return isExternal
+      ? <a href={href} target="_blank" rel="noopener noreferrer" className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🎟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></a>
+      : <Link to={href} className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🎟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></Link>;
   }
 
   return (
@@ -158,6 +167,13 @@ export default function Events() {
                     <div className="event-row__info">
                       <h3 className="event-row__name">{show.name}</h3>
                       <p className="event-row__meta text-dim">{show.venue} · {show.time}</p>
+                      {show.description && (
+                        <p className="event-row__desc">
+                          {show.description.length > 100
+                            ? show.description.slice(0, 100).trimEnd() + '…'
+                            : show.description}
+                        </p>
+                      )}
                       {show.tags?.length > 0 && (
                         <div className="event-row__tags">
                           {show.tags.map(tag => <span key={tag} className="event-row__tag">{tag}</span>)}
@@ -186,6 +202,13 @@ export default function Events() {
                   <div className="event-row__info">
                     <h3 className="event-row__name">{show.name}</h3>
                     <p className="event-row__meta text-dim">{show.venue} · {show.time}</p>
+                    {show.description && (
+                      <p className="event-row__desc">
+                        {show.description.length > 100
+                          ? show.description.slice(0, 100).trimEnd() + '…'
+                          : show.description}
+                      </p>
+                    )}
                   </div>
                   <div className="event-row__action">
                     <span className="event-past">Show Completed</span>

@@ -42,9 +42,10 @@
 }
 
 .nav__logo-img-wrap {
-  height: calc(var(--nav-height) - 4px);
+  height: 90px;
   display: flex;
   align-items: center;
+  overflow: visible;
 }
 
 .nav__logo-script {
@@ -227,4 +228,5 @@
   .nav__cta    { display: none; }
   .nav__hamburger { display: flex; }
   .nav__mobile    { display: block; }
+  .nav__logo-img-wrap { height: 60px; }
 }

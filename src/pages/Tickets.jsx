@@ -71,24 +71,22 @@ export default function Tickets() {
     <div className="tickets-page">
       <EventSchema shows={shows} />
 
-      {/* HERO */}
+      {/* HERO — text left, featured card right */}
       <section className="tickets-hero">
         <div className="tickets-hero__bg" />
-        <div className="container tickets-hero__content">
-          <p className="section-label">Secure Your Seat</p>
-          <h1 className="display text-blue tickets-hero__title">
-            Get<br />Tickets
-          </h1>
-          <p className="tickets-hero__sub text-dim">
-            All tickets sold through Eventbrite — secure checkout, instant confirmation.
-          </p>
-        </div>
-      </section>
-
-      {/* FEATURED EVENT */}
-      <section className="tickets-featured section">
-        <div className="container">
-          <FeaturedEvent />
+        <div className="container tickets-hero__inner">
+          <div className="tickets-hero__text">
+            <p className="section-label">Secure Your Seat</p>
+            <h1 className="display text-blue tickets-hero__title">
+              Get<br />Tickets
+            </h1>
+            <p className="tickets-hero__sub text-dim">
+              All tickets sold through Eventbrite — secure checkout, instant confirmation.
+            </p>
+          </div>
+          <div className="tickets-hero__featured">
+            <FeaturedEvent />
+          </div>
         </div>
       </section>
 

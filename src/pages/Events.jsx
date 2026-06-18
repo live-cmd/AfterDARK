@@ -76,25 +76,32 @@ export default function Events() {
     const href = show.eventbrite_url || '/tickets';
     const isExternal = href.startsWith('http');
     return isExternal
-      ? <a href={href} target="_blank" rel="noopener noreferrer" className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🎟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></a>
-      : <Link to={href} className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🎟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></Link>;
+      ? <a href={href} target="_blank" rel="noopener noreferrer" className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🏟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></a>
+      : <Link to={href} className="event-row__ticket-btn"><span className="event-row__ticket-notch event-row__ticket-notch--left" /><span className="event-row__ticket-text">🏟 Tickets</span><span className="event-row__ticket-notch event-row__ticket-notch--right" /></Link>;
   }
 
   return (
     <div className="events-page">
       <EventSchema shows={shows} />
 
-      {/* HERO */}
+      {/* HERO — text left, featured card right */}
       <section className="events-hero">
         <div className="events-hero__bg" />
-        <div className="container events-hero__content">
-          <p className="section-label">Live Comedy · Live Entertainment · Bear, Delaware</p>
-          <h1 className="display text-blue events-hero__title">
-            Upcoming<br />Shows
-          </h1>
-          <p className="events-hero__sub text-dim">
-            Every show is one night only. Don't find out you missed it.
-          </p>
+        <div className="container events-hero__inner">
+          <div className="events-hero__text">
+            <p className="section-label">Live Comedy · Live Entertainment · Bear, Delaware</p>
+            <h1 className="display text-blue events-hero__title">
+              Upcoming<br />Shows
+            </h1>
+            <p className="events-hero__sub text-dim">
+              Every show is one night only. Don't find out you missed it.
+            </p>
+          </div>
+          {filter === 'upcoming' && (
+            <div className="events-hero__featured">
+              <FeaturedEvent />
+            </div>
+          )}
         </div>
       </section>
 
@@ -119,9 +126,6 @@ export default function Events() {
       {/* CONTENT */}
       <section className="events-list section">
         <div className="container">
-
-          {/* FEATURED EVENT — only on upcoming tab */}
-          {filter === 'upcoming' && <FeaturedEvent />}
 
           {loading && <div className="events-loading"><p className="text-dim">Loading shows...</p></div>}
           {error && <div className="events-empty"><p className="text-dim">Couldn't load shows right now. Check back soon.</p></div>}

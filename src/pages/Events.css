@@ -5,7 +5,7 @@
 /* ── HERO ── */
 .events-hero {
   position: relative;
-  padding: 140px 0 80px;
+  padding: 140px 0 60px;
   overflow: hidden;
 }
 
@@ -17,10 +17,32 @@
     radial-gradient(ellipse 40% 40% at 20% 80%, rgba(144, 77, 201, 0.06) 0%, transparent 70%);
 }
 
-.events-hero__content { position: relative; z-index: 1; }
+/* Two-column hero: text left, featured card right */
+.events-hero__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.events-hero__text { /* left column */ }
+
+.events-hero__featured {
+  /* right column — remove FeaturedEvent's own bottom margin here */
+}
+
+.events-hero__featured .fe-wrapper {
+  margin-bottom: 0;
+}
+
+.events-hero__featured .fe-label {
+  display: none; /* label is redundant next to the hero text */
+}
 
 .events-hero__title {
-  font-size: clamp(4rem, 10vw, 8rem);
+  font-size: clamp(3.5rem, 8vw, 7rem);
   line-height: 0.9;
   margin: 12px 0 24px;
 }
@@ -63,102 +85,6 @@
 
 /* ── EVENTS GRID ── */
 .events-grid { display: flex; flex-direction: column; }
-
-/* ── FEATURED HERO ── */
-.events-featured {
-  margin-bottom: 40px;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid rgba(0, 191, 255, 0.15);
-}
-
-.events-featured__img {
-  width: 100%;
-  height: 280px;
-  background: linear-gradient(135deg, #0a1628 0%, #001a3a 40%, #003366 100%);
-  background-size: cover;
-  background-position: top center; /* Show top of image (performer's face/head) */
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-}
-
-.events-featured__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.4) 60%, transparent 100%);
-}
-
-.events-featured__badge {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(0, 191, 255, 0.15);
-  color: var(--blue);
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border: 1px solid rgba(0, 191, 255, 0.3);
-  border-radius: 2px;
-}
-
-.events-featured__content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: 24px 28px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.events-featured__date {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.events-featured__month {
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  color: var(--blue);
-  text-transform: uppercase;
-}
-
-.events-featured__day {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  color: var(--white);
-  line-height: 1;
-}
-
-.events-featured__year {
-  font-family: var(--font-heading);
-  font-size: 0.7rem;
-  color: var(--white-dim);
-}
-
-.events-featured__name {
-  font-family: var(--font-heading);
-  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--white);
-  margin: 0 0 4px;
-}
-
-.events-featured__meta {
-  font-size: 0.85rem;
-  color: var(--white-dim);
-  margin: 0;
-}
-
-.events-featured__action { flex-shrink: 0; }
 
 /* ── ALL SHOWS LABEL ── */
 .events-all-label { margin: 8px 0 16px; }
@@ -253,7 +179,7 @@
   border-radius: 2px;
 }
 
-/* ── TICKET BUTTON (matches homepage style) ── */
+/* ── TICKET BUTTON ── */
 .event-row__action {
   min-width: 120px;
   display: flex;
@@ -340,10 +266,19 @@
 .events-private-cta p { margin-bottom: 24px; }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .events-hero__inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .events-hero__featured .fe-label {
+    display: block; /* restore label when stacked */
+  }
+}
+
 @media (max-width: 768px) {
-  .events-hero { padding: 120px 0 60px; }
-  .events-featured__img { height: 220px; }
-  .events-featured__content { flex-direction: column; align-items: flex-start; }
+  .events-hero { padding: 120px 0 48px; }
 
   .event-row {
     grid-template-columns: 56px 50px 1fr;

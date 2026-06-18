@@ -1,0 +1,279 @@
+/* ─── FEATURED EVENT WRAPPER ─── */
+.fe-wrapper {
+  margin-bottom: 48px;
+}
+
+.fe-label {
+  margin-bottom: 12px;
+}
+
+/* ─── FEATURED CARD ─── */
+.fe-card {
+  cursor: pointer;
+  border: 2px solid #7c3aed;
+  box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  max-width: 520px;
+}
+
+.fe-card:hover {
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.55);
+  transform: translateY(-2px);
+}
+
+.fe-card__image {
+  position: relative;
+  height: 280px;
+  background: #111 center/cover no-repeat;
+}
+
+.fe-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.fe-card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+}
+
+.fe-card__name {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.fe-card__date {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* ─── MODAL BACKDROP ─── */
+.fe-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fe-fade-in 0.2s ease;
+}
+
+@keyframes fe-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── MODAL ─── */
+.fe-modal {
+  background: #0f0f0f;
+  border: 1px solid #222;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: fe-slide-up 0.25s ease;
+}
+
+@keyframes fe-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fe-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.fe-modal__close:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Hero image */
+.fe-modal__hero {
+  position: relative;
+  height: 220px;
+  background: #111 center/cover no-repeat;
+}
+
+.fe-modal__hero-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #7c3aed;
+}
+
+.fe-modal__hero-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+/* Modal body */
+.fe-modal__body {
+  padding: 24px;
+}
+
+.fe-modal__name {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.fe-modal__meta {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  margin: 0 0 16px;
+}
+
+.fe-modal__desc {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* Promo block */
+.fe-modal__promo {
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.fe-modal__promo-text {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  margin: 0 0 6px;
+}
+
+.fe-modal__promo-code {
+  color: #a78bfa;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  font-family: monospace;
+}
+
+/* Actions */
+.fe-modal__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.fe-modal__cta-primary {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fe-modal__cta-primary:hover {
+  background: #6d28d9;
+}
+
+.fe-modal__cta-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.fe-modal__cta-ghost:hover {
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
+}
+
+.fe-modal__sold-out {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 0;
+}
+
+.fe-modal__free {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 12px 0;
+}
+
+.fe-modal__note {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .fe-card__image {
+    height: 220px;
+  }
+  .fe-modal__hero {
+    height: 180px;
+  }
+  .fe-modal__name {
+    font-size: 1.2rem;
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
+import FeaturedEvent from '../components/FeaturedEvent';
 import './Tickets.css';
 import EventSchema from '../components/EventSchema';
 
@@ -65,7 +66,6 @@ export default function Tickets() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const upcoming = shows.filter(s => new Date(s.date + 'T00:00:00') >= today);
-  const featured = upcoming.find(s => s.featured) || upcoming[0];
 
   return (
     <div className="tickets-page">
@@ -85,38 +85,12 @@ export default function Tickets() {
         </div>
       </section>
 
-      {/* FEATURED SHOW */}
-      {!loading && featured && (
-        <section className="tickets-featured section">
-          <div className="container">
-            <p className="section-label">Next Up</p>
-            <span className="blue-line" />
-            <div className="tickets-featured__card">
-              <div className="tickets-featured__left">
-                <div className="tickets-featured__date-block">
-                  <span className="tickets-featured__month">{featured.month}</span>
-                  <span className="tickets-featured__day">{featured.day}</span>
-                  <span className="tickets-featured__year">{featured.year}</span>
-                </div>
-              </div>
-              <div className="tickets-featured__body">
-                <h2 className="tickets-featured__name">{featured.name}</h2>
-                <p className="tickets-featured__meta">{featured.venue} · {featured.time}</p>
-                <p className="tickets-featured__desc">{featured.description}</p>
-                <div className="tickets-featured__actions">
-                  {getTicketCTA(featured, 'featured')}
-                  <Link to="/events" className="btn btn-outline-white">View All Shows</Link>
-                </div>
-                {!featured.is_private && !featured.is_free && !featured.sold_out && (
-                  <p className="tickets-eventbrite-note text-dim">
-                    You'll be taken to Eventbrite to complete your purchase securely.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* FEATURED EVENT */}
+      <section className="tickets-featured section">
+        <div className="container">
+          <FeaturedEvent />
+        </div>
+      </section>
 
       {/* ALL UPCOMING SHOWS */}
       <section className="tickets-all section">

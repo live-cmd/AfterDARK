@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Admin.css';
 
 const ADMIN_PASSWORD = 'afterdark2026';
@@ -32,8 +33,20 @@ export default function Admin() {
   const [uploadPreview, setUploadPreview] = useState('');
   const fileInputRef = useRef();
 
+  // Featured event state
+  const [allEvents, setAllEvents] = useState([]);
+  const [featuredConfig, setFeaturedConfig] = useState(null);
+  const [featuredForm, setFeaturedForm] = useState({ source: 'supabase', event_id: '', promo_code: '', promo_text: '', custom_cta_label: '' });
+  const [featuredSaving, setFeaturedSaving] = useState(false);
+  const [featuredMessage, setFeaturedMessage] = useState('');
+  const [featuredLoading, setFeaturedLoading] = useState(false);
+
   useEffect(() => {
-    if (authed) fetchShows();
+    if (authed) {
+      fetchShows();
+      loadFeaturedConfig();
+      loadAllEvents();
+    }
   }, [authed]);
 
   async function fetchShows() {
@@ -44,6 +57,82 @@ export default function Admin() {
       .order('date', { ascending: true });
     if (!error) setShows(data || []);
     setLoading(false);
+  }
+
+  async function loadFeaturedConfig() {
+    const { data, error } = await supabase.from('featured_event').select('*').limit(1);
+    if (!error && data && data.length > 0) {
+      setFeaturedConfig(data[0]);
+      setFeaturedForm({
+        source: data[0].source || 'supabase',
+        event_id: String(data[0].event_id || ''),
+        promo_code: data[0].promo_code || '',
+        promo_text: data[0].promo_text || '',
+        custom_cta_label: data[0].custom_cta_label || '',
+      });
+    }
+  }
+
+  async function loadAllEvents() {
+    setFeaturedLoading(true);
+    try {
+      const [sbResult, ebResult] = await Promise.allSettled([
+        supabase.from('shows').select('id, name, date, source').order('date', { ascending: true }),
+        fetchEventbriteEvents()
+      ]);
+      const sbShows = sbResult.status === 'fulfilled' && !sbResult.value.error
+        ? (sbResult.value.data || []).map(s => ({ ...s, source: 'supabase' }))
+        : [];
+      const ebShows = ebResult.status === 'fulfilled'
+        ? ebResult.value.map(e => ({ id: e.id, name: e.name, date: e.date, source: 'eventbrite' }))
+        : [];
+      setAllEvents([...ebShows, ...sbShows].sort((a, b) => new Date(a.date) - new Date(b.date)));
+    } catch {
+      setAllEvents([]);
+    }
+    setFeaturedLoading(false);
+  }
+
+  async function handleFeaturedSave(e) {
+    e.preventDefault();
+    setFeaturedSaving(true);
+    setFeaturedMessage('');
+
+    const payload = {
+      source: featuredForm.source,
+      event_id: featuredForm.event_id,
+      promo_code: featuredForm.promo_code || null,
+      promo_text: featuredForm.promo_text || null,
+      custom_cta_label: featuredForm.custom_cta_label || null,
+    };
+
+    let error;
+    if (featuredConfig) {
+      ({ error } = await supabase.from('featured_event').update(payload).eq('id', featuredConfig.id));
+    } else {
+      ({ error } = await supabase.from('featured_event').insert([payload]));
+    }
+
+    if (error) {
+      setFeaturedMessage('❌ Error saving: ' + error.message);
+    } else {
+      setFeaturedMessage('✓ Featured event updated.');
+      loadFeaturedConfig();
+    }
+    setFeaturedSaving(false);
+  }
+
+  async function handleFeaturedClear() {
+    if (!featuredConfig) return;
+    if (!window.confirm('Clear the featured event? The block will stop showing on the site.')) return;
+    const { error } = await supabase.from('featured_event').delete().eq('id', featuredConfig.id);
+    if (!error) {
+      setFeaturedConfig(null);
+      setFeaturedForm({ source: 'supabase', event_id: '', promo_code: '', promo_text: '', custom_cta_label: '' });
+      setFeaturedMessage('✓ Featured event cleared.');
+    } else {
+      setFeaturedMessage('❌ Error clearing: ' + error.message);
+    }
   }
 
   function handleLogin(e) {
@@ -67,42 +156,15 @@ export default function Admin() {
   async function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!validTypes.includes(file.type)) {
-      setMessage('❌ Please upload a JPG, PNG, WebP, or GIF image.');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage('❌ Image must be under 5MB.');
-      return;
-    }
-
-    setUploading(true);
-    setMessage('');
-
-    // Create unique filename
+    if (!validTypes.includes(file.type)) { setMessage('❌ Please upload a JPG, PNG, WebP, or GIF image.'); return; }
+    if (file.size > 5 * 1024 * 1024) { setMessage('❌ Image must be under 5MB.'); return; }
+    setUploading(true); setMessage('');
     const ext = file.name.split('.').pop();
     const fileName = `shows/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
-
-    const { data, error } = await supabase.storage
-      .from('afterdark-media')
-      .upload(fileName, file, { cacheControl: '3600', upsert: false });
-
-    if (error) {
-      setMessage('❌ Upload failed: ' + error.message);
-      setUploading(false);
-      return;
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from('afterdark-media')
-      .getPublicUrl(fileName);
-
+    const { error } = await supabase.storage.from('afterdark-media').upload(fileName, file, { cacheControl: '3600', upsert: false });
+    if (error) { setMessage('❌ Upload failed: ' + error.message); setUploading(false); return; }
+    const { data: urlData } = supabase.storage.from('afterdark-media').getPublicUrl(fileName);
     const publicUrl = urlData.publicUrl;
     setForm(prev => ({ ...prev, image_url: publicUrl }));
     setUploadPreview(publicUrl);
@@ -128,54 +190,33 @@ export default function Admin() {
 
   async function handleSave(e) {
     e.preventDefault();
-    setSaving(true);
-    setMessage('');
+    setSaving(true); setMessage('');
     const { month, day, year } = parseDate(form.date);
     const payload = {
-      name: form.name,
-      date: form.date,
-      month, day, year,
-      venue: form.venue,
-      time: form.time,
-      description: form.description,
-      image_url: form.image_url,
-      eventbrite_url: form.eventbrite_url,
-      featured: form.featured,
-      sold_out: form.sold_out,
+      name: form.name, date: form.date, month, day, year,
+      venue: form.venue, time: form.time, description: form.description,
+      image_url: form.image_url, eventbrite_url: form.eventbrite_url,
+      featured: form.featured, sold_out: form.sold_out,
       tags: form.tags ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
     };
-
     let error;
     if (editingId) {
       ({ error } = await supabase.from('shows').update(payload).eq('id', editingId));
     } else {
       ({ error } = await supabase.from('shows').insert([payload]));
     }
-
-    if (error) {
-      setMessage('❌ Error saving show: ' + error.message);
-    } else {
-      setMessage(editingId ? '✓ Show updated.' : '✓ Show added.');
-      setForm(EMPTY_FORM);
-      setEditingId(null);
-      setUploadPreview('');
-      fetchShows();
-    }
+    if (error) { setMessage('❌ Error saving show: ' + error.message); }
+    else { setMessage(editingId ? '✓ Show updated.' : '✓ Show added.'); setForm(EMPTY_FORM); setEditingId(null); setUploadPreview(''); fetchShows(); }
     setSaving(false);
   }
 
   function handleEdit(show) {
     setEditingId(show.id);
     setForm({
-      name: show.name || '',
-      date: show.date || '',
-      venue: show.venue || 'Bear, DE',
-      time: show.time || 'Doors 7PM · Show 8PM',
-      description: show.description || '',
-      image_url: show.image_url || '',
-      eventbrite_url: show.eventbrite_url || '',
-      featured: show.featured || false,
-      sold_out: show.sold_out || false,
+      name: show.name || '', date: show.date || '', venue: show.venue || 'Bear, DE',
+      time: show.time || 'Doors 7PM · Show 8PM', description: show.description || '',
+      image_url: show.image_url || '', eventbrite_url: show.eventbrite_url || '',
+      featured: show.featured || false, sold_out: show.sold_out || false,
       tags: (show.tags || []).join(', '),
     });
     setUploadPreview(show.image_url || '');
@@ -183,22 +224,15 @@ export default function Admin() {
   }
 
   function handleCancel() {
-    setForm(EMPTY_FORM);
-    setEditingId(null);
-    setMessage('');
-    setUploadPreview('');
+    setForm(EMPTY_FORM); setEditingId(null); setMessage(''); setUploadPreview('');
   }
 
   async function handleDelete(id) {
     if (!window.confirm('Delete this show? This cannot be undone.')) return;
     setDeleting(id);
     const { error } = await supabase.from('shows').delete().eq('id', id);
-    if (!error) {
-      setMessage('✓ Show deleted.');
-      fetchShows();
-    } else {
-      setMessage('❌ Error deleting show.');
-    }
+    if (!error) { setMessage('✓ Show deleted.'); fetchShows(); }
+    else { setMessage('❌ Error deleting show.'); }
     setDeleting(null);
   }
 
@@ -222,14 +256,7 @@ export default function Admin() {
             <span className="admin-login__sub">Admin</span>
           </div>
           <form onSubmit={handleLogin} className="admin-login__form">
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="admin-input"
-              autoFocus
-            />
+            <input type="password" placeholder="Enter password" value={password} onChange={e => setPassword(e.target.value)} className="admin-input" autoFocus />
             {authError && <p className="admin-error">{authError}</p>}
             <button type="submit" className="admin-btn-primary">Enter</button>
           </form>
@@ -253,7 +280,100 @@ export default function Admin() {
 
       <div className="admin-body">
 
-        {/* FORM */}
+        {/* ── FEATURED EVENT SELECTOR ── */}
+        <section className="admin-section">
+          <h2 className="admin-section__title">⭐ Featured Event</h2>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>
+            The featured block appears at the top of the Events and Tickets pages. Only one event can be featured at a time.
+          </p>
+
+          {featuredMessage && (
+            <div className={`admin-message ${featuredMessage.startsWith('❌') ? 'admin-message--error' : 'admin-message--success'}`}>
+              {featuredMessage}
+            </div>
+          )}
+
+          <form onSubmit={handleFeaturedSave} className="admin-form">
+            <div className="admin-form__row">
+              <div className="admin-form__field">
+                <label className="admin-label">Source</label>
+                <select
+                  className="admin-input"
+                  value={featuredForm.source}
+                  onChange={e => setFeaturedForm(prev => ({ ...prev, source: e.target.value, event_id: '' }))}
+                >
+                  <option value="supabase">Supabase (free/private shows)</option>
+                  <option value="eventbrite">Eventbrite (ticketed shows)</option>
+                </select>
+              </div>
+              <div className="admin-form__field">
+                <label className="admin-label">Event</label>
+                {featuredLoading ? (
+                  <p className="admin-loading" style={{ fontSize: '0.85rem' }}>Loading events...</p>
+                ) : (
+                  <select
+                    className="admin-input"
+                    value={featuredForm.event_id}
+                    onChange={e => setFeaturedForm(prev => ({ ...prev, event_id: e.target.value }))}
+                    required
+                  >
+                    <option value="">— Select an event —</option>
+                    {allEvents
+                      .filter(e => e.source === featuredForm.source)
+                      .map(e => (
+                        <option key={`${e.source}-${e.id}`} value={String(e.id)}>
+                          {e.date} · {e.name}
+                        </option>
+                      ))
+                    }
+                  </select>
+                )}
+              </div>
+            </div>
+
+            <div className="admin-form__row">
+              <div className="admin-form__field">
+                <label className="admin-label">Promo Code (optional)</label>
+                <input
+                  className="admin-input"
+                  placeholder="e.g. AFTERDARK10"
+                  value={featuredForm.promo_code}
+                  onChange={e => setFeaturedForm(prev => ({ ...prev, promo_code: e.target.value }))}
+                />
+              </div>
+              <div className="admin-form__field">
+                <label className="admin-label">Promo Label (optional)</label>
+                <input
+                  className="admin-input"
+                  placeholder="e.g. Use code at checkout for 10% off"
+                  value={featuredForm.promo_text}
+                  onChange={e => setFeaturedForm(prev => ({ ...prev, promo_text: e.target.value }))}
+                />
+              </div>
+            </div>
+
+            <div className="admin-form__field">
+              <label className="admin-label">Custom CTA Label (optional)</label>
+              <input
+                className="admin-input"
+                placeholder="Default: Get Tickets →"
+                value={featuredForm.custom_cta_label}
+                onChange={e => setFeaturedForm(prev => ({ ...prev, custom_cta_label: e.target.value }))}
+              />
+            </div>
+
+            <div className="admin-form__actions">
+              <button type="submit" className="admin-btn-primary" disabled={featuredSaving}>
+                {featuredSaving ? 'Saving...' : featuredConfig ? 'Update Featured Event' : 'Set Featured Event'}
+              </button>
+              {featuredConfig && (
+                <button type="button" className="admin-btn-ghost" onClick={handleFeaturedClear}>Clear Featured</button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        {/* ── ADD / EDIT SHOW ── */}
         <section className="admin-section">
           <h2 className="admin-section__title">
             {editingId ? 'Edit Show' : 'Add New Show'}
@@ -291,7 +411,6 @@ export default function Admin() {
               <textarea name="description" value={form.description} onChange={handleFormChange} className="admin-input admin-textarea" placeholder="Show description..." rows={3} />
             </div>
 
-            {/* IMAGE UPLOAD */}
             <div className="admin-form__field">
               <label className="admin-label">Show Image</label>
               <div className="admin-upload">
@@ -299,40 +418,28 @@ export default function Admin() {
                   <div className="admin-upload__preview">
                     <img src={uploadPreview} alt="Preview" className="admin-upload__img" />
                     <div className="admin-upload__preview-actions">
-                      <button type="button" className="admin-pill" onClick={() => fileInputRef.current.click()} disabled={uploading}>
-                        Replace Image
-                      </button>
-                      <button type="button" className="admin-pill admin-pill--delete" onClick={clearImage}>
-                        Remove
-                      </button>
+                      <button type="button" className="admin-pill" onClick={() => fileInputRef.current.click()} disabled={uploading}>Replace Image</button>
+                      <button type="button" className="admin-pill admin-pill--delete" onClick={clearImage}>Remove</button>
                     </div>
                   </div>
                 ) : (
                   <div className="admin-upload__dropzone" onClick={() => fileInputRef.current.click()}>
                     <div className="admin-upload__icon">↑</div>
-                    <p className="admin-upload__text">
-                      {uploading ? 'Uploading...' : 'Click to upload image'}
-                    </p>
+                    <p className="admin-upload__text">{uploading ? 'Uploading...' : 'Click to upload image'}</p>
                     <p className="admin-upload__hint">JPG, PNG, WebP — max 5MB</p>
                   </div>
                 )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
+                <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleImageUpload} style={{ display: 'none' }} />
                 {form.image_url && (
                   <div className="admin-upload__url">
                     <label className="admin-label">Image URL</label>
-                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="Or paste a URL directly" />
+                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" />
                   </div>
                 )}
                 {!uploadPreview && (
                   <div className="admin-upload__url">
                     <label className="admin-label">Or paste image URL directly</label>
-                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="https://lh3.googleusercontent.com/d/..." />
+                    <input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="https://..." />
                   </div>
                 )}
               </div>
@@ -372,7 +479,7 @@ export default function Admin() {
           </form>
         </section>
 
-        {/* SHOWS LIST */}
+        {/* ── SHOWS LIST ── */}
         <section className="admin-section">
           <h2 className="admin-section__title">
             Current Shows {shows.length > 0 && <span className="admin-count">{shows.length}</span>}
@@ -411,6 +518,7 @@ export default function Admin() {
             </div>
           )}
         </section>
+
       </div>
     </div>
   );

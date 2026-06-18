@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
+import FeaturedEvent from '../components/FeaturedEvent';
 import './Events.css';
 import EventSchema from '../components/EventSchema';
 
@@ -59,7 +60,6 @@ export default function Events() {
 
   const upcoming = shows.filter(s => new Date(s.date + 'T00:00:00') >= today);
   const past = shows.filter(s => new Date(s.date + 'T00:00:00') < today);
-  const featured = upcoming.find(s => s.featured) || upcoming[0];
   const displayed = filter === 'past' ? past : upcoming;
 
   function getTicketCTA(show, size = 'normal') {
@@ -73,7 +73,6 @@ export default function Events() {
         ? <a href={href} target="_blank" rel="noopener noreferrer" className="btn btn-blue">Get Tickets</a>
         : <Link to={href} className="btn btn-blue">Get Tickets</Link>;
     }
-    // Normal ticket button — styled as ticket shape
     const href = show.eventbrite_url || '/tickets';
     const isExternal = href.startsWith('http');
     return isExternal
@@ -121,6 +120,9 @@ export default function Events() {
       <section className="events-list section">
         <div className="container">
 
+          {/* FEATURED EVENT — only on upcoming tab */}
+          {filter === 'upcoming' && <FeaturedEvent />}
+
           {loading && <div className="events-loading"><p className="text-dim">Loading shows...</p></div>}
           {error && <div className="events-empty"><p className="text-dim">Couldn't load shows right now. Check back soon.</p></div>}
           {!loading && !error && displayed.length === 0 && (
@@ -131,29 +133,6 @@ export default function Events() {
 
           {!loading && !error && displayed.length > 0 && filter === 'upcoming' && (
             <>
-              {featured && (
-                <div className="events-featured">
-                  <div className="events-featured__img" style={featured.image_url ? { backgroundImage: `url(${featured.image_url})` } : {}}>
-                    <div className="events-featured__overlay" />
-                    <div className="events-featured__badge">Featured</div>
-                    <div className="events-featured__content">
-                      <div className="events-featured__left">
-                        <div className="events-featured__date">
-                          <span className="events-featured__month">{featured.month}</span>
-                          <span className="events-featured__day">{featured.day}</span>
-                          <span className="events-featured__year">{featured.year}</span>
-                        </div>
-                        <h2 className="events-featured__name">{featured.name}</h2>
-                        <p className="events-featured__meta">{featured.venue} · {featured.time}</p>
-                      </div>
-                      <div className="events-featured__action">
-                        {getTicketCTA(featured, 'featured')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               <p className="events-all-label section-label">All Upcoming Shows</p>
               <div className="events-grid">
                 {displayed.map(show => (

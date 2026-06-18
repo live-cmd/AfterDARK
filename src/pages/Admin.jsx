@@ -77,7 +77,7 @@ export default function Admin() {
     setFeaturedLoading(true);
     try {
       const [sbResult, ebResult] = await Promise.allSettled([
-        supabase.from('shows').select('id, name, date, source').order('date', { ascending: true }),
+        supabase.from('shows').select('id, name, date').order('date', { ascending: true }),
         fetchEventbriteEvents()
       ]);
       const sbShows = sbResult.status === 'fulfilled' && !sbResult.value.error

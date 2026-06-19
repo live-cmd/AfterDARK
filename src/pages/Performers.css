@@ -28,6 +28,33 @@
   padding: 24px 0;
 }
 
+/* PERFORM CTA BANNER */
+.perform-cta {
+  background: linear-gradient(135deg, rgba(62, 166, 255, 0.08), rgba(124, 58, 237, 0.08));
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.perform-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.perform-cta__text { max-width: 600px; }
+.perform-cta__title { font-size: clamp(1.6rem, 3.5vw, 2.1rem); margin-bottom: 8px; }
+.perform-cta__sub { font-size: 1rem; }
+.perform-cta__btn {
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .perform-cta__inner { flex-direction: column; align-items: flex-start; }
+  .perform-cta__btn { width: 100%; text-align: center; }
+}
+
 /* LEGENDS AFTERDARK */
 .legends-section { background: linear-gradient(180deg, rgba(212,175,55,0.04), transparent); }
 .legends-section__title { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 8px; }

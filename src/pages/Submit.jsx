@@ -1,6 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import './PrivateEvents.css';
+
+const RECAPTCHA_SITE_KEY = '6LfKPf4sAAAAAC32FH8vbfnIkM993HUYVvAOymxF';
 
 const EMPTY_FORM = {
   name: '',
@@ -9,6 +11,7 @@ const EMPTY_FORM = {
   bio: '',
   media_url: '',
   socials: '',
+  website: '', // honeypot — real users never see or fill this
 };
 
 export default function Submit() {
@@ -19,6 +22,14 @@ export default function Submit() {
   const [uploading, setUploading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
   const fileInputRef = useRef();
+
+  useEffect(() => {
+    if (document.querySelector(`script[src*="recaptcha"]`)) return;
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -41,12 +52,48 @@ export default function Submit() {
     setUploading(false);
   }
 
+  function getRecaptchaToken() {
+    return new Promise((resolve, reject) => {
+      if (!window.grecaptcha) { reject(new Error('reCAPTCHA not loaded')); return; }
+      window.grecaptcha.ready(() => {
+        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then(resolve).catch(reject);
+      });
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
     setError('');
 
+    // Honeypot: if this hidden field has anything in it, it was filled by a bot.
+    // Pretend success so the bot doesn't learn it was caught.
+    if (form.website) {
+      setSubmitted(true);
+      setForm(EMPTY_FORM);
+      setPhotoUrl('');
+      setSubmitting(false);
+      return;
+    }
+
     try {
+      const token = await getRecaptchaToken();
+      const verifyRes = await fetch('/.netlify/functions/verify-recaptcha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.success) {
+        // Likely a bot — fail quietly without revealing why.
+        setSubmitted(true);
+        setForm(EMPTY_FORM);
+        setPhotoUrl('');
+        setSubmitting(false);
+        return;
+      }
+
       const { error: insertErr } = await supabase.from('performer_submissions').insert([{
         name: form.name,
         email: form.email,
@@ -120,6 +167,20 @@ export default function Submit() {
               </div>
             ) : (
               <form className="private-form" onSubmit={handleSubmit}>
+                {/* Honeypot field — hidden from real users via CSS, bots fill it anyway */}
+                <div style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={form.website}
+                    onChange={handleChange}
+                    tabIndex="-1"
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="private-form__row">
                   <div className="private-form__field">
                     <label className="private-label">Full Name / Stage Name *</label>
@@ -221,6 +282,12 @@ export default function Submit() {
                 >
                   {submitting ? 'Submitting...' : 'Submit for Consideration'}
                 </button>
+
+                <p className="text-dim" style={{ fontSize: '0.75rem', marginTop: '12px' }}>
+                  This site is protected by reCAPTCHA and the Google{' '}
+                  <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> and{' '}
+                  <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a> apply.
+                </p>
               </form>
             )}
           </div>

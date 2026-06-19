@@ -18,6 +18,20 @@ const EMPTY_FORM = {
   tags: '',
 };
 
+const EMPTY_CLIP_FORM = {
+  performer_name: '',
+  youtube_url: '',
+  thumbnail_url: '',
+  event_date: '',
+};
+
+const EMPTY_LEGEND_FORM = {
+  name: '',
+  headshot_url: '',
+  induction_date: '',
+  bio: '',
+};
+
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [password, setPassword] = useState('');
@@ -41,11 +55,37 @@ export default function Admin() {
   const [featuredMessage, setFeaturedMessage] = useState('');
   const [featuredLoading, setFeaturedLoading] = useState(false);
 
+  // Performer submissions state
+  const [submissions, setSubmissions] = useState([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+  const [submissionFilter, setSubmissionFilter] = useState('all');
+
+  // Performance clips state
+  const [clips, setClips] = useState([]);
+  const [clipsLoading, setClipsLoading] = useState(false);
+  const [clipForm, setClipForm] = useState(EMPTY_CLIP_FORM);
+  const [clipEditingId, setClipEditingId] = useState(null);
+  const [clipSaving, setClipSaving] = useState(false);
+  const [clipMessage, setClipMessage] = useState('');
+
+  // Legends AfterDARK state
+  const [legends, setLegends] = useState([]);
+  const [legendsLoading, setLegendsLoading] = useState(false);
+  const [legendForm, setLegendForm] = useState(EMPTY_LEGEND_FORM);
+  const [legendEditingId, setLegendEditingId] = useState(null);
+  const [legendSaving, setLegendSaving] = useState(false);
+  const [legendMessage, setLegendMessage] = useState('');
+  const [legendUploading, setLegendUploading] = useState(false);
+  const legendFileInputRef = useRef();
+
   useEffect(() => {
     if (authed) {
       fetchShows();
       loadFeaturedConfig();
       loadAllEvents();
+      fetchSubmissions();
+      fetchClips();
+      fetchLegends();
     }
   }, [authed]);
 
@@ -244,6 +284,167 @@ export default function Admin() {
   async function toggleSoldOut(show) {
     await supabase.from('shows').update({ sold_out: !show.sold_out }).eq('id', show.id);
     fetchShows();
+  }
+
+  // ── PERFORMER SUBMISSIONS ──
+  async function fetchSubmissions() {
+    setSubmissionsLoading(true);
+    const { data, error } = await supabase
+      .from('performer_submissions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (!error) setSubmissions(data || []);
+    setSubmissionsLoading(false);
+  }
+
+  async function updateRanking(id, ranking) {
+    await supabase.from('performer_submissions').update({ ranking }).eq('id', id);
+    fetchSubmissions();
+  }
+
+  async function deleteSubmission(id) {
+    if (!window.confirm('Delete this submission? This cannot be undone.')) return;
+    await supabase.from('performer_submissions').delete().eq('id', id);
+    fetchSubmissions();
+  }
+
+  const filteredSubmissions = submissionFilter === 'all'
+    ? submissions
+    : submissions.filter(s => (s.ranking || 'unranked') === submissionFilter);
+
+  // ── PERFORMANCE CLIPS ──
+  async function fetchClips() {
+    setClipsLoading(true);
+    const { data, error } = await supabase
+      .from('performance_clips')
+      .select('*')
+      .order('event_date', { ascending: false });
+    if (!error) setClips(data || []);
+    setClipsLoading(false);
+  }
+
+  function handleClipFormChange(e) {
+    const { name, value } = e.target;
+    setClipForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleClipSave(e) {
+    e.preventDefault();
+    setClipSaving(true); setClipMessage('');
+    const payload = {
+      performer_name: clipForm.performer_name,
+      youtube_url: clipForm.youtube_url,
+      thumbnail_url: clipForm.thumbnail_url || null,
+      event_date: clipForm.event_date || null,
+    };
+    let error;
+    if (clipEditingId) {
+      ({ error } = await supabase.from('performance_clips').update(payload).eq('id', clipEditingId));
+    } else {
+      ({ error } = await supabase.from('performance_clips').insert([payload]));
+    }
+    if (error) { setClipMessage('❌ Error saving clip: ' + error.message); }
+    else {
+      setClipMessage(clipEditingId ? '✓ Clip updated.' : '✓ Clip added.');
+      setClipForm(EMPTY_CLIP_FORM); setClipEditingId(null); fetchClips();
+    }
+    setClipSaving(false);
+  }
+
+  function handleClipEdit(clip) {
+    setClipEditingId(clip.id);
+    setClipForm({
+      performer_name: clip.performer_name || '',
+      youtube_url: clip.youtube_url || '',
+      thumbnail_url: clip.thumbnail_url || '',
+      event_date: clip.event_date || '',
+    });
+  }
+
+  function handleClipCancel() {
+    setClipForm(EMPTY_CLIP_FORM); setClipEditingId(null); setClipMessage('');
+  }
+
+  async function handleClipDelete(id) {
+    if (!window.confirm('Delete this clip? This cannot be undone.')) return;
+    const { error } = await supabase.from('performance_clips').delete().eq('id', id);
+    if (!error) { setClipMessage('✓ Clip deleted.'); fetchClips(); }
+  }
+
+  // ── LEGENDS AFTERDARK ──
+  async function fetchLegends() {
+    setLegendsLoading(true);
+    const { data, error } = await supabase
+      .from('legends_afterdark')
+      .select('*')
+      .order('induction_date', { ascending: false });
+    if (!error) setLegends(data || []);
+    setLegendsLoading(false);
+  }
+
+  function handleLegendFormChange(e) {
+    const { name, value } = e.target;
+    setLegendForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  async function handleHeadshotUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) { setLegendMessage('❌ Please upload a JPG, PNG, or WebP image.'); return; }
+    if (file.size > 5 * 1024 * 1024) { setLegendMessage('❌ Headshot must be under 5MB.'); return; }
+    setLegendUploading(true); setLegendMessage('');
+    const ext = file.name.split('.').pop();
+    const fileName = `legends/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+    const { error } = await supabase.storage.from('afterdark-media').upload(fileName, file, { cacheControl: '3600', upsert: false });
+    if (error) { setLegendMessage('❌ Upload failed: ' + error.message); setLegendUploading(false); return; }
+    const { data: urlData } = supabase.storage.from('afterdark-media').getPublicUrl(fileName);
+    setLegendForm(prev => ({ ...prev, headshot_url: urlData.publicUrl }));
+    setLegendUploading(false);
+  }
+
+  async function handleLegendSave(e) {
+    e.preventDefault();
+    setLegendSaving(true); setLegendMessage('');
+    const payload = {
+      name: legendForm.name,
+      headshot_url: legendForm.headshot_url,
+      induction_date: legendForm.induction_date,
+      bio: legendForm.bio || null,
+    };
+    let error;
+    if (legendEditingId) {
+      ({ error } = await supabase.from('legends_afterdark').update(payload).eq('id', legendEditingId));
+    } else {
+      ({ error } = await supabase.from('legends_afterdark').insert([payload]));
+    }
+    if (error) { setLegendMessage('❌ Error saving: ' + error.message); }
+    else {
+      setLegendMessage(legendEditingId ? '✓ Legend updated.' : '✓ Legend inducted.');
+      setLegendForm(EMPTY_LEGEND_FORM); setLegendEditingId(null); fetchLegends();
+    }
+    setLegendSaving(false);
+  }
+
+  function handleLegendEdit(legend) {
+    setLegendEditingId(legend.id);
+    setLegendForm({
+      name: legend.name || '',
+      headshot_url: legend.headshot_url || '',
+      induction_date: legend.induction_date || '',
+      bio: legend.bio || '',
+    });
+  }
+
+  function handleLegendCancel() {
+    setLegendForm(EMPTY_LEGEND_FORM); setLegendEditingId(null); setLegendMessage('');
+    if (legendFileInputRef.current) legendFileInputRef.current.value = '';
+  }
+
+  async function handleLegendDelete(id) {
+    if (!window.confirm('Remove this Legend? This cannot be undone.')) return;
+    const { error } = await supabase.from('legends_afterdark').delete().eq('id', id);
+    if (!error) { setLegendMessage('✓ Legend removed.'); fetchLegends(); }
   }
 
   // LOGIN SCREEN
@@ -512,6 +713,222 @@ export default function Admin() {
                     <button className={`admin-pill ${show.sold_out ? 'admin-pill--sold-out' : ''}`} onClick={() => toggleSoldOut(show)}>{show.sold_out ? 'Sold Out' : 'Available'}</button>
                     <button className="admin-pill" onClick={() => handleEdit(show)}>Edit</button>
                     <button className="admin-pill admin-pill--delete" onClick={() => handleDelete(show.id)} disabled={deleting === show.id}>{deleting === show.id ? '...' : 'Delete'}</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── PERFORMER SUBMISSIONS ── */}
+        <section className="admin-section">
+          <h2 className="admin-section__title">
+            🎤 Performer Submissions {submissions.length > 0 && <span className="admin-count">{submissions.length}</span>}
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>
+            Performers submit directly — no approval gate. Rank by booking interest so they're easy to reference later.
+          </p>
+
+          <div className="admin-form__row" style={{ marginBottom: '16px' }}>
+            <div className="admin-form__field">
+              <label className="admin-label">Filter</label>
+              <select className="admin-input" value={submissionFilter} onChange={e => setSubmissionFilter(e.target.value)}>
+                <option value="all">All</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+                <option value="unranked">Unranked</option>
+              </select>
+            </div>
+          </div>
+
+          {submissionsLoading ? (
+            <p className="admin-loading">Loading submissions...</p>
+          ) : filteredSubmissions.length === 0 ? (
+            <p className="admin-empty">No submissions match this filter.</p>
+          ) : (
+            <div className="admin-shows">
+              {filteredSubmissions.map(sub => (
+                <div key={sub.id} className="admin-show-row">
+                  <div className="admin-show-row__thumb" style={sub.photo_url ? { backgroundImage: `url(${sub.photo_url})` } : {}} />
+                  <div className="admin-show-row__info">
+                    <h3 className="admin-show-row__name">{sub.name}</h3>
+                    <p className="admin-show-row__meta">{sub.email} {sub.phone ? `· ${sub.phone}` : ''}</p>
+                    {sub.bio && <p className="admin-show-row__meta" style={{ marginTop: '4px' }}>{sub.bio}</p>}
+                    <div className="admin-show-row__badges">
+                      {sub.media_url && <a href={sub.media_url} target="_blank" rel="noreferrer" className="admin-badge admin-badge--live">Media Link</a>}
+                      {sub.socials && <span className="admin-badge admin-badge--live">{sub.socials}</span>}
+                    </div>
+                  </div>
+                  <div className="admin-show-row__actions">
+                    <select
+                      className="admin-input"
+                      value={sub.ranking || 'unranked'}
+                      onChange={e => updateRanking(sub.id, e.target.value)}
+                      style={{ minWidth: '110px' }}
+                    >
+                      <option value="unranked">Unranked</option>
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                    <button className="admin-pill admin-pill--delete" onClick={() => deleteSubmission(sub.id)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── PERFORMANCE CLIPS ── */}
+        <section className="admin-section">
+          <h2 className="admin-section__title">
+            🎬 {clipEditingId ? 'Edit Clip' : 'Add Performance Clip'}
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>
+            Upload the clip to YouTube as Unlisted first, then paste the link here. Thumbnail auto-pulls from YouTube unless you provide your own.
+          </p>
+          {clipMessage && (
+            <div className={`admin-message ${clipMessage.startsWith('❌') ? 'admin-message--error' : 'admin-message--success'}`}>
+              {clipMessage}
+            </div>
+          )}
+          <form onSubmit={handleClipSave} className="admin-form">
+            <div className="admin-form__row">
+              <div className="admin-form__field">
+                <label className="admin-label">Performer Name *</label>
+                <input name="performer_name" value={clipForm.performer_name} onChange={handleClipFormChange} className="admin-input" required />
+              </div>
+              <div className="admin-form__field">
+                <label className="admin-label">Event Date</label>
+                <input type="date" name="event_date" value={clipForm.event_date} onChange={handleClipFormChange} className="admin-input" />
+              </div>
+            </div>
+            <div className="admin-form__field">
+              <label className="admin-label">YouTube URL *</label>
+              <input name="youtube_url" value={clipForm.youtube_url} onChange={handleClipFormChange} className="admin-input" placeholder="https://youtube.com/watch?v=..." required />
+            </div>
+            <div className="admin-form__field">
+              <label className="admin-label">Custom Thumbnail URL (optional)</label>
+              <input name="thumbnail_url" value={clipForm.thumbnail_url} onChange={handleClipFormChange} className="admin-input" placeholder="Leave blank to use YouTube's default thumbnail" />
+            </div>
+            <div className="admin-form__actions">
+              <button type="submit" className="admin-btn-primary" disabled={clipSaving}>
+                {clipSaving ? 'Saving...' : clipEditingId ? 'Update Clip' : 'Add Clip'}
+              </button>
+              {clipEditingId && (
+                <button type="button" className="admin-btn-ghost" onClick={handleClipCancel}>Cancel</button>
+              )}
+            </div>
+          </form>
+
+          <h3 className="admin-section__title" style={{ marginTop: '32px', fontSize: '1rem' }}>
+            Current Clips {clips.length > 0 && <span className="admin-count">{clips.length}</span>}
+          </h3>
+          {clipsLoading ? (
+            <p className="admin-loading">Loading clips...</p>
+          ) : clips.length === 0 ? (
+            <p className="admin-empty">No clips yet. Add one above.</p>
+          ) : (
+            <div className="admin-shows">
+              {clips.map(clip => (
+                <div key={clip.id} className="admin-show-row">
+                  <div className="admin-show-row__thumb" style={{ backgroundImage: `url(${clip.thumbnail_url || `https://img.youtube.com/vi/${(clip.youtube_url.match(/(?:v=|youtu\.be\/)([^&?/]+)/) || [])[1] || ''}/hqdefault.jpg`})` }} />
+                  <div className="admin-show-row__info">
+                    <h3 className="admin-show-row__name">{clip.performer_name}</h3>
+                    <p className="admin-show-row__meta">{clip.event_date || 'No date set'}</p>
+                  </div>
+                  <div className="admin-show-row__actions">
+                    <button className="admin-pill" onClick={() => handleClipEdit(clip)}>Edit</button>
+                    <button className="admin-pill admin-pill--delete" onClick={() => handleClipDelete(clip.id)}>Delete</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── LEGENDS AFTERDARK ── */}
+        <section className="admin-section">
+          <h2 className="admin-section__title">
+            🏆 {legendEditingId ? 'Edit Legend' : 'Induct a Legend'}
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>
+            Curated honor for performers who entertained at the highest level. Headshot, name, and induction date only.
+          </p>
+          {legendMessage && (
+            <div className={`admin-message ${legendMessage.startsWith('❌') ? 'admin-message--error' : 'admin-message--success'}`}>
+              {legendMessage}
+            </div>
+          )}
+          <form onSubmit={handleLegendSave} className="admin-form">
+            <div className="admin-form__row">
+              <div className="admin-form__field">
+                <label className="admin-label">Name *</label>
+                <input name="name" value={legendForm.name} onChange={handleLegendFormChange} className="admin-input" required />
+              </div>
+              <div className="admin-form__field">
+                <label className="admin-label">Induction Date *</label>
+                <input type="date" name="induction_date" value={legendForm.induction_date} onChange={handleLegendFormChange} className="admin-input" required />
+              </div>
+            </div>
+
+            <div className="admin-form__field">
+              <label className="admin-label">Headshot *</label>
+              <div className="admin-upload">
+                {legendForm.headshot_url ? (
+                  <div className="admin-upload__preview">
+                    <img src={legendForm.headshot_url} alt="Preview" className="admin-upload__img" />
+                    <div className="admin-upload__preview-actions">
+                      <button type="button" className="admin-pill" onClick={() => legendFileInputRef.current.click()} disabled={legendUploading}>Replace</button>
+                      <button type="button" className="admin-pill admin-pill--delete" onClick={() => setLegendForm(prev => ({ ...prev, headshot_url: '' }))}>Remove</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="admin-upload__dropzone" onClick={() => legendFileInputRef.current.click()}>
+                    <div className="admin-upload__icon">↑</div>
+                    <p className="admin-upload__text">{legendUploading ? 'Uploading...' : 'Click to upload headshot'}</p>
+                    <p className="admin-upload__hint">JPG, PNG, WebP — max 5MB</p>
+                  </div>
+                )}
+                <input ref={legendFileInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleHeadshotUpload} style={{ display: 'none' }} />
+              </div>
+            </div>
+
+            <div className="admin-form__field">
+              <label className="admin-label">Bio (optional)</label>
+              <textarea name="bio" value={legendForm.bio} onChange={handleLegendFormChange} className="admin-input admin-textarea" rows={3} />
+            </div>
+
+            <div className="admin-form__actions">
+              <button type="submit" className="admin-btn-primary" disabled={legendSaving || legendUploading || !legendForm.headshot_url}>
+                {legendSaving ? 'Saving...' : legendEditingId ? 'Update Legend' : 'Induct Legend'}
+              </button>
+              {legendEditingId && (
+                <button type="button" className="admin-btn-ghost" onClick={handleLegendCancel}>Cancel</button>
+              )}
+            </div>
+          </form>
+
+          <h3 className="admin-section__title" style={{ marginTop: '32px', fontSize: '1rem' }}>
+            Current Legends {legends.length > 0 && <span className="admin-count">{legends.length}</span>}
+          </h3>
+          {legendsLoading ? (
+            <p className="admin-loading">Loading...</p>
+          ) : legends.length === 0 ? (
+            <p className="admin-empty">No Legends inducted yet.</p>
+          ) : (
+            <div className="admin-shows">
+              {legends.map(legend => (
+                <div key={legend.id} className="admin-show-row">
+                  <div className="admin-show-row__thumb" style={{ backgroundImage: `url(${legend.headshot_url})` }} />
+                  <div className="admin-show-row__info">
+                    <h3 className="admin-show-row__name">{legend.name}</h3>
+                    <p className="admin-show-row__meta">Inducted {legend.induction_date}</p>
+                  </div>
+                  <div className="admin-show-row__actions">
+                    <button className="admin-pill" onClick={() => handleLegendEdit(legend)}>Edit</button>
+                    <button className="admin-pill admin-pill--delete" onClick={() => handleLegendDelete(legend.id)}>Delete</button>
                   </div>
                 </div>
               ))}

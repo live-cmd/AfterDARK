@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import './PrivateEvents.css';
 
-const RECAPTCHA_SITE_KEY = '6LfKPf4sAAAAAC32FH8vbfnIkM993HUYVvAOymxF'; // TEMP: Water Ice key for isolation testing
+const RECAPTCHA_SITE_KEY = '6LfXCktAAAAAHOmOTAABMaoFwFkggURDWvrMxlv';
 
 const EMPTY_FORM = {
   name: '',

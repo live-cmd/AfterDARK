@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import './PrivateEvents.css';
 
-const RECAPTCHA_SITE_KEY = '6Le2qyotAAAAAJd0O72XenQcsA1TkgXRW79u0GS';
+const RECAPTCHA_SITE_KEY = '6LfKPf4sAAAAAC32FH8vbfnIkM993HUYVvAOymxF';
 
 const EMPTY_FORM = {
   name: '',

@@ -60,6 +60,23 @@ export default function Performers() {
         </div>
       </section>
 
+      {/* PERFORM HERE CTA */}
+      <section className="section perform-cta">
+        <div className="container perform-cta__inner">
+          <div className="perform-cta__text">
+            <p className="section-label">Take The Stage</p>
+            <span className="blue-line" />
+            <h2 className="perform-cta__title">Think You Belong Up Here?</h2>
+            <p className="perform-cta__sub text-dim">
+              We're always looking for comedians, musicians, vocalists, and
+              spoken word artists for upcoming shows. Tell us about your act —
+              no approval gate, just send us what you've got.
+            </p>
+          </div>
+          <a href="/submit" className="btn btn-blue perform-cta__btn">Submit Your Info →</a>
+        </div>
+      </section>
+
       {/* LEGENDS AFTERDARK */}
       <section className="section legends-section">
         <div className="container">

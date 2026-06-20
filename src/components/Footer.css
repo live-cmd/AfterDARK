@@ -150,6 +150,18 @@
   opacity: 0.6;
 }
 
+.footer__admin-link {
+  color: var(--white-dim);
+  opacity: 0.7;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.25);
+}
+
+.footer__admin-link:hover {
+  color: var(--blue);
+  opacity: 1;
+}
+
 .footer__statement {
   font-family: var(--font-heading);
   font-size: 0.75rem;

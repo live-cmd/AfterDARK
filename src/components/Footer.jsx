@@ -82,6 +82,7 @@ export default function Footer() {
         <div className="footer__bottom">
           <p className="footer__copy">
             &copy; {year} Cool J's AfterDARK. All rights reserved. A CJP Ventures brand.
+            {' '}<Link to="/admin" className="footer__admin-link">Admin</Link>
           </p>
           <p className="footer__statement">
             Get off the couch, we'll handle the rest.

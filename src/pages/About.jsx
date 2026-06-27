@@ -78,7 +78,6 @@ export default function About() {
                 something, not just watch it.
               </p>
             </div>
-            <div className="story-pillar__icon"></div>
             <div className="story-pillar">
               <div className="story-pillar__icon">🏆</div>
               <h3 className="story-pillar__title">Earned, Not Given</h3>

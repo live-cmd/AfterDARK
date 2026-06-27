@@ -13,7 +13,7 @@ export default function About() {
             Everything Changes<br />AfterDARK
           </h1>
           <p className="story-hero__sub text-dim">
-            From a single Friday night in Bear, Delaware, to the state's
+            From a single Saturday night in Bear, Delaware, to the state's
             longest-running comedy show — this is how Cool J's AfterDARK
             became the place where the city comes alive.
           </p>
@@ -56,6 +56,41 @@ export default function About() {
         </div>
       </section>
 
+      {/* NEIGHBORHOOD / COMMUNITY */}
+      <section className="section" style={{ background: 'rgba(201,168,76,0.03)' }}>
+        <div className="container story-split">
+          <div>
+            <p className="section-label">More Than A Venue</p>
+            <span className="blue-line" />
+            <h2 className="story-section__title">The Neighborhood's Living Room</h2>
+          </div>
+          <div className="story-section__body text-dim">
+            <p>
+              Bear doesn't have a downtown strip lined with marquees — what it
+              has is AfterDARK. We're not trying to be a destination people
+              drive an hour for and never come back to. We're trying to be
+              the spot regulars walk past three times a week and finally walk
+              into, the place where the bartender remembers your order and
+              the comic on stage might be your neighbor.
+            </p>
+            <p>
+              That's on purpose. Every show we book, every night we run, is
+              built around the idea that a community needs somewhere to
+              actually gather — not just scroll past on a feed. Local
+              performers get a real stage to grow on. Local businesses get a
+              partner for fundraisers and private events. Local regulars get
+              a reason to leave the house on a Saturday that isn't a chain
+              restaurant or a parking lot.
+            </p>
+            <p>
+              We measure success the same way a neighborhood does — not by
+              how far people traveled to get here, but by how many of them
+              keep coming back.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* PHILOSOPHY / PILLARS */}
       <section className="section" style={{ background: 'rgba(255,255,255,0.015)' }}>
         <div className="container">
@@ -83,7 +118,7 @@ export default function About() {
               <h3 className="story-pillar__title">Earned, Not Given</h3>
               <p className="story-pillar__text text-dim">
                 "Longest-running" isn't a marketing line — it's a streak we've
-                protected one Friday at a time. Every format we run has to
+                protected one Saturday at a time. Every format we run has to
                 earn its place on the calendar.
               </p>
             </div>

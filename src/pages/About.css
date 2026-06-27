@@ -1,0 +1,80 @@
+.story-hero {
+  position: relative;
+  padding: 140px 0 80px;
+  overflow: hidden;
+  text-align: center;
+}
+.story-hero__bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12), transparent 60%);
+  z-index: 0;
+}
+.story-hero__content { position: relative; z-index: 1; }
+.story-hero__title { font-size: clamp(2.5rem, 6vw, 4rem); margin: 12px 0 20px; }
+.story-hero__sub { max-width: 580px; margin: 0 auto; font-size: 1.05rem; }
+
+.story-section__title { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 20px; }
+.story-section__body { max-width: 680px; font-size: 1.05rem; line-height: 1.75; }
+.story-section__body p { margin-bottom: 18px; }
+
+.story-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 880px) {
+  .story-split { grid-template-columns: 1fr; }
+}
+
+.story-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+  margin-top: 36px;
+}
+.story-pillar {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 28px 24px;
+  background: rgba(255,255,255,0.02);
+}
+.story-pillar__icon { font-size: 1.8rem; margin-bottom: 12px; }
+.story-pillar__title { font-size: 1.1rem; color: #d4af37; margin-bottom: 8px; }
+.story-pillar__text { font-size: 0.92rem; line-height: 1.6; }
+
+.story-timeline {
+  border-left: 2px solid rgba(212, 175, 55, 0.35);
+  margin-top: 8px;
+  padding-left: 28px;
+}
+.story-timeline__item { position: relative; padding-bottom: 32px; }
+.story-timeline__item:last-child { padding-bottom: 0; }
+.story-timeline__item::before {
+  content: '';
+  position: absolute;
+  left: -34px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d4af37;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+}
+.story-timeline__label { font-size: 0.85rem; letter-spacing: 0.08em; color: #3ea6ff; margin-bottom: 4px; text-transform: uppercase; }
+.story-timeline__text { font-size: 1rem; line-height: 1.6; }
+
+.story-cta {
+  background: linear-gradient(135deg, rgba(62, 166, 255, 0.08), rgba(212, 175, 55, 0.08));
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+}
+.story-cta__title { font-size: clamp(1.6rem, 3.5vw, 2.1rem); margin-bottom: 12px; }
+.story-cta__sub { max-width: 520px; margin: 0 auto 28px; }
+.story-cta__actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .story-hero { padding: 110px 0 60px; }
+}

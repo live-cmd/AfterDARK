@@ -189,6 +189,7 @@ export default function About() {
           </p>
           <div className="story-cta__actions">
             <a href="/tickets" className="btn btn-blue">Get Tickets →</a>
+            <a href="/private-events" className="btn btn-purple">Book A Private Event →</a>
             <a href="/submit" className="btn btn-gold">Take The Stage →</a>
           </div>
         </div>

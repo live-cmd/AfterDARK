@@ -475,7 +475,7 @@ export default function Admin() {
             <span className="admin-header__brand">AfterDARK</span>
             <span className="admin-header__label">Show Manager</span>
           </div>
-          <button className="admin-btn-ghost" onClick={() => setAuthed(false)}>Sign Out</button>
+          <button className="admin-btn-ghost" onClick={() => { setAuthed(false); window.location.href = '/'; }}>Sign Out</button>
         </div>
       </div>
 

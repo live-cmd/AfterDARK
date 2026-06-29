@@ -5,6 +5,7 @@ export default function EventSchema({ shows = [] }) {
     const upcoming = shows.filter(s => new Date(s.date + 'T00:00:00') >= new Date());
 
     const events = upcoming.map(show => ({
+      "@context": "https://schema.org",
       "@type": "Event",
       "name": show.name,
       "startDate": show.date + (show.time ? 'T' + convertTo24(show.time) : 'T20:00:00'),
@@ -33,6 +34,8 @@ export default function EventSchema({ shows = [] }) {
         "offers": {
           "@type": "Offer",
           "url": show.eventbrite_url,
+          "price": show.price ?? "0",
+          "priceCurrency": "USD",
           "availability": show.sold_out
             ? "https://schema.org/SoldOut"
             : "https://schema.org/InStock",
@@ -41,30 +44,32 @@ export default function EventSchema({ shows = [] }) {
       } : {})
     }));
 
-    const schema = {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Cool J's AfterDARK — Upcoming Shows",
-      "url": "https://cooljsafterdark.com/events",
-      "itemListElement": events.map((ev, i) => ({
-        "@type": "ListItem",
-        "position": i + 1,
-        "item": ev
-      }))
-    };
+    // Google's Event rich-result spec wants standalone Event objects —
+    // NOT events nested inside an ItemList/ListItem wrapper. Each show
+    // gets its own <script type="application/ld+json"> tag so Googlebot
+    // can parse them as independent, valid Event entities.
+    const containerId = 'event-schema-ld-container';
+    let container = document.getElementById(containerId);
+    if (container) container.remove();
 
-    const id = 'event-schema-ld';
-    let tag = document.getElementById(id);
-    if (!tag) {
-      tag = document.createElement('script');
-      tag.id = id;
-      tag.type = 'application/ld+json';
-      document.head.appendChild(tag);
+    if (events.length > 0) {
+      container = document.createElement('div');
+      container.id = containerId;
+      container.style.display = 'none';
+
+      events.forEach((ev, i) => {
+        const tag = document.createElement('script');
+        tag.type = 'application/ld+json';
+        tag.id = `event-schema-ld-${i}`;
+        tag.textContent = JSON.stringify(ev);
+        container.appendChild(tag);
+      });
+
+      document.head.appendChild(container);
     }
-    tag.textContent = JSON.stringify(schema);
 
     return () => {
-      const el = document.getElementById(id);
+      const el = document.getElementById(containerId);
       if (el) el.remove();
     };
   }, [shows]);

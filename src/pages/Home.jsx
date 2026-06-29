@@ -41,11 +41,11 @@ const SHOWS = [
 ];
 
 const GALLERY_PHOTOS = [
-  { src: 'https://static.wixstatic.com/media/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_661f42479ae044b5a2919f8375880094~mv2.jpeg', alt: 'AfterDARK crowd' },
+  { src: SUPABASE_IMG('comedy_comedian-wide-shot-1.jpeg'), alt: 'AfterDARK crowd' },
   { src: SUPABASE_IMG('comedy_comedy@cooljs-brand-card.png'), alt: "Comedy Night at Cool J's AfterDARK", isBrandCard: true },
-  { src: 'https://static.wixstatic.com/media/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg/v1/fill/w_800,h_1000,q_90/711317_daeb70eb60614d129a6ce98ac63d0f1e~mv2.jpeg', alt: 'AfterDARK atmosphere' },
+  { src: SUPABASE_IMG('comedy_comedian-wide-shot-2.JPG'), alt: 'AfterDARK atmosphere' },
   { src: SUPABASE_IMG('karaoke_brand-card.png'), alt: 'Karaoke at AfterDARK', isBrandCard: true },
-  { src: 'https://static.wixstatic.com/media/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg/v1/fill/w_1200,h_900,q_90/711317_4a5d230b7a00480583be5788c469e94e~mv2.jpeg', alt: 'Comedy night crowd' },
+  { src: SUPABASE_IMG('comedy_comedian-onstage-2.JPG'), alt: 'Comedy night crowd' },
   { src: SUPABASE_IMG('open-mic_brand-card.png'), alt: 'Open Mic at AfterDARK', isBrandCard: true },
   { src: SUPABASE_IMG('spoken-word_brand-card.png'), alt: 'Spoken Word at AfterDARK', isBrandCard: true },
 ];

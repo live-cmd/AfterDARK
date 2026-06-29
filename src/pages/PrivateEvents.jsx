@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './PrivateEvents.css';
+
+const RECAPTCHA_SITE_KEY = '6LfKPf4sAAAAAC32FH8vbfnIkM993HUYVvAOymxF';
 
 const PACKAGES = [
   {
@@ -49,6 +51,7 @@ const EMPTY_FORM = {
   preferredDate: '',
   message: '',
   vipOptIn: false,
+  website: '', // honeypot — real users never see or fill this
 };
 
 export default function PrivateEvents() {
@@ -57,6 +60,14 @@ export default function PrivateEvents() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [selectedPackage, setSelectedPackage] = useState('');
+
+  useEffect(() => {
+    if (document.querySelector(`script[src*="recaptcha"]`)) return;
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   function handleFormChange(e) {
     const { name, value, type, checked } = e.target;
@@ -72,67 +83,65 @@ export default function PrivateEvents() {
     document.getElementById('inquiry-form').scrollIntoView({ behavior: 'smooth' });
   }
 
+  function getRecaptchaToken() {
+    return new Promise((resolve, reject) => {
+      if (!window.grecaptcha) { reject(new Error('reCAPTCHA not loaded')); return; }
+      window.grecaptcha.ready(() => {
+        window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'private_event_inquiry' }).then(resolve).catch(reject);
+      });
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitting(true);
     setError('');
-const BREVO_API_KEY = process.env.REACT_APP_BREVO_API_KEY;
-    const PRIVATE_EVENTS_LIST = 13;
-    const VIP_LIST = 10;
+
+    // Honeypot: if this hidden field has anything in it, it was filled by a bot.
+    // Pretend success so the bot doesn't learn it was caught.
+    if (form.website) {
+      setSubmitted(true);
+      setForm(EMPTY_FORM);
+      setSubmitting(false);
+      return;
+    }
 
     try {
-      // Add contact to Brevo
-      const listIds = [PRIVATE_EVENTS_LIST];
-      if (form.vipOptIn) listIds.push(VIP_LIST);
-
-      const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
+      const token = await getRecaptchaToken();
+      const verifyRes = await fetch('/.netlify/functions/verify-recaptcha', {
         method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'content-type': 'application/json',
-          'api-key': BREVO_API_KEY,
-        },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.success) {
+        // Likely a bot — fail quietly without revealing why.
+        setSubmitted(true);
+        setForm(EMPTY_FORM);
+        setSubmitting(false);
+        return;
+      }
+
+      const inquiryRes = await fetch('/.netlify/functions/private-event-inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: form.name,
           email: form.email,
-          firstName: form.name.split(' ')[0] || form.name,
-          lastName: form.name.split(' ').slice(1).join(' ') || '',
           phone: form.phone,
-          listIds,
-          updateEnabled: true,
-          attributes: {
-            EVENT_TYPE: form.eventType,
-            GUEST_COUNT: form.guestCount,
-            PREFERRED_DATE: form.preferredDate,
-            MESSAGE: form.message,
-          },
+          eventType: form.eventType,
+          guestCount: form.guestCount,
+          preferredDate: form.preferredDate,
+          message: form.message,
+          vipOptIn: form.vipOptIn,
         }),
       });
 
-      // Send notification email to AfterDARK
-      await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'accept': 'application/json',
-          'content-type': 'application/json',
-          'api-key': BREVO_API_KEY,
-        },
-        body: JSON.stringify({
-          sender: { name: 'AfterDARK Website', email: 'live@cooljsafterdark.com' },
-          to: [{ email: 'live@cooljsafterdark.com', name: 'Cool J\'s AfterDARK' }],
-          subject: `New Private Event Inquiry — ${form.eventType}`,
-          htmlContent: `
-            <h2>New Private Event Inquiry</h2>
-            <p><strong>Name:</strong> ${form.name}</p>
-            <p><strong>Email:</strong> ${form.email}</p>
-            <p><strong>Phone:</strong> ${form.phone}</p>
-            <p><strong>Event Type:</strong> ${form.eventType}</p>
-            <p><strong>Guest Count:</strong> ${form.guestCount}</p>
-            <p><strong>Preferred Date:</strong> ${form.preferredDate}</p>
-            <p><strong>Message:</strong> ${form.message}</p>
-            <p><strong>VIP Opt-in:</strong> ${form.vipOptIn ? 'Yes' : 'No'}</p>
-          `,
-        }),
-      });
+      const inquiryData = await inquiryRes.json();
+      if (!inquiryRes.ok || !inquiryData.success) {
+        throw new Error(inquiryData.error || 'Submission failed');
+      }
 
       setSubmitted(true);
       setForm(EMPTY_FORM);
@@ -232,6 +241,20 @@ const BREVO_API_KEY = process.env.REACT_APP_BREVO_API_KEY;
               </div>
             ) : (
               <form className="private-form" onSubmit={handleSubmit}>
+                {/* Honeypot field — hidden from real users via CSS, bots fill it anyway */}
+                <div style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
+                  <label htmlFor="website">Website</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    value={form.website}
+                    onChange={handleFormChange}
+                    tabIndex="-1"
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="private-form__row">
                   <div className="private-form__field">
                     <label className="private-label">Full Name *</label>
@@ -349,6 +372,12 @@ const BREVO_API_KEY = process.env.REACT_APP_BREVO_API_KEY;
                 >
                   {submitting ? 'Sending...' : 'Send Request'}
                 </button>
+
+                <p className="text-dim" style={{ fontSize: '0.75rem', marginTop: '12px' }}>
+                  This site is protected by reCAPTCHA and the Google{' '}
+                  <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> and{' '}
+                  <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a> apply.
+                </p>
               </form>
             )}
           </div>

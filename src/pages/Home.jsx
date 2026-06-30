@@ -75,10 +75,6 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className="hero">
         <div className="hero__bg">
-          <div
-            className="hero__photo"
-            style={{ backgroundImage: `url(https://static.wixstatic.com/media/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg/v1/fill/w_2500,h_1875,al_c/711317_cd60ddf81c464493ade1652087f31a45~mv2.jpg)` }}
-          />
           <div className="hero__overlay" />
           <div className="hero__spotlights">
             <div className="spotlight spotlight--left" />

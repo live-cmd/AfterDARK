@@ -3,13 +3,14 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import './Nav.css';
 
 const NAV_LINKS = [
-  { to: '/',              label: 'Home' },
-  { to: '/events',        label: 'Events' },
-  { to: '/performers',    label: 'Performers' },
-  { to: '/tickets',       label: 'Tickets' },
-  { to: '/private-events',label: 'Private Events' },
-  { to: '/radar',         label: 'AfterDARK Radar' },
-  { to: '/about',         label: 'Our Story' },
+  { to: '/',               label: 'Home' },
+  { to: '/events',         label: 'Events' },
+  { to: '/menu',           label: 'Menu' },
+  { to: '/performers',     label: 'Performers' },
+  { to: '/tickets',        label: 'Tickets' },
+  { to: '/private-events', label: 'Private Events' },
+  { to: '/radar',          label: 'AfterDARK Radar' },
+  { to: '/about',          label: 'Our Story' },
 ];
 
 export default function Nav() {
@@ -23,7 +24,6 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => { setMenuOpen(false); }, [location]);
 
   return (

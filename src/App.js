@@ -10,6 +10,7 @@ import Radar from './pages/Radar';
 import About from './pages/About';
 import Submit from './pages/Submit';
 import Admin from './pages/Admin';
+import Menu from './pages/Menu';
 import './styles/global.css';
 
 function Layout({ children }) {
@@ -36,7 +37,8 @@ export default function App() {
         <Route path="/radar" element={<Layout><Radar /></Layout>} />
         <Route path="/about" element={<Layout><About /></Layout>} />
         <Route path="/submit" element={<Layout><Submit /></Layout>} />
-    <Route path="/admin" element={<Admin />} />
+        <Route path="/menu" element={<Layout><Menu /></Layout>} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );

@@ -18,7 +18,7 @@
   display: block;
   width: 48px;
   height: 3px;
-  background: #d4af37;
+  background: linear-gradient(90deg, #b8962e, #f2d675, #b8962e);
   margin: 8px 0 20px;
 }
 
@@ -44,42 +44,195 @@
 .perform-cta__text { max-width: 600px; }
 .perform-cta__title { font-size: clamp(1.6rem, 3.5vw, 2.1rem); margin-bottom: 8px; }
 .perform-cta__sub { font-size: 1rem; }
-.perform-cta__btn {
-  white-space: nowrap;
-  text-decoration: none;
-  flex-shrink: 0;
-}
+.perform-cta__btn { white-space: nowrap; text-decoration: none; flex-shrink: 0; }
 
 @media (max-width: 720px) {
   .perform-cta__inner { flex-direction: column; align-items: flex-start; }
   .perform-cta__btn { width: 100%; text-align: center; }
 }
 
-/* LEGENDS AFTERDARK */
-.legends-section { background: linear-gradient(180deg, rgba(212,175,55,0.04), transparent); }
-.legends-section__title { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 8px; }
-.legends-section__sub { margin-bottom: 36px; max-width: 540px; }
+/* ══════════════════════════════════════
+   LEGENDS AFTERDARK — Hall of Fame
+══════════════════════════════════════ */
+.legends-section {
+  position: relative;
+  overflow: hidden;
+  background: #0a0800;
+  padding: 80px 0 100px;
+}
+/* Atmospheric gold backdrop */
+.legends-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212,175,55,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 110%, rgba(212,175,55,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* Thin gold border lines top and bottom */
+.legends-section::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6) 30%, rgba(212,175,55,0.6) 70%, transparent);
+}
+.legends-section .container { position: relative; z-index: 1; }
 
+.legends-section__eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #d4af37;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.legends-section__title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 12px;
+  text-align: center;
+  color: #f2d675;
+  text-shadow: 0 0 40px rgba(212,175,55,0.4);
+}
+.legends-section__sub {
+  margin: 0 auto 16px;
+  max-width: 500px;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+.legends-section__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+.legends-section__divider-line {
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5));
+}
+.legends-section__divider-line--right {
+  background: linear-gradient(270deg, transparent, rgba(212,175,55,0.5));
+}
+.legends-section__divider-star {
+  font-size: 1.1rem;
+  color: #d4af37;
+}
+
+/* ── Grid ── */
 .legends-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 240px));
+  gap: 36px;
+  justify-content: center;
 }
 
-.legend-card { text-align: center; }
-.legend-card__frame {
-  width: 140px;
-  height: 140px;
-  margin: 0 auto 16px;
-  border-radius: 50%;
-  border: 3px solid #d4af37;
-  box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
-  overflow: hidden;
+/* ── Card ── */
+.legend-card {
+  text-align: center;
+  position: relative;
 }
-.legend-card__img { width: 100%; height: 100%; object-fit: cover; }
-.legend-card__name { font-size: 1.1rem; color: #d4af37; margin-bottom: 4px; }
-.legend-card__date { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
-.legend-card__bio { font-size: 0.85rem; line-height: 1.5; }
+
+.legend-card__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto 18px;
+  border-radius: 4px;
+  overflow: hidden;
+  /* Layered gold frame effect */
+  outline: 1px solid rgba(212,175,55,0.25);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 1px rgba(212,175,55,0.5),
+    0 0 0 3px rgba(10,8,0,0.8),
+    0 0 0 4px rgba(212,175,55,0.3),
+    0 8px 40px rgba(0,0,0,0.7),
+    0 0 60px rgba(212,175,55,0.1);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+.legend-card:hover .legend-card__frame {
+  box-shadow:
+    0 0 0 1px rgba(212,175,55,0.8),
+    0 0 0 3px rgba(10,8,0,0.8),
+    0 0 0 4px rgba(212,175,55,0.5),
+    0 12px 50px rgba(0,0,0,0.8),
+    0 0 80px rgba(212,175,55,0.25);
+  transform: translateY(-4px);
+}
+
+.legend-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: sepia(8%) contrast(1.05);
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+.legend-card:hover .legend-card__img {
+  filter: sepia(0%) contrast(1.08);
+  transform: scale(1.03);
+}
+
+/* Gold overlay on hover */
+.legend-card__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(10,8,0,0.7) 100%);
+  pointer-events: none;
+}
+
+/* LEGEND badge */
+.legend-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #b8962e, #f2d675, #b8962e);
+  color: #0a0800;
+  font-family: var(--font-heading);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.legend-card__name {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: #f2d675;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.legend-card__year {
+  font-size: 0.75rem;
+  color: rgba(212,175,55,0.5);
+  letter-spacing: 0.1em;
+}
+
+/* Empty state */
+.legends-empty {
+  text-align: center;
+  padding: 48px 0;
+  color: rgba(212,175,55,0.4);
+  font-style: italic;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
 
 /* PERFORMANCE CLIPS */
 .clips-section__title { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 8px; }
@@ -131,11 +284,7 @@
   z-index: 1000;
   padding: 20px;
 }
-.clip-modal__inner {
-  width: 100%;
-  max-width: 880px;
-  position: relative;
-}
+.clip-modal__inner { width: 100%; max-width: 880px; position: relative; }
 .clip-modal__video {
   position: relative;
   width: 100%;
@@ -160,5 +309,6 @@
 
 @media (max-width: 640px) {
   .performers-hero { padding: 110px 0 60px; }
-  .legend-card__frame { width: 110px; height: 110px; }
+  .legends-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .legends-section { padding: 60px 0 80px; }
 }

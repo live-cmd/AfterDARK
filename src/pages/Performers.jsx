@@ -39,6 +39,11 @@ export default function Performers() {
     return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
   }
 
+  function getInductionYear(dateStr) {
+    if (!dateStr) return '';
+    return new Date(dateStr + 'T00:00:00').getFullYear();
+  }
+
   function formatDate(dateStr) {
     if (!dateStr) return '';
     return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -78,29 +83,33 @@ export default function Performers() {
       </section>
 
       {/* LEGENDS AFTERDARK */}
-      <section className="section legends-section">
+      <section className="legends-section">
         <div className="container">
-          <p className="section-label">The Highest Honor</p>
-          <span className="gold-line" />
+          <p className="legends-section__eyebrow">Cool J's AfterDARK</p>
           <h2 className="legends-section__title">Legends AfterDARK</h2>
-          <p className="legends-section__sub text-dim">
-            Inducted for performances that truly entertained at the highest level.
+          <p className="legends-section__sub">
+            The highest honor we give. Awarded to performers who took the stage and left their mark.
           </p>
+          <div className="legends-section__divider">
+            <span className="legends-section__divider-line" />
+            <span className="legends-section__divider-star">✦</span>
+            <span className="legends-section__divider-line legends-section__divider-line--right" />
+          </div>
 
           {loading ? (
-            <p className="performers-loading">Loading...</p>
+            <p className="performers-loading" style={{ textAlign: 'center' }}>Loading...</p>
           ) : legends.length === 0 ? (
-            <p className="performers-empty">No inductees yet — the first Legend is waiting to be named.</p>
+            <p className="legends-empty">The first Legend has yet to be named.</p>
           ) : (
             <div className="legends-grid">
               {legends.map(legend => (
                 <div key={legend.id} className="legend-card">
                   <div className="legend-card__frame">
+                    <span className="legend-card__badge">Legend</span>
                     <img src={legend.headshot_url} alt={legend.name} className="legend-card__img" />
                   </div>
                   <h3 className="legend-card__name">{legend.name}</h3>
-                  <p className="legend-card__date">Inducted {formatDate(legend.induction_date)}</p>
-                  {legend.bio && <p className="legend-card__bio text-dim">{legend.bio}</p>}
+                  <p className="legend-card__year">Class of {getInductionYear(legend.induction_date)}</p>
                 </div>
               ))}
             </div>

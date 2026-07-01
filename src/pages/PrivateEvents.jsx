@@ -7,8 +7,8 @@ const PACKAGES = [
   {
     icon: '🎤',
     name: 'Comedy Night',
-    desc: 'Professional stand-up comedians from the Mid-Atlantic and beyond. We curate the lineup, run the show, and deliver the laughs — you just show up and enjoy.',
-    highlights: ['Headliner + opener', 'Custom run of show', 'MC included'],
+    desc: "Professional stand-up comedians from the Mid-Atlantic and beyond. We curate the lineup, run the show, and deliver the laughs — at Cool J's or we bring the show to you at your home, venue, or private space.",
+    highlights: ['Headliner + opener', 'Custom run of show', 'MC included', 'Your venue or ours'],
   },
   {
     icon: '🎵',
@@ -36,9 +36,9 @@ const PACKAGES = [
   },
   {
     icon: '✨',
-    name: 'Special Event',
-    desc: 'Have something unique in mind? Birthdays, corporate events, celebrations, fundraisers — tell us what you\'re building and we\'ll make it happen.',
-    highlights: ['Fully custom', 'Concept development', 'Full coordination'],
+    name: 'Custom Event',
+    desc: "Have something unique in mind? Book the space at Cool J's and build the event your way — birthdays, corporate functions, celebrations, fundraisers. Tell us what you're building and we'll make it happen.",
+    highlights: ['Book Cool J\'s for your event', 'Concept development', 'Full coordination'],
   },
 ];
 
@@ -97,8 +97,6 @@ export default function PrivateEvents() {
     setSubmitting(true);
     setError('');
 
-    // Honeypot: if this hidden field has anything in it, it was filled by a bot.
-    // Pretend success so the bot doesn't learn it was caught.
     if (form.website) {
       setSubmitted(true);
       setForm(EMPTY_FORM);
@@ -116,7 +114,6 @@ export default function PrivateEvents() {
       const verifyData = await verifyRes.json();
 
       if (!verifyData.success) {
-        // Likely a bot — fail quietly without revealing why.
         setSubmitted(true);
         setForm(EMPTY_FORM);
         setSubmitting(false);
@@ -164,9 +161,8 @@ export default function PrivateEvents() {
             Make It a<br />Private Show
           </h1>
           <p className="private-hero__sub text-dim">
-            Birthdays. Corporate events. Celebrations. We bring Delaware's
-            best live entertainment to your private event — fully produced,
-            professionally run, unforgettable.
+            Book Cool J's for your next event — or let us bring the show to you.
+            Fully produced, professionally run, unforgettable.
           </p>
         </div>
       </section>
@@ -241,7 +237,6 @@ export default function PrivateEvents() {
               </div>
             ) : (
               <form className="private-form" onSubmit={handleSubmit}>
-                {/* Honeypot field — hidden from real users via CSS, bots fill it anyway */}
                 <div style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }} aria-hidden="true">
                   <label htmlFor="website">Website</label>
                   <input
@@ -258,49 +253,22 @@ export default function PrivateEvents() {
                 <div className="private-form__row">
                   <div className="private-form__field">
                     <label className="private-label">Full Name *</label>
-                    <input
-                      name="name"
-                      value={form.name}
-                      onChange={handleFormChange}
-                      className="private-input"
-                      placeholder="Your name"
-                      required
-                    />
+                    <input name="name" value={form.name} onChange={handleFormChange} className="private-input" placeholder="Your name" required />
                   </div>
                   <div className="private-form__field">
                     <label className="private-label">Email *</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleFormChange}
-                      className="private-input"
-                      placeholder="your@email.com"
-                      required
-                    />
+                    <input type="email" name="email" value={form.email} onChange={handleFormChange} className="private-input" placeholder="your@email.com" required />
                   </div>
                 </div>
 
                 <div className="private-form__row">
                   <div className="private-form__field">
                     <label className="private-label">Phone</label>
-                    <input
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleFormChange}
-                      className="private-input"
-                      placeholder="(555) 000-0000"
-                    />
+                    <input name="phone" value={form.phone} onChange={handleFormChange} className="private-input" placeholder="(555) 000-0000" />
                   </div>
                   <div className="private-form__field">
                     <label className="private-label">Event Type *</label>
-                    <select
-                      name="eventType"
-                      value={form.eventType}
-                      onChange={handleFormChange}
-                      className="private-input private-select"
-                      required
-                    >
+                    <select name="eventType" value={form.eventType} onChange={handleFormChange} className="private-input private-select" required>
                       <option value="">Select a package</option>
                       {PACKAGES.map(pkg => (
                         <option key={pkg.name} value={pkg.name}>{pkg.name}</option>
@@ -312,12 +280,7 @@ export default function PrivateEvents() {
                 <div className="private-form__row">
                   <div className="private-form__field">
                     <label className="private-label">Estimated Guest Count</label>
-                    <select
-                      name="guestCount"
-                      value={form.guestCount}
-                      onChange={handleFormChange}
-                      className="private-input private-select"
-                    >
+                    <select name="guestCount" value={form.guestCount} onChange={handleFormChange} className="private-input private-select">
                       <option value="">Select range</option>
                       <option>Under 25</option>
                       <option>25–50</option>
@@ -328,13 +291,7 @@ export default function PrivateEvents() {
                   </div>
                   <div className="private-form__field">
                     <label className="private-label">Preferred Date</label>
-                    <input
-                      type="date"
-                      name="preferredDate"
-                      value={form.preferredDate}
-                      onChange={handleFormChange}
-                      className="private-input"
-                    />
+                    <input type="date" name="preferredDate" value={form.preferredDate} onChange={handleFormChange} className="private-input" />
                   </div>
                 </div>
 
@@ -345,18 +302,13 @@ export default function PrivateEvents() {
                     value={form.message}
                     onChange={handleFormChange}
                     className="private-input private-textarea"
-                    placeholder="What are you celebrating? Any special requests or ideas?"
+                    placeholder="What are you celebrating? Will it be at Cool J's or another location? Any special requests?"
                     rows={4}
                   />
                 </div>
 
                 <label className="private-checkbox">
-                  <input
-                    type="checkbox"
-                    name="vipOptIn"
-                    checked={form.vipOptIn}
-                    onChange={handleFormChange}
-                  />
+                  <input type="checkbox" name="vipOptIn" checked={form.vipOptIn} onChange={handleFormChange} />
                   <span className="private-checkbox__box" />
                   <span className="private-checkbox__label">
                     Add me to the VIP list for exclusive offers and early ticket access
@@ -365,11 +317,7 @@ export default function PrivateEvents() {
 
                 {error && <p className="private-form__error">{error}</p>}
 
-                <button
-                  type="submit"
-                  className="btn btn-blue private-form__submit"
-                  disabled={submitting}
-                >
+                <button type="submit" className="btn btn-blue private-form__submit" disabled={submitting}>
                   {submitting ? 'Sending...' : 'Send Request'}
                 </button>
 

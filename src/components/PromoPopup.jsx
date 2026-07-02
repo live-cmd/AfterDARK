@@ -18,6 +18,7 @@ export default function PromoPopup() {
         .from('promo_popup')
         .select('*')
         .eq('enabled', true)
+        .eq('site', 'afterdark')
         .limit(1)
         .single();
       if (!error && data) {

@@ -56,7 +56,6 @@ export default function Admin() {
   const [legendUploading, setLegendUploading] = useState(false);
   const legendFileInputRef = useRef();
 
-  // Promo Popup state
   const [popupConfig, setPopupConfig] = useState(null);
   const [popupForm, setPopupForm] = useState(EMPTY_POPUP_FORM);
   const [popupSaving, setPopupSaving] = useState(false);
@@ -70,41 +69,30 @@ export default function Admin() {
   }, [authed]);
 
   async function loadPopupConfig() {
-    const { data, error } = await supabase.from('promo_popup').select('*').limit(1).single();
+    const { data, error } = await supabase.from('promo_popup').select('*').eq('site', 'afterdark').limit(1).single();
     if (!error && data) {
       setPopupConfig(data);
       setPopupForm({
-        enabled: data.enabled ?? true,
-        type: data.type || 'image',
-        headline: data.headline || '',
-        subtext: data.subtext || '',
-        image_url: data.image_url || '',
-        youtube_url: data.youtube_url || '',
-        cta_label: data.cta_label || '',
-        cta_url: data.cta_url || '',
+        enabled: data.enabled ?? true, type: data.type || 'image',
+        headline: data.headline || '', subtext: data.subtext || '',
+        image_url: data.image_url || '', youtube_url: data.youtube_url || '',
+        cta_label: data.cta_label || '', cta_url: data.cta_url || '',
       });
     }
   }
 
   async function handlePopupSave(e) {
-    e.preventDefault();
-    setPopupSaving(true); setPopupMessage('');
+    e.preventDefault(); setPopupSaving(true); setPopupMessage('');
     const payload = {
-      enabled: popupForm.enabled,
-      type: popupForm.type,
-      headline: popupForm.headline || null,
-      subtext: popupForm.subtext || null,
-      image_url: popupForm.image_url || null,
-      youtube_url: popupForm.youtube_url || null,
-      cta_label: popupForm.cta_label || null,
-      cta_url: popupForm.cta_url || null,
+      site: 'afterdark',
+      enabled: popupForm.enabled, type: popupForm.type,
+      headline: popupForm.headline || null, subtext: popupForm.subtext || null,
+      image_url: popupForm.image_url || null, youtube_url: popupForm.youtube_url || null,
+      cta_label: popupForm.cta_label || null, cta_url: popupForm.cta_url || null,
     };
     let error;
-    if (popupConfig) {
-      ({ error } = await supabase.from('promo_popup').update(payload).eq('id', popupConfig.id));
-    } else {
-      ({ error } = await supabase.from('promo_popup').insert([payload]));
-    }
+    if (popupConfig) { ({ error } = await supabase.from('promo_popup').update(payload).eq('id', popupConfig.id)); }
+    else { ({ error } = await supabase.from('promo_popup').insert([payload])); }
     if (error) { setPopupMessage('❌ Error: ' + error.message); }
     else { setPopupMessage('✓ Popup updated.'); loadPopupConfig(); }
     setPopupSaving(false);
@@ -323,26 +311,20 @@ export default function Admin() {
         {/* ── PROMO POPUP ── */}
         <section className="admin-section">
           <h2 className="admin-section__title">📢 Promo Popup</h2>
-          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>
-            Displays on every page load. Toggle off to hide without deleting content.
-          </p>
-          {popupMessage && (
-            <div className={`admin-message ${popupMessage.startsWith('❌') ? 'admin-message--error' : 'admin-message--success'}`}>{popupMessage}</div>
-          )}
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>Displays on every page load. Toggle off to hide without deleting content.</p>
+          {popupMessage && <div className={`admin-message ${popupMessage.startsWith('❌') ? 'admin-message--error' : 'admin-message--success'}`}>{popupMessage}</div>}
           <form onSubmit={handlePopupSave} className="admin-form">
             <div className="admin-form__toggles" style={{ marginBottom: '20px' }}>
               <label className="admin-toggle">
                 <input type="checkbox" checked={popupForm.enabled} onChange={e => setPopupForm(prev => ({ ...prev, enabled: e.target.checked }))} />
-                <span className="admin-toggle__track" />
-                <span className="admin-toggle__label">Popup Enabled</span>
+                <span className="admin-toggle__track" /><span className="admin-toggle__label">Popup Enabled</span>
               </label>
             </div>
             <div className="admin-form__row">
               <div className="admin-form__field">
                 <label className="admin-label">Type</label>
                 <select className="admin-input" value={popupForm.type} onChange={e => setPopupForm(prev => ({ ...prev, type: e.target.value }))}>
-                  <option value="image">Image</option>
-                  <option value="video">Video (YouTube)</option>
+                  <option value="image">Image</option><option value="video">Video (YouTube)</option>
                 </select>
               </div>
               <div className="admin-form__field">
@@ -381,7 +363,7 @@ export default function Admin() {
           </form>
         </section>
 
-        {/* ── FEATURED EVENT SELECTOR ── */}
+        {/* ── FEATURED EVENT ── */}
         <section className="admin-section">
           <h2 className="admin-section__title">⭐ Featured Event</h2>
           <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginBottom: '20px' }}>The featured block appears at the top of the Events and Tickets pages.</p>
@@ -397,7 +379,7 @@ export default function Admin() {
               </div>
               <div className="admin-form__field">
                 <label className="admin-label">Event</label>
-                {featuredLoading ? <p className="admin-loading" style={{ fontSize: '0.85rem' }}>Loading events...</p> : (
+                {featuredLoading ? <p className="admin-loading" style={{ fontSize: '0.85rem' }}>Loading...</p> : (
                   <select className="admin-input" value={featuredForm.event_id} onChange={e => setFeaturedForm(prev => ({ ...prev, event_id: e.target.value }))} required>
                     <option value="">— Select an event —</option>
                     {allEvents.filter(e => e.source === featuredForm.source).map(e => <option key={`${e.source}-${e.id}`} value={String(e.id)}>{e.date} · {e.name}</option>)}
@@ -406,19 +388,10 @@ export default function Admin() {
               </div>
             </div>
             <div className="admin-form__row">
-              <div className="admin-form__field">
-                <label className="admin-label">Promo Code (optional)</label>
-                <input className="admin-input" placeholder="e.g. AFTERDARK10" value={featuredForm.promo_code} onChange={e => setFeaturedForm(prev => ({ ...prev, promo_code: e.target.value }))} />
-              </div>
-              <div className="admin-form__field">
-                <label className="admin-label">Promo Label (optional)</label>
-                <input className="admin-input" placeholder="e.g. Use code at checkout for 10% off" value={featuredForm.promo_text} onChange={e => setFeaturedForm(prev => ({ ...prev, promo_text: e.target.value }))} />
-              </div>
+              <div className="admin-form__field"><label className="admin-label">Promo Code</label><input className="admin-input" placeholder="e.g. AFTERDARK10" value={featuredForm.promo_code} onChange={e => setFeaturedForm(prev => ({ ...prev, promo_code: e.target.value }))} /></div>
+              <div className="admin-form__field"><label className="admin-label">Promo Label</label><input className="admin-input" placeholder="e.g. 10% off at checkout" value={featuredForm.promo_text} onChange={e => setFeaturedForm(prev => ({ ...prev, promo_text: e.target.value }))} /></div>
             </div>
-            <div className="admin-form__field">
-              <label className="admin-label">Custom CTA Label (optional)</label>
-              <input className="admin-input" placeholder="Default: Get Tickets →" value={featuredForm.custom_cta_label} onChange={e => setFeaturedForm(prev => ({ ...prev, custom_cta_label: e.target.value }))} />
-            </div>
+            <div className="admin-form__field"><label className="admin-label">Custom CTA Label</label><input className="admin-input" placeholder="Default: Get Tickets →" value={featuredForm.custom_cta_label} onChange={e => setFeaturedForm(prev => ({ ...prev, custom_cta_label: e.target.value }))} /></div>
             <div className="admin-form__actions">
               <button type="submit" className="admin-btn-primary" disabled={featuredSaving}>{featuredSaving ? 'Saving...' : featuredConfig ? 'Update Featured Event' : 'Set Featured Event'}</button>
               {featuredConfig && <button type="button" className="admin-btn-ghost" onClick={handleFeaturedClear}>Clear Featured</button>}
@@ -436,8 +409,8 @@ export default function Admin() {
               <div className="admin-form__field"><label className="admin-label">Date *</label><input type="date" name="date" value={form.date} onChange={handleFormChange} className="admin-input" required /></div>
             </div>
             <div className="admin-form__row">
-              <div className="admin-form__field"><label className="admin-label">Venue</label><input name="venue" value={form.venue} onChange={handleFormChange} className="admin-input" placeholder="Bear, DE" /></div>
-              <div className="admin-form__field"><label className="admin-label">Time</label><input name="time" value={form.time} onChange={handleFormChange} className="admin-input" placeholder="Doors 7PM · Show 8PM" /></div>
+              <div className="admin-form__field"><label className="admin-label">Venue</label><input name="venue" value={form.venue} onChange={handleFormChange} className="admin-input" /></div>
+              <div className="admin-form__field"><label className="admin-label">Time</label><input name="time" value={form.time} onChange={handleFormChange} className="admin-input" /></div>
             </div>
             <div className="admin-form__field"><label className="admin-label">Description</label><textarea name="description" value={form.description} onChange={handleFormChange} className="admin-input admin-textarea" rows={3} /></div>
             <div className="admin-form__field">
@@ -447,7 +420,7 @@ export default function Admin() {
                   <div className="admin-upload__preview">
                     <img src={uploadPreview} alt="Preview" className="admin-upload__img" />
                     <div className="admin-upload__preview-actions">
-                      <button type="button" className="admin-pill" onClick={() => fileInputRef.current.click()} disabled={uploading}>Replace Image</button>
+                      <button type="button" className="admin-pill" onClick={() => fileInputRef.current.click()} disabled={uploading}>Replace</button>
                       <button type="button" className="admin-pill admin-pill--delete" onClick={clearImage}>Remove</button>
                     </div>
                   </div>
@@ -459,13 +432,13 @@ export default function Admin() {
                   </div>
                 )}
                 <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleImageUpload} style={{ display: 'none' }} />
-                {!uploadPreview && <div className="admin-upload__url"><label className="admin-label">Or paste image URL directly</label><input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="https://..." /></div>}
+                {!uploadPreview && <div className="admin-upload__url"><label className="admin-label">Or paste URL</label><input name="image_url" value={form.image_url} onChange={handleFormChange} className="admin-input" placeholder="https://..." /></div>}
               </div>
             </div>
             <div className="admin-form__field"><label className="admin-label">Eventbrite URL</label><input name="eventbrite_url" value={form.eventbrite_url} onChange={handleFormChange} className="admin-input" placeholder="https://www.eventbrite.com/e/..." /></div>
             <div className="admin-form__field"><label className="admin-label">Tags (comma separated)</label><input name="tags" value={form.tags} onChange={handleFormChange} className="admin-input" placeholder="Live Comedy, Summer, July" /></div>
             <div className="admin-form__toggles">
-              <label className="admin-toggle"><input type="checkbox" name="featured" checked={form.featured} onChange={handleFormChange} /><span className="admin-toggle__track" /><span className="admin-toggle__label">Featured Show</span></label>
+              <label className="admin-toggle"><input type="checkbox" name="featured" checked={form.featured} onChange={handleFormChange} /><span className="admin-toggle__track" /><span className="admin-toggle__label">Featured</span></label>
               <label className="admin-toggle"><input type="checkbox" name="sold_out" checked={form.sold_out} onChange={handleFormChange} /><span className="admin-toggle__track" /><span className="admin-toggle__label">Sold Out</span></label>
             </div>
             <div className="admin-form__actions">
@@ -478,7 +451,7 @@ export default function Admin() {
         {/* ── SHOWS LIST ── */}
         <section className="admin-section">
           <h2 className="admin-section__title">Current Shows {shows.length > 0 && <span className="admin-count">{shows.length}</span>}</h2>
-          {loading ? <p className="admin-loading">Loading shows...</p> : shows.length === 0 ? <p className="admin-empty">No shows yet.</p> : (
+          {loading ? <p className="admin-loading">Loading...</p> : shows.length === 0 ? <p className="admin-empty">No shows yet.</p> : (
             <div className="admin-shows">
               {shows.map(show => (
                 <div key={show.id} className={`admin-show-row ${show.featured ? 'admin-show-row--featured' : ''}`}>
@@ -509,8 +482,7 @@ export default function Admin() {
         <section className="admin-section">
           <h2 className="admin-section__title">🎤 Performer Submissions {submissions.length > 0 && <span className="admin-count">{submissions.length}</span>}</h2>
           <div className="admin-form__row" style={{ marginBottom: '16px' }}>
-            <div className="admin-form__field">
-              <label className="admin-label">Filter</label>
+            <div className="admin-form__field"><label className="admin-label">Filter</label>
               <select className="admin-input" value={submissionFilter} onChange={e => setSubmissionFilter(e.target.value)}>
                 <option value="all">All</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option><option value="unranked">Unranked</option>
               </select>

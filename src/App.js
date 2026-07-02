@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
+import PromoPopup from './components/PromoPopup';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import Performers from './pages/Performers';
@@ -21,6 +22,7 @@ function Layout({ children }) {
         {children}
       </main>
       <Footer />
+      <PromoPopup />
     </>
   );
 }

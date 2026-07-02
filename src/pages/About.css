@@ -14,53 +14,42 @@
 .story-hero__title { font-size: clamp(2.5rem, 6vw, 4rem); margin: 12px 0 20px; }
 .story-hero__sub { max-width: 580px; margin: 0 auto; font-size: 1.05rem; }
 
-.story-section__title { font-size: clamp(1.8rem, 4vw, 2.4rem); margin-bottom: 24px; }
+.story-section__title { font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 20px; }
 .story-section__body { font-size: 1.05rem; line-height: 1.75; }
 .story-section__body p { margin-bottom: 18px; }
 
-/* ── Image + copy layout (one image left of text, under headline) ── */
-.story-split-img__columns {
+/* ── Two-column: [label + headline + image] | [copy] ── */
+.story-split-img {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
   align-items: start;
 }
+.story-split-img__left {
+  display: flex;
+  flex-direction: column;
+}
 .story-split-img__photo-wrap {
+  margin-top: 20px;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  aspect-ratio: 3 / 4;
 }
 .story-split-img__photo {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
   display: block;
+  object-fit: cover;
 }
 
-@media (max-width: 760px) {
-  .story-split-img__columns {
+@media (max-width: 800px) {
+  .story-split-img {
     grid-template-columns: 1fr;
-  }
-  .story-split-img__photo-wrap {
-    aspect-ratio: 16 / 9;
-    max-width: 100%;
+    gap: 32px;
   }
 }
 
-/* ── Community split (text only, two cols) ── */
-.story-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: start;
-}
-@media (max-width: 880px) {
-  .story-split { grid-template-columns: 1fr; }
-}
-
+/* ── Pillars ── */
 .story-pillars {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -77,6 +66,7 @@
 .story-pillar__title { font-size: 1.1rem; color: #d4af37; margin-bottom: 8px; }
 .story-pillar__text { font-size: 0.92rem; line-height: 1.6; }
 
+/* ── Timeline ── */
 .story-timeline {
   border-left: 2px solid rgba(212, 175, 55, 0.35);
   margin-top: 8px;
@@ -98,6 +88,7 @@
 .story-timeline__label { font-size: 0.85rem; letter-spacing: 0.08em; color: #3ea6ff; margin-bottom: 4px; text-transform: uppercase; }
 .story-timeline__text { font-size: 1rem; line-height: 1.6; }
 
+/* ── CTA ── */
 .story-cta {
   background: linear-gradient(135deg, rgba(62, 166, 255, 0.08), rgba(212, 175, 55, 0.08));
   border-top: 1px solid rgba(255,255,255,0.06);

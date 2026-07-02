@@ -1,6 +1,9 @@
 import './PageShell.css';
 import './About.css';
 
+const SUPABASE_IMG = (filename) =>
+  `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
+
 export default function About() {
   return (
     <div className="story-page">
@@ -20,38 +23,55 @@ export default function About() {
         </div>
       </section>
 
-      {/* ORIGIN */}
+      {/* ORIGIN — two venue photos left, text right */}
       <section className="section">
-        <div className="container story-split">
-          <div>
+        <div className="container story-origin">
+          <div className="story-origin__photos">
+            <div className="story-origin__photo-wrap story-origin__photo-wrap--top">
+              <img
+                src={SUPABASE_IMG('room-%20center-stage.jpg')}
+                alt="Cool J's AfterDARK — the stage"
+                className="story-origin__photo"
+              />
+            </div>
+            <div className="story-origin__photo-wrap story-origin__photo-wrap--bottom">
+              <img
+                src={SUPABASE_IMG('crowd-intimate-view.jpg')}
+                alt="Cool J's AfterDARK — the crowd"
+                className="story-origin__photo"
+              />
+            </div>
+          </div>
+
+          <div className="story-origin__text">
             <p className="section-label">How It Started</p>
             <span className="gold-line" />
             <h2 className="story-section__title">A Side Room With Big Ambitions</h2>
-          </div>
-          <div className="story-section__body text-dim">
-            <p>
-              Cool J's AfterDARK didn't start as a venue — it started as an idea
-              scribbled on the back of a napkin: Delaware deserved a real night
-              out. Not a one-off show in a borrowed banquet hall, but a place
-              people could count on, week after week, for something live, loud,
-              and unapologetically fun.
-            </p>
-            <p>
-              The first comedy night drew a handful of regulars and a borrowed
-              mic stand. There was no stage lighting to speak of, no fog
-              machine, no line out the door — just a room full of people
-              willing to laugh together in Bear, Delaware. That night became a
-              second night. A second night became a residency. And that
-              residency is now the longest continuously running comedy show in
-              the state.
-            </p>
-            <p>
-              Somewhere along the way, "the comedy show" stopped being the
-              whole story. Karaoke nights packed the room. Live bands started
-              asking to play. Poets and spoken word artists found a stage that
-              actually listened. AfterDARK stopped being one thing and became
-              a banner for all of it.
-            </p>
+            <div className="story-section__body text-dim">
+              <p>
+                Cool J's AfterDARK didn't start as a venue — it started as an idea
+                scribbled on the back of a napkin: Delaware deserved a real night
+                out. Not a one-off show in a borrowed banquet hall, but a place
+                people could count on, week after week, for something live, loud,
+                and unapologetically fun.
+              </p>
+              <p>
+                The first comedy night drew a handful of regulars and a borrowed
+                mic stand. There was no stage lighting to speak of, no fog
+                machine, no line out the door — just a room full of people
+                willing to laugh together in Bear, Delaware. That night became a
+                second night. A second night became a residency. And that
+                residency is now the longest continuously running comedy show in
+                the state.
+              </p>
+              <p>
+                Somewhere along the way, "the comedy show" stopped being the
+                whole story. Karaoke nights packed the room. Live bands started
+                asking to play. Poets and spoken word artists found a stage that
+                actually listened. AfterDARK stopped being one thing and became
+                a banner for all of it.
+              </p>
+            </div>
           </div>
         </div>
       </section>

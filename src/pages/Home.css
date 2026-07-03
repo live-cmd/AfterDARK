@@ -532,6 +532,23 @@
 
 .email-signup__input::placeholder { color: var(--white-dim); opacity: 0.5; }
 .email-signup__input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,191,255,0.1); }
+.email-signup__input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.email-signup__success {
+  color: var(--blue);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.email-signup__error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin: 16px auto 0;
+  max-width: 480px;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {

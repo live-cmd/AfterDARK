@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ScrollReveal from '../components/ScrollReveal';
+import { supabase } from '../lib/supabaseClient';
+import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import './Home.css';
 
 const SUPABASE_IMG = (filename) =>
@@ -22,24 +24,6 @@ const REVIEWS = [
   { author: 'Autumn Hayes', text: "It was the best decision I made that night. I love the intimate close knit vibe of the place. The comedians were hilarious. Can't wait to come back!" },
 ];
 
-const SHOWS = [
-  {
-    month: 'JUN', day: '14', name: 'AfterDARK Summer Kickoff', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: 'Kick off summer the right way. Headliner TBA.',
-    tags: ['Comedy', 'All Ages', 'Bear, DE'], soldOut: false,
-  },
-  {
-    month: 'JUN', day: '28', name: "Cool J's AfterDARK", venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: "Delaware's longest-running comedy show returns.",
-    tags: ['Comedy', 'Open Mic', 'Bear, DE'], soldOut: false,
-  },
-  {
-    month: 'JUL', day: '12', name: 'Independence Laughs', venue: 'Bear, DE', time: 'Doors 7PM · Show 8PM',
-    desc: 'A July tradition. Fire comedy, no fireworks required.',
-    tags: ['Comedy', 'Special Event', 'Bear, DE'], soldOut: false,
-  },
-];
-
 const GALLERY_PHOTOS = [
   { src: SUPABASE_IMG('comedy_comedian-wide-shot-1.jpeg'), alt: 'AfterDARK crowd' },
   { src: SUPABASE_IMG('comedy_comedy@cooljs-brand-card.png'), alt: "Comedy Night at Cool J's AfterDARK", isBrandCard: true },
@@ -58,7 +42,11 @@ const PILLARS = [
 ];
 
 export default function Home() {
+  const navigate = useNavigate();
   const [slideIndex, setSlideIndex] = useState(0);
+  const [shows, setShows] = useState([]);
+  const [showsLoading, setShowsLoading] = useState(true);
+  const [showsError, setShowsError] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -66,6 +54,79 @@ export default function Home() {
     }, 8000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    fetchUpcomingShows();
+  }, []);
+
+  async function fetchUpcomingShows() {
+    setShowsLoading(true);
+    setShowsError(false);
+
+    try {
+      const [supabaseResult, eventbriteEvents] = await Promise.allSettled([
+        supabase.from('shows').select('*').order('date', { ascending: true }),
+        fetchEventbriteEvents()
+      ]);
+
+      const supabaseShows =
+        supabaseResult.status === 'fulfilled' && !supabaseResult.value.error
+          ? supabaseResult.value.data || []
+          : [];
+
+      const ebShows =
+        eventbriteEvents.status === 'fulfilled' ? eventbriteEvents.value : [];
+
+      const ebKeys = new Set(ebShows.map(e => `${e.date}|${e.name.toLowerCase()}`));
+      const filteredSupabase = supabaseShows.filter(
+        s => !ebKeys.has(`${s.date}|${s.name?.toLowerCase()}`)
+      );
+
+      const merged = [...ebShows, ...filteredSupabase].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const upcoming = merged.filter(s => new Date(s.date + 'T00:00:00') >= today);
+
+      if (upcoming.length === 0 && supabaseResult.status === 'rejected' && eventbriteEvents.status === 'rejected') {
+        setShowsError(true);
+      } else {
+        setShows(upcoming.slice(0, 3));
+      }
+    } catch {
+      setShowsError(true);
+    }
+
+    setShowsLoading(false);
+  }
+
+  function getTicketCTA(show) {
+    if (show.sold_out) return <span className="show-card__sold-out">Sold Out</span>;
+    if (show.is_private) {
+      return (
+        <Link to="/private-events" className="show-card__ticket-btn">
+          <span className="show-card__ticket-notch show-card__ticket-notch--left" />
+          <span className="show-card__ticket-text">Request Booking</span>
+          <span className="show-card__ticket-notch show-card__ticket-notch--right" />
+        </Link>
+      );
+    }
+    if (show.is_free) return <span className="show-card__sold-out">Free Admission</span>;
+    const href = show.eventbrite_url || '/tickets';
+    const isExternal = href.startsWith('http');
+    const content = (
+      <>
+        <span className="show-card__ticket-notch show-card__ticket-notch--left" />
+        <span className="show-card__ticket-text">🎟 Tickets</span>
+        <span className="show-card__ticket-notch show-card__ticket-notch--right" />
+      </>
+    );
+    return isExternal
+      ? <a href={href} target="_blank" rel="noopener noreferrer" className="show-card__ticket-btn" onClick={e => e.stopPropagation()}>{content}</a>
+      : <Link to={href} className="show-card__ticket-btn" onClick={e => e.stopPropagation()}>{content}</Link>;
+  }
 
   const goTo = (i) => setSlideIndex(i);
 
@@ -166,41 +227,62 @@ export default function Home() {
             <span className="blue-line" />
             <h2 className="shows__title">Upcoming Shows</h2>
           </ScrollReveal>
-          <div className="shows__grid">
-            {SHOWS.map((show, i) => (
-              <ScrollReveal key={i} delay={i * 80}>
-                <div className="show-card">
-                  <div className="show-card__date">
-                    <span className="show-card__month">{show.month}</span>
-                    <span className="show-card__day">{show.day}</span>
-                  </div>
-                  <div className="show-card__info">
-                    <span className="show-card__live">Live</span>
-                    <h3 className="show-card__name">{show.name}</h3>
-                    <p className="show-card__meta">{show.venue} &bull; {show.time}</p>
-                    <p className="show-card__desc">{show.desc}</p>
-                    <div className="show-card__tags">
-                      {show.tags.map((tag, t) => (
-                        <span key={t} className="show-card__tag">{tag}</span>
-                      ))}
+
+          {showsLoading && (
+            <p className="text-dim">Loading shows...</p>
+          )}
+
+          {!showsLoading && showsError && (
+            <p className="text-dim">Couldn't load shows right now. Check back soon.</p>
+          )}
+
+          {!showsLoading && !showsError && shows.length === 0 && (
+            <p className="text-dim">No upcoming shows right now. Check back soon.</p>
+          )}
+
+          {!showsLoading && !showsError && shows.length > 0 && (
+            <div className="shows__grid">
+              {shows.map((show, i) => (
+                <ScrollReveal key={show.id || i} delay={i * 80}>
+                  <div
+                    className="show-card"
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => navigate('/events')}
+                    onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && navigate('/events')}
+                  >
+                    <div className="show-card__date">
+                      <span className="show-card__month">{show.month}</span>
+                      <span className="show-card__day">{show.day}</span>
+                    </div>
+                    <div className="show-card__info">
+                      <span className="show-card__live">Live</span>
+                      <h3 className="show-card__name">{show.name}</h3>
+                      <p className="show-card__meta">{show.venue} &bull; {show.time}</p>
+                      {show.description && (
+                        <p className="show-card__desc">
+                          {show.description.length > 100
+                            ? show.description.slice(0, 100).trimEnd() + '…'
+                            : show.description}
+                        </p>
+                      )}
+                      {show.tags?.length > 0 && (
+                        <div className="show-card__tags">
+                          {show.tags.map((tag, t) => (
+                            <span key={t} className="show-card__tag">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="show-card__action">
+                      {getTicketCTA(show)}
                     </div>
                   </div>
-                  <div className="show-card__action">
-                    {show.soldOut
-                      ? <span className="show-card__sold-out">Sold Out</span>
-                      : (
-                        <Link to="/tickets" className="show-card__ticket-btn">
-                          <span className="show-card__ticket-notch show-card__ticket-notch--left" />
-                          <span className="show-card__ticket-text">🎟 Tickets</span>
-                          <span className="show-card__ticket-notch show-card__ticket-notch--right" />
-                        </Link>
-                      )
-                    }
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          )}
+
           <div className="shows__more">
             <Link to="/events" className="btn btn-outline-white">View Full Calendar</Link>
           </div>

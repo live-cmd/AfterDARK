@@ -47,6 +47,8 @@ export default function Home() {
   const [shows, setShows] = useState([]);
   const [showsLoading, setShowsLoading] = useState(true);
   const [showsError, setShowsError] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupStatus, setSignupStatus] = useState('idle'); // idle | loading | success | error
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -100,6 +102,29 @@ export default function Home() {
     }
 
     setShowsLoading(false);
+  }
+
+  async function handleEmailSignup(e) {
+    e.preventDefault();
+    if (signupStatus === 'loading') return;
+
+    setSignupStatus('loading');
+    try {
+      const res = await fetch('/.netlify/functions/email-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: signupEmail }),
+      });
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setSignupStatus('success');
+        setSignupEmail('');
+      } else {
+        setSignupStatus('error');
+      }
+    } catch {
+      setSignupStatus('error');
+    }
   }
 
   function getTicketCTA(show) {
@@ -391,10 +416,34 @@ export default function Home() {
             <p className="email-signup__desc text-center">
               Get early access to tickets, exclusive offers, and AfterDARK news delivered straight to your inbox.
             </p>
-            <form className="email-signup__form" onSubmit={e => e.preventDefault()}>
-              <input type="email" placeholder="your@email.com" className="email-signup__input" aria-label="Email address" required />
-              <button type="submit" className="btn btn-blue">Sign Me Up</button>
-            </form>
+
+            {signupStatus === 'success' ? (
+              <p className="email-signup__success" role="status">
+                You're in! Watch your inbox for AfterDARK news.
+              </p>
+            ) : (
+              <form className="email-signup__form" onSubmit={handleEmailSignup}>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  className="email-signup__input"
+                  aria-label="Email address"
+                  required
+                  value={signupEmail}
+                  onChange={e => setSignupEmail(e.target.value)}
+                  disabled={signupStatus === 'loading'}
+                />
+                <button type="submit" className="btn btn-blue" disabled={signupStatus === 'loading'}>
+                  {signupStatus === 'loading' ? 'Signing Up…' : 'Sign Me Up'}
+                </button>
+              </form>
+            )}
+
+            {signupStatus === 'error' && (
+              <p className="email-signup__error" role="alert">
+                Something went wrong. Please try again in a moment.
+              </p>
+            )}
           </ScrollReveal>
         </div>
       </section>

@@ -5,6 +5,7 @@ import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import FeaturedEvent from '../components/FeaturedEvent';
 import './Tickets.css';
 import EventSchema from '../components/EventSchema';
+import SEO from '../components/SEO';
 
 function getTicketCTA(show, variant = 'list') {
   const btnClass = variant === 'featured' ? 'btn btn-blue tickets-featured__cta' : 'btn btn-outline-blue';
@@ -69,6 +70,11 @@ export default function Tickets() {
 
   return (
     <div className="tickets-page">
+      <SEO
+        path="/tickets"
+        title="Get Tickets | Cool J's AfterDARK — Bear, Delaware"
+        description="Buy tickets to upcoming shows at Cool J's AfterDARK. All tickets sold through Eventbrite — secure checkout, instant confirmation."
+      />
       <EventSchema shows={shows} />
 
       {/* HERO — text left, featured card right */}

@@ -5,6 +5,14 @@
 [functions]
   directory = "netlify/functions"
 
+[[edge_functions]]
+  path = "/events"
+  function = "event-schema"
+
+[[edge_functions]]
+  path = "/tickets"
+  function = "event-schema"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

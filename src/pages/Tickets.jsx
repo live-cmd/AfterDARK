@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import FeaturedEvent from '../components/FeaturedEvent';
 import './Tickets.css';
-import EventSchema from '../components/EventSchema';
 import SEO from '../components/SEO';
 
 function getTicketCTA(show, variant = 'list') {
@@ -75,7 +74,6 @@ export default function Tickets() {
         title="Get Tickets | Cool J's AfterDARK — Bear, Delaware"
         description="Buy tickets to upcoming shows at Cool J's AfterDARK. All tickets sold through Eventbrite — secure checkout, instant confirmation."
       />
-      <EventSchema shows={shows} />
 
       {/* HERO — text left, featured card right */}
       <section className="tickets-hero">

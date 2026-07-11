@@ -1,5 +1,6 @@
-// TEMPORARY DIAGNOSTICS VERSION -- see PR description. Revert once the
-// runtime failure is identified.
+// TEMPORARY DIAGNOSTICS VERSION -- see PR #5 description. Revert once the
+// runtime behavior is confirmed. This revision also forces no-store
+// caching so we can verify against a genuinely fresh response each time.
 
 const SUPABASE_URL = 'https://psxvjiuufwwcqrkdpueh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_M6rVL6iN53U8DyZkCi9oMQ_Mm4FjfLm';
@@ -95,6 +96,13 @@ function buildEventLd(show) {
   };
 }
 
+function noStore(res) {
+  const headers = new Headers(res.headers);
+  headers.set('Cache-Control', 'no-store, must-revalidate');
+  headers.delete('Age');
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+}
+
 export default async (request, context) => {
   const response = await context.next();
   const diag = { steps: [] };
@@ -144,7 +152,7 @@ export default async (request, context) => {
           element.append(diagComment, { html: true });
         }
       }
-      return new HTMLRewriter().on('head', new DiagOnlyInjector()).transform(response);
+      return noStore(new HTMLRewriter().on('head', new DiagOnlyInjector()).transform(response));
     }
 
     const scriptTags = upcoming
@@ -157,7 +165,7 @@ export default async (request, context) => {
       }
     }
 
-    return new HTMLRewriter().on('head', new HeadInjector()).transform(response);
+    return noStore(new HTMLRewriter().on('head', new HeadInjector()).transform(response));
   } catch (err) {
     diag.topLevelError = String(err && err.stack || err);
     const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
@@ -167,7 +175,7 @@ export default async (request, context) => {
           element.append(diagComment, { html: true });
         }
       }
-      return new HTMLRewriter().on('head', new ErrInjector()).transform(response);
+      return noStore(new HTMLRewriter().on('head', new ErrInjector()).transform(response));
     } catch {
       return response;
     }

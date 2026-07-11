@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import PromoPopup from './components/PromoPopup';
@@ -30,20 +31,22 @@ function Layout({ children }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/events" element={<Layout><Events /></Layout>} />
-        <Route path="/performers" element={<Layout><Performers /></Layout>} />
-        <Route path="/tickets" element={<Layout><Tickets /></Layout>} />
-        <Route path="/private-events" element={<Layout><PrivateEvents /></Layout>} />
-        <Route path="/radar" element={<Layout><Radar /></Layout>} />
-        <Route path="/about" element={<Layout><About /></Layout>} />
-        <Route path="/submit" element={<Layout><Submit /></Layout>} />
-        <Route path="/menu" element={<Layout><Menu /></Layout>} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/vibe" element={<Vibe />} />
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout><Home /></Layout>} />
+          <Route path="/events" element={<Layout><Events /></Layout>} />
+          <Route path="/performers" element={<Layout><Performers /></Layout>} />
+          <Route path="/tickets" element={<Layout><Tickets /></Layout>} />
+          <Route path="/private-events" element={<Layout><PrivateEvents /></Layout>} />
+          <Route path="/radar" element={<Layout><Radar /></Layout>} />
+          <Route path="/about" element={<Layout><About /></Layout>} />
+          <Route path="/submit" element={<Layout><Submit /></Layout>} />
+          <Route path="/menu" element={<Layout><Menu /></Layout>} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/vibe" element={<Vibe />} />
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

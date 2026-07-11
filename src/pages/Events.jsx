@@ -5,6 +5,7 @@ import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import FeaturedEvent from '../components/FeaturedEvent';
 import './Events.css';
 import EventSchema from '../components/EventSchema';
+import SEO from '../components/SEO';
 
 export default function Events() {
   const [filter, setFilter] = useState('upcoming');
@@ -82,6 +83,11 @@ export default function Events() {
 
   return (
     <div className="events-page">
+      <SEO
+        path="/events"
+        title="Upcoming Shows | Cool J's AfterDARK — Live Comedy in Bear, DE"
+        description="See what's coming up at Cool J's AfterDARK — live comedy, karaoke, spoken word, and live music in Bear, Delaware. Every show is one night only."
+      />
       <EventSchema shows={shows} />
 
       {/* HERO — text left, featured card right */}

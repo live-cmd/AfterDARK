@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import ScrollReveal from '../components/ScrollReveal';
 import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
+import SEO from '../components/SEO';
 import './Home.css';
 
 const SUPABASE_IMG = (filename) =>
@@ -144,7 +145,7 @@ export default function Home() {
     const content = (
       <>
         <span className="show-card__ticket-notch show-card__ticket-notch--left" />
-        <span className="show-card__ticket-text">🎟 Tickets</span>
+        <span className="show-card__ticket-text">🎫 Tickets</span>
         <span className="show-card__ticket-notch show-card__ticket-notch--right" />
       </>
     );
@@ -157,6 +158,7 @@ export default function Home() {
 
   return (
     <div className="home">
+      <SEO path="/" />
 
       {/* ── HERO ── */}
       <section className="hero">

@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabaseClient';
 import { fetchEventbriteEvents } from '../lib/eventbriteClient';
 import FeaturedEvent from '../components/FeaturedEvent';
 import './Events.css';
-import EventSchema from '../components/EventSchema';
 import SEO from '../components/SEO';
 
 export default function Events() {
@@ -88,7 +87,6 @@ export default function Events() {
         title="Upcoming Shows | Cool J's AfterDARK — Live Comedy in Bear, DE"
         description="See what's coming up at Cool J's AfterDARK — live comedy, karaoke, spoken word, and live music in Bear, Delaware. Every show is one night only."
       />
-      <EventSchema shows={shows} />
 
       {/* HERO — text left, featured card right */}
       <section className="events-hero">

@@ -1,20 +1,5 @@
-// Netlify Edge Function: injects standalone Event JSON-LD (schema.org)
-// into the HTML response for /events and /tickets, computed server-side
-// at request time.
-//
-// Why this exists: the client-side version (src/components/EventSchema.jsx)
-// only writes its JSON-LD <script> tags after two chained async steps
-// finish -- fetch shows (Supabase + Eventbrite) -> React state update ->
-// EventSchema's own effect -> DOM injection. Real visitors see it fine,
-// but Google's Rich Results Test kept reporting zero Event items even
-// after the per-page canonical fix shipped and Eventbrite env vars were
-// confirmed correct. Doing this at the edge means the JSON-LD is present
-// in the very first response byte -- no JS execution or third-party API
-// wait required on the crawler's end.
-//
-// Fails open: if either data source errors, the original (unmodified)
-// response is returned untouched so this can never break the page for a
-// real visitor.
+// TEMPORARY DIAGNOSTICS VERSION -- see PR description. Revert once the
+// runtime failure is identified.
 
 const SUPABASE_URL = 'https://psxvjiuufwwcqrkdpueh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_M6rVL6iN53U8DyZkCi9oMQ_Mm4FjfLm';
@@ -39,15 +24,15 @@ async function fetchSupabaseShows() {
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     },
   });
-  if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
+  if (!res.ok) throw new Error(`Supabase error: ${res.status} ${await res.text().catch(() => '')}`);
   return res.json();
 }
 
 async function fetchEventbriteEvents(apiKey, orgId) {
-  if (!apiKey || !orgId) return [];
+  if (!apiKey || !orgId) throw new Error(`Missing Eventbrite credentials (apiKey present: ${!!apiKey}, orgId present: ${!!orgId})`);
   const url = `https://www.eventbriteapi.com/v3/organizations/${orgId}/events/?status=live&expand=venue,logo&order_by=start_asc&token=${apiKey}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Eventbrite error: ${res.status}`);
+  if (!res.ok) throw new Error(`Eventbrite error: ${res.status} ${await res.text().catch(() => '')}`);
   const json = await res.json();
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return (json.events || []).map(ev => {
@@ -112,18 +97,30 @@ function buildEventLd(show) {
 
 export default async (request, context) => {
   const response = await context.next();
+  const diag = { steps: [] };
 
   try {
     const contentType = response.headers.get('content-type') || '';
+    diag.contentType = contentType;
     if (!contentType.includes('text/html')) return response;
 
     const apiKey = Netlify.env.get('REACT_APP_EVENTBRITE_API_KEY');
     const orgId = Netlify.env.get('REACT_APP_EVENTBRITE_ORG_ID');
+    diag.apiKeyPresent = !!apiKey;
+    diag.orgIdPresent = !!orgId;
 
     const [supabaseResult, eventbriteResult] = await Promise.allSettled([
       fetchSupabaseShows(),
       fetchEventbriteEvents(apiKey, orgId),
     ]);
+
+    diag.supabaseStatus = supabaseResult.status;
+    diag.supabaseCount = supabaseResult.status === 'fulfilled' ? supabaseResult.value.length : undefined;
+    diag.supabaseError = supabaseResult.status === 'rejected' ? String(supabaseResult.reason) : undefined;
+
+    diag.eventbriteStatus = eventbriteResult.status;
+    diag.eventbriteCount = eventbriteResult.status === 'fulfilled' ? eventbriteResult.value.length : undefined;
+    diag.eventbriteError = eventbriteResult.status === 'rejected' ? String(eventbriteResult.reason) : undefined;
 
     const supabaseShows = supabaseResult.status === 'fulfilled' ? supabaseResult.value : [];
     const ebShows = eventbriteResult.status === 'fulfilled' ? eventbriteResult.value : [];
@@ -136,8 +133,19 @@ export default async (request, context) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const upcoming = merged.filter(s => new Date(s.date + 'T00:00:00') >= today);
+    diag.mergedCount = merged.length;
+    diag.upcomingCount = upcoming.length;
 
-    if (upcoming.length === 0) return response;
+    const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
+
+    if (upcoming.length === 0) {
+      class DiagOnlyInjector {
+        element(element) {
+          element.append(diagComment, { html: true });
+        }
+      }
+      return new HTMLRewriter().on('head', new DiagOnlyInjector()).transform(response);
+    }
 
     const scriptTags = upcoming
       .map(show => `<script type="application/ld+json">${JSON.stringify(buildEventLd(show))}</script>`)
@@ -145,13 +153,24 @@ export default async (request, context) => {
 
     class HeadInjector {
       element(element) {
-        element.append(scriptTags, { html: true });
+        element.append(diagComment + '\n' + scriptTags, { html: true });
       }
     }
 
     return new HTMLRewriter().on('head', new HeadInjector()).transform(response);
-  } catch {
-    return response;
+  } catch (err) {
+    diag.topLevelError = String(err && err.stack || err);
+    const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
+    try {
+      class ErrInjector {
+        element(element) {
+          element.append(diagComment, { html: true });
+        }
+      }
+      return new HTMLRewriter().on('head', new ErrInjector()).transform(response);
+    } catch {
+      return response;
+    }
   }
 };
 

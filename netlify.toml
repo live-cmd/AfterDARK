@@ -5,6 +5,16 @@
 [functions]
   directory = "netlify/functions"
 
+[[headers]]
+  for = "/events"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+
+[[headers]]
+  for = "/tickets"
+  [headers.values]
+    Cache-Control = "no-store, must-revalidate"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

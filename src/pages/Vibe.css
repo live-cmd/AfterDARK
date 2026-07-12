@@ -12,14 +12,14 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.25) saturate(0.7);
+  filter: brightness(0.5) saturate(0.85);
   transform: scale(1.05);
 }
 
 .vibe-page__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.75) 60%, rgba(10,10,10,0.9) 100%);
+  background: linear-gradient(to top, rgba(10,10,10,0.88) 0%, rgba(10,10,10,0.4) 60%, rgba(10,10,10,0.6) 100%);
 }
 
 .vibe-page__content {

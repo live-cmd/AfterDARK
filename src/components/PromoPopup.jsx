@@ -20,7 +20,7 @@ export default function PromoPopup() {
         .eq('enabled', true)
         .eq('site', 'afterdark')
         .limit(1)
-        .single();
+        .maybeSingle();
       if (!error && data) {
         setPopup(data);
         setTimeout(() => setVisible(true), 600);

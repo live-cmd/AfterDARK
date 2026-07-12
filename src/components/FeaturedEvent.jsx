@@ -43,7 +43,7 @@ export default function FeaturedEvent() {
           .from('shows')
           .select('*')
           .eq('id', config.event_id)
-          .single();
+          .maybeSingle();
         if (!showError && show) {
           setFeatured({ ...show, promo_code: config.promo_code, promo_text: config.promo_text, custom_cta_label: config.custom_cta_label });
         } else {

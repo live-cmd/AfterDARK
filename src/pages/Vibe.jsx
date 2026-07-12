@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import './Vibe.css';
 
 const SUPABASE_IMG = (filename) =>
   `https://psxvjiuufwwcqrkdpueh.supabase.co/storage/v1/object/public/afterdark-media/website-images/${filename}`;
+
+const VIBE_OG_IMAGE = SUPABASE_IMG('comedy_comedian-wide-shot-1.jpeg');
 
 const INTERESTS = [
   { id: 'comedy', label: 'Comedy Night' },
@@ -65,7 +68,13 @@ export default function Vibe() {
 
   return (
     <div className="vibe-page">
-      <div className="vibe-page__bg" style={{ backgroundImage: `url(${SUPABASE_IMG('comedy_comedian-wide-shot-1.jpeg')})` }} />
+      <SEO
+        path="/vibe"
+        title="Get the AfterDARK Vibe | Cool J's AfterDARK"
+        description="You found us. Tell us what you're into — comedy, karaoke, open mic, and more — and we'll make sure you never miss the vibe at Cool J's AfterDARK in Bear, DE."
+        image={VIBE_OG_IMAGE}
+      />
+      <div className="vibe-page__bg" style={{ backgroundImage: `url(${VIBE_OG_IMAGE})` }} />
       <div className="vibe-page__overlay" />
 
       <div className="vibe-page__content">

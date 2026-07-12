@@ -1,5 +1,5 @@
-// TEMPORARY DIAGNOSTICS VERSION -- see PR #5 description. Revert once the
-// runtime behavior is confirmed.
+// TEMPORARY BULLETPROOF DIAGNOSTICS -- see PR description. Revert once the
+// runtime failure is identified and fixed.
 
 const SUPABASE_URL = 'https://psxvjiuufwwcqrkdpueh.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_M6rVL6iN53U8DyZkCi9oMQ_Mm4FjfLm';
@@ -103,29 +103,30 @@ function noStore(res) {
 }
 
 export default async (request, context) => {
-  // Request uncompressed HTML from the origin -- HTMLRewriter needs plain
-  // text to find elements like <head>. If the origin serves a
-  // Content-Encoding: br/gzip body, HTMLRewriter has nothing to match
-  // against and silently passes it through unchanged (no error, no effect),
-  // which is what we saw for every prior deploy of this function.
-  const reqHeaders = new Headers(request.headers);
-  reqHeaders.delete('accept-encoding');
-  const uncompressedRequest = new Request(request, { headers: reqHeaders });
-
-  const response = await context.next(uncompressedRequest);
-  const diag = { steps: [] };
+  const diag = { stage: 'start' };
 
   try {
+    diag.stage = 'calling context.next()';
+    const response = await context.next();
+
+    diag.stage = 'read response headers';
     const contentType = response.headers.get('content-type') || '';
     diag.contentType = contentType;
-    diag.responseContentEncoding = response.headers.get('content-encoding') || null;
-    if (!contentType.includes('text/html')) return response;
+    diag.contentEncoding = response.headers.get('content-encoding') || null;
+    diag.status = response.status;
 
+    if (!contentType.includes('text/html')) {
+      diag.stage = 'skipped: not html';
+      return response;
+    }
+
+    diag.stage = 'reading env vars';
     const apiKey = Netlify.env.get('REACT_APP_EVENTBRITE_API_KEY');
     const orgId = Netlify.env.get('REACT_APP_EVENTBRITE_ORG_ID');
     diag.apiKeyPresent = !!apiKey;
     diag.orgIdPresent = !!orgId;
 
+    diag.stage = 'fetching supabase + eventbrite';
     const [supabaseResult, eventbriteResult] = await Promise.allSettled([
       fetchSupabaseShows(),
       fetchEventbriteEvents(apiKey, orgId),
@@ -142,9 +143,9 @@ export default async (request, context) => {
     const supabaseShows = supabaseResult.status === 'fulfilled' ? supabaseResult.value : [];
     const ebShows = eventbriteResult.status === 'fulfilled' ? eventbriteResult.value : [];
 
+    diag.stage = 'merging';
     const ebKeys = new Set(ebShows.map(e => `${e.date}|${e.name.toLowerCase()}`));
     const filteredSupabase = supabaseShows.filter(s => !ebKeys.has(`${s.date}|${(s.name || '').toLowerCase()}`));
-
     const merged = [...ebShows, ...filteredSupabase].sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const today = new Date();
@@ -153,41 +154,31 @@ export default async (request, context) => {
     diag.mergedCount = merged.length;
     diag.upcomingCount = upcoming.length;
 
-    const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
-
-    if (upcoming.length === 0) {
-      class DiagOnlyInjector {
-        element(element) {
-          element.append(diagComment, { html: true });
-        }
-      }
-      return noStore(new HTMLRewriter().on('head', new DiagOnlyInjector()).transform(response));
-    }
-
+    diag.stage = 'building script tags';
     const scriptTags = upcoming
       .map(show => `<script type="application/ld+json">${JSON.stringify(buildEventLd(show))}</script>`)
       .join('\n');
 
+    const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
+
+    diag.stage = 'running HTMLRewriter';
     class HeadInjector {
       element(element) {
-        element.append(diagComment + '\n' + scriptTags, { html: true });
+        element.append(diagComment + (scriptTags ? '\n' + scriptTags : ''), { html: true });
       }
     }
 
-    return noStore(new HTMLRewriter().on('head', new HeadInjector()).transform(response));
+    const rewritten = new HTMLRewriter().on('head', new HeadInjector()).transform(response);
+
+    diag.stage = 'returning transformed response';
+    return noStore(rewritten);
   } catch (err) {
-    diag.topLevelError = String(err && err.stack || err);
-    const diagComment = `<!-- event-schema-debug ${JSON.stringify(diag).replace(/-->/g, '')} -->`;
-    try {
-      class ErrInjector {
-        element(element) {
-          element.append(diagComment, { html: true });
-        }
-      }
-      return noStore(new HTMLRewriter().on('head', new ErrInjector()).transform(response));
-    } catch {
-      return response;
-    }
+    diag.stage = `FAILED during: ${diag.stage}`;
+    diag.error = String((err && err.stack) || err);
+    return new Response(
+      `EVENT-SCHEMA-DEBUG-ERROR\n${JSON.stringify(diag, null, 2)}`,
+      { status: 200, headers: { 'content-type': 'text/plain' } }
+    );
   }
 };
 

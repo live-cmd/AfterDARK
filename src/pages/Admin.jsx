@@ -60,6 +60,8 @@ export default function Admin() {
   const [popupForm, setPopupForm] = useState(EMPTY_POPUP_FORM);
   const [popupSaving, setPopupSaving] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
+  const [popupUploading, setPopupUploading] = useState(false);
+  const popupFileInputRef = useRef();
 
   useEffect(() => {
     if (authed) {
@@ -69,7 +71,7 @@ export default function Admin() {
   }, [authed]);
 
   async function loadPopupConfig() {
-    const { data, error } = await supabase.from('promo_popup').select('*').eq('site', 'afterdark').limit(1).single();
+    const { data, error } = await supabase.from('promo_popup').select('*').eq('site', 'afterdark').limit(1).maybeSingle();
     if (!error && data) {
       setPopupConfig(data);
       setPopupForm({
@@ -80,6 +82,23 @@ export default function Admin() {
       });
     }
   }
+
+  async function handlePopupImageUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) { setPopupMessage('❌ Please upload a JPG, PNG, WebP, or GIF image.'); return; }
+    if (file.size > 5 * 1024 * 1024) { setPopupMessage('❌ Image must be under 5MB.'); return; }
+    setPopupUploading(true); setPopupMessage('');
+    const ext = file.name.split('.').pop();
+    const fileName = `promo/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+    const { error } = await supabase.storage.from('afterdark-media').upload(fileName, file, { cacheControl: '3600', upsert: false });
+    if (error) { setPopupMessage('❌ Upload failed: ' + error.message); setPopupUploading(false); return; }
+    const { data: urlData } = supabase.storage.from('afterdark-media').getPublicUrl(fileName);
+    setPopupForm(prev => ({ ...prev, image_url: urlData.publicUrl }));
+    setPopupMessage('✓ Image uploaded successfully.'); setPopupUploading(false);
+  }
+
+  function clearPopupImage() { setPopupForm(prev => ({ ...prev, image_url: '' })); if (popupFileInputRef.current) popupFileInputRef.current.value = ''; }
 
   async function handlePopupSave(e) {
     e.preventDefault(); setPopupSaving(true); setPopupMessage('');
@@ -338,8 +357,26 @@ export default function Admin() {
             </div>
             {popupForm.type === 'image' ? (
               <div className="admin-form__field">
-                <label className="admin-label">Image URL</label>
-                <input className="admin-input" value={popupForm.image_url} onChange={e => setPopupForm(prev => ({ ...prev, image_url: e.target.value }))} placeholder="https://..." />
+                <label className="admin-label">Image</label>
+                <div className="admin-upload">
+                  {popupForm.image_url ? (
+                    <div className="admin-upload__preview">
+                      <img src={popupForm.image_url} alt="Preview" className="admin-upload__img" />
+                      <div className="admin-upload__preview-actions">
+                        <button type="button" className="admin-pill" onClick={() => popupFileInputRef.current.click()} disabled={popupUploading}>Replace</button>
+                        <button type="button" className="admin-pill admin-pill--delete" onClick={clearPopupImage}>Remove</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="admin-upload__dropzone" onClick={() => popupFileInputRef.current.click()}>
+                      <div className="admin-upload__icon">↑</div>
+                      <p className="admin-upload__text">{popupUploading ? 'Uploading...' : 'Click to upload image'}</p>
+                      <p className="admin-upload__hint">JPG, PNG, WebP — max 5MB</p>
+                    </div>
+                  )}
+                  <input ref={popupFileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handlePopupImageUpload} style={{ display: 'none' }} />
+                  {!popupForm.image_url && <div className="admin-upload__url"><label className="admin-label">Or paste URL</label><input value={popupForm.image_url} onChange={e => setPopupForm(prev => ({ ...prev, image_url: e.target.value }))} className="admin-input" placeholder="https://..." /></div>}
+                </div>
               </div>
             ) : (
               <div className="admin-form__field">
@@ -358,7 +395,7 @@ export default function Admin() {
               </div>
             </div>
             <div className="admin-form__actions">
-              <button type="submit" className="admin-btn-primary" disabled={popupSaving}>{popupSaving ? 'Saving...' : popupConfig ? 'Update Popup' : 'Create Popup'}</button>
+              <button type="submit" className="admin-btn-primary" disabled={popupSaving || popupUploading}>{popupSaving ? 'Saving...' : popupConfig ? 'Update Popup' : 'Create Popup'}</button>
             </div>
           </form>
         </section>

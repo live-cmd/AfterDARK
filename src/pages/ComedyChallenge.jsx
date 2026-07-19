@@ -55,7 +55,20 @@ export default function ComedyChallenge() {
             <p className="cc-promoters__label text-dim">In Partnership With</p>
             <div className="cc-promoters__row">
               {PROMOTERS.map((p, i) => (
-                <img key={i} src={p.logo} alt={p.name} className="cc-promoters__logo" />
+                p.url ? (
+                  <a
+                    key={i}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cc-promoters__logo-link"
+                    aria-label={p.name}
+                  >
+                    <img src={p.logo} alt={p.name} className="cc-promoters__logo" />
+                  </a>
+                ) : (
+                  <img key={i} src={p.logo} alt={p.name} className="cc-promoters__logo" />
+                )
               ))}
             </div>
           </div>

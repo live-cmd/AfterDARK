@@ -43,6 +43,7 @@ export const ROUNDS = [
     address: '2 Chesmar Plaza, Newark, DE 19713',
     comedians: 20,
     setTime: '3:30 min/sec',
+    logo: '/partners/plated-soul.png',
   },
   {
     round: 3,
@@ -55,6 +56,7 @@ export const ROUNDS = [
     address: '239 Market St, Wilmington, DE 19801',
     comedians: 10,
     setTime: '5:00 min',
+    logo: '/partners/milk-n-honey.png',
   },
   {
     round: 4,
@@ -155,3 +157,11 @@ export const PRIZES = [
 ];
 
 export const RULES_PDF_PATH = '/cool-js-comedy-challenge-rules.pdf';
+
+// Promoters helping spread the word — shown as a logo strip near the top
+// of the page. Venue partners (Plated Soul, Milk N Honey) get recognition
+// contextually on their own round cards above instead of here.
+export const PROMOTERS = [
+  { name: 'Rani Daze Brings Laughter', logo: '/partners/rani-daze.png' },
+  { name: "Zeola's Comedy Room", logo: '/partners/zeolas-comedy-room.png' },
+];

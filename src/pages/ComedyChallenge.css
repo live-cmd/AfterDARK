@@ -56,6 +56,45 @@
   justify-content: center;
 }
 
+/* ── PROMOTED BY ── */
+.cc-promoters {
+  padding: 32px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cc-promoters__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px 40px;
+}
+
+.cc-promoters__label {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cc-promoters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.cc-promoters__logo {
+  height: 56px;
+  width: auto;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
 /* ── SHARED SECTION TITLE ── */
 .cc-section-title {
   font-family: var(--font-heading);
@@ -103,9 +142,23 @@
   font-weight: 600;
 }
 
+.cc-round-card__venue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.cc-round-card__logo {
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .cc-round-card__venue {
   font-weight: 600;
-  margin-bottom: 2px;
 }
 
 .cc-round-card__venue-type,

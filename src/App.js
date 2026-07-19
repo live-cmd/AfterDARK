@@ -44,7 +44,7 @@ export default function App() {
           <Route path="/about" element={<Layout><About /></Layout>} />
           <Route path="/submit" element={<Layout><Submit /></Layout>} />
           <Route path="/menu" element={<Layout><Menu /></Layout>} />
-          <Route path="/comedy-challenge" element={<Layout><ComedyChallenge /></Layout>} />
+          <Route path="/officially-funny" element={<Layout><ComedyChallenge /></Layout>} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/vibe" element={<Vibe />} />
         </Routes>

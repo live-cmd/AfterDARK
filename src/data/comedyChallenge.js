@@ -158,10 +158,12 @@ export const PRIZES = [
 
 export const RULES_PDF_PATH = '/cool-js-comedy-challenge-rules.pdf';
 
-// Promoters helping spread the word — shown as a logo strip near the top
-// of the page. Venue partners (Plated Soul, Milk N Honey) get recognition
-// contextually on their own round cards above instead of here.
+// Shown as a logo strip near the top of the page. Venue partners (Plated
+// Soul, Milk N Honey) also get recognition contextually on their own round
+// cards above. Logos with a `url` are clickable; Rani Daze has no website.
 export const PROMOTERS = [
+  { name: 'Plated Soul', logo: '/partners/plated-soul.png', url: 'https://platedsoulbyauntvonda.com' },
+  { name: 'Milk N Honey', logo: '/partners/milk-n-honey.png', url: 'https://getmilkandhoney.com' },
   { name: 'Rani Daze Brings Laughter', logo: '/partners/rani-daze.png' },
-  { name: "Zeola's Comedy Room", logo: '/partners/zeolas-comedy-room.png' },
+  { name: "Zeola's Comedy Room", logo: '/partners/zeolas-comedy-room.png', url: 'https://zeolascomedyroom.com' },
 ];

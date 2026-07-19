@@ -20,8 +20,8 @@ export default function ComedyChallenge() {
     <div className="cc-page">
       <SEO
         path="/officially-funny"
-        title="Officially Funny | A Stand-Up Comedy Competition — Cool J's, Bear, Delaware"
-        description="Officially Funny is a stand-up comedy competition spotlighting Delaware's next great voice. Apply to compete or get audience tickets at Cool J's AfterDARK."
+        title="Officially Funny | Delaware's Stand-Up Comedy Competition — Cool J's, Bear, Delaware"
+        description="Officially Funny is Delaware's stand-up comedy competition, spotlighting the state's next great voice. Apply to compete or get audience tickets at Cool J's AfterDARK."
       />
 
       {/* HERO */}
@@ -32,10 +32,10 @@ export default function ComedyChallenge() {
           <h1 className="display cc-hero__title">
             Officially<br /><span className="text-gold">Funny</span>
           </h1>
-          <p className="cc-hero__tagline">A Stand-Up Comedy Competition</p>
+          <p className="cc-hero__tagline">Delaware's Stand-Up Comedy Competition</p>
           <p className="cc-hero__stats">32 Comedians. 5 Rounds. 1 Name to Watch.</p>
           <p className="cc-hero__sub text-dim">
-            A stand-up comedy competition spotlighting Delaware's next great voice.
+            Delaware's stand-up comedy competition, spotlighting the state's next great voice.
             Original material, five rounds, one comedian who walks away Officially Funny.
           </p>
           <div className="cc-hero__ctas">

@@ -95,6 +95,16 @@
   object-fit: contain;
 }
 
+.cc-promoters__logo-link {
+  display: inline-flex;
+  transition: var(--transition-fast);
+}
+
+.cc-promoters__logo-link:hover {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 4px 12px rgba(201, 168, 76, 0.35));
+}
+
 /* ── SHARED SECTION TITLE ── */
 .cc-section-title {
   font-family: var(--font-heading);

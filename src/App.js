@@ -14,6 +14,7 @@ import Submit from './pages/Submit';
 import Admin from './pages/Admin';
 import Menu from './pages/Menu';
 import Vibe from './pages/Vibe';
+import ComedyChallenge from './pages/ComedyChallenge';
 import './styles/global.css';
 
 function Layout({ children }) {
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/about" element={<Layout><About /></Layout>} />
           <Route path="/submit" element={<Layout><Submit /></Layout>} />
           <Route path="/menu" element={<Layout><Menu /></Layout>} />
+          <Route path="/comedy-challenge" element={<Layout><ComedyChallenge /></Layout>} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/vibe" element={<Vibe />} />
         </Routes>

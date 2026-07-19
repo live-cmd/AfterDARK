@@ -1,5 +1,5 @@
 /* ============================================
-   AFTERDARK — Comedy Challenge Championship
+   AFTERDARK — Officially Funny (Comedy Competition)
    ============================================ */
 
 /* ── HERO ── */
@@ -30,6 +30,16 @@
 .cc-hero__title {
   font-size: clamp(2.75rem, 7vw, 5.5rem);
   margin: 12px 0 20px;
+}
+
+.cc-hero__tagline {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  color: var(--white-dim);
+  margin-bottom: 12px;
 }
 
 .cc-hero__stats {

@@ -85,11 +85,11 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 32px;
 }
 
 .cc-promoters__logo {
-  height: 56px;
+  height: 130px;
   width: auto;
   border-radius: 50%;
   object-fit: contain;
@@ -145,13 +145,13 @@
 .cc-round-card__venue-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .cc-round-card__logo {
-  height: 28px;
-  width: 28px;
+  height: 64px;
+  width: 64px;
   border-radius: 50%;
   object-fit: contain;
   flex-shrink: 0;

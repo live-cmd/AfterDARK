@@ -5,7 +5,7 @@ import './Nav.css';
 const NAV_LINKS = [
   { to: '/',               label: 'Home' },
   { to: '/events',         label: 'Events' },
-  { to: '/comedy-challenge', label: 'Comedy Challenge' },
+  { to: '/officially-funny', label: 'Officially Funny' },
   { to: '/menu',           label: 'Menu' },
   { to: '/performers',     label: 'Performers' },
   { to: '/tickets',        label: 'Tickets' },

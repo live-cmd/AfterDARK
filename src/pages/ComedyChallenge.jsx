@@ -12,6 +12,7 @@ import {
   TIE_BREAKER_ORDER,
   PRIZES,
   RULES_PDF_PATH,
+  PROMOTERS,
 } from '../data/comedyChallenge';
 
 export default function ComedyChallenge() {
@@ -47,6 +48,20 @@ export default function ComedyChallenge() {
         </div>
       </section>
 
+      {/* PROMOTED BY */}
+      {PROMOTERS.length > 0 && (
+        <section className="cc-promoters">
+          <div className="container cc-promoters__inner">
+            <p className="cc-promoters__label text-dim">In Partnership With</p>
+            <div className="cc-promoters__row">
+              {PROMOTERS.map((p, i) => (
+                <img key={i} src={p.logo} alt={p.name} className="cc-promoters__logo" />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* SCHEDULE */}
       <section className="cc-schedule section">
         <div className="container">
@@ -60,7 +75,10 @@ export default function ComedyChallenge() {
                 <div className="cc-round-card__num">Round {r.round}</div>
                 <h3 className="cc-round-card__name">{r.name}</h3>
                 <p className="cc-round-card__date">{r.dateLabel}</p>
-                <p className="cc-round-card__venue">{r.venue}</p>
+                <div className="cc-round-card__venue-row">
+                  {r.logo && <img src={r.logo} alt={`${r.venue} logo`} className="cc-round-card__logo" />}
+                  <p className="cc-round-card__venue">{r.venue}</p>
+                </div>
                 <p className="cc-round-card__venue-type text-dim">{r.venueType}</p>
                 <p className="cc-round-card__address text-dim">{r.address}</p>
                 <div className="cc-round-card__meta">

@@ -26,6 +26,15 @@ const HERO_BG_STYLE = {
   ].join(', '),
 };
 
+const SCHEDULE_BG_IMAGE = '/officially-funny/performance_kareem-green-officially-funny.jpg';
+
+const SCHEDULE_BG_STYLE = {
+  backgroundImage: [
+    'linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8))',
+    `url(${SCHEDULE_BG_IMAGE})`,
+  ].join(', '),
+};
+
 export default function ComedyChallenge() {
   return (
     <div className="cc-page">
@@ -89,7 +98,8 @@ export default function ComedyChallenge() {
 
       {/* SCHEDULE */}
       <section className="cc-schedule section">
-        <div className="container">
+        <div className="cc-schedule__bg" style={SCHEDULE_BG_STYLE} />
+        <div className="container cc-schedule__inner">
           <p className="section-label">Competition Framework</p>
           <span className="gold-line" />
           <h2 className="cc-section-title">Schedule & Venues</h2>

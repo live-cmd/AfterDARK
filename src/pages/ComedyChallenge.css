@@ -421,6 +421,13 @@
 }
 
 /* ── AUDIENCE TICKETS ── */
+.cc-tickets__inner {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
 .cc-tickets__note {
   max-width: 600px;
   margin-bottom: 32px;
@@ -453,10 +460,35 @@
   line-height: 1;
 }
 
+.cc-tickets__logo {
+  display: flex;
+  justify-content: center;
+}
+
+.cc-tickets__logo img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .cc-entry__inner {
     grid-template-columns: 1fr;
+  }
+
+  .cc-tickets__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .cc-tickets__logo {
+    order: -1;
+  }
+
+  .cc-tickets__logo img {
+    max-width: 220px;
+    margin: 0 auto;
   }
 }
 

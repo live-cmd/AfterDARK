@@ -60,7 +60,6 @@ export default function ComedyChallenge() {
           <h1 className="cc-hero__logo">
             <img src="/officially-funny/Officially-funny-logo.png" alt="Officially Funny" />
           </h1>
-          <p className="cc-hero__tagline">Delaware's Stand-Up Comedy Competition</p>
           <p className="cc-hero__stats">32 Comedians. 5 Rounds. 1 Name to Watch.</p>
           <p className="cc-hero__sub text-dim">
             Delaware's stand-up comedy competition, spotlighting the state's next great voice.

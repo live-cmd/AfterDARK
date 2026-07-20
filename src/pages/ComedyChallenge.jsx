@@ -13,6 +13,7 @@ import {
   PRIZES,
   RULES_PDF_PATH,
   PROMOTERS,
+  GALLERY,
 } from '../data/comedyChallenge';
 
 export default function ComedyChallenge() {
@@ -70,6 +71,21 @@ export default function ComedyChallenge() {
                 ) : (
                   <img key={i} src={p.logo} alt={p.name} className="cc-promoters__logo" />
                 )
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* GALLERY */}
+      {GALLERY.length > 0 && (
+        <section className="cc-gallery section">
+          <div className="container">
+            <div className="cc-gallery__grid">
+              {GALLERY.map((g, i) => (
+                <div key={i} className="cc-gallery__item">
+                  <img src={g.src} alt={g.alt} className="cc-gallery__img" loading="lazy" />
+                </div>
               ))}
             </div>
           </div>

@@ -126,6 +126,24 @@
 }
 
 /* ── SCHEDULE ── */
+.cc-schedule {
+  position: relative;
+  overflow: hidden;
+}
+
+.cc-schedule__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 35%;
+  background-repeat: no-repeat;
+}
+
+.cc-schedule__inner {
+  position: relative;
+  z-index: 1;
+}
+
 .cc-rounds {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

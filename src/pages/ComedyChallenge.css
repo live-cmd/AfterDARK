@@ -38,16 +38,6 @@
   display: block;
 }
 
-.cc-hero__tagline {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  color: var(--white-dim);
-  margin-bottom: 12px;
-}
-
 .cc-hero__stats {
   font-family: var(--font-heading);
   font-weight: 700;

@@ -31,6 +31,7 @@ export const ROUNDS = [
     address: '1857 Pulaski Hwy, Bear, DE 19701',
     comedians: 32,
     setTime: '3:30 min/sec',
+    logo: '/officially-funny/AfterDARK-officially-funny-icon.png',
   },
   {
     round: 2,
@@ -69,6 +70,7 @@ export const ROUNDS = [
     address: '1857 Pulaski Hwy, Bear, DE 19701',
     comedians: 5,
     setTime: '5:00 min',
+    logo: '/officially-funny/AfterDARK-officially-funny-icon.png',
   },
   {
     round: 5,
@@ -81,6 +83,7 @@ export const ROUNDS = [
     address: '1857 Pulaski Hwy, Bear, DE 19701',
     comedians: 3,
     setTime: '7:00 min',
+    logo: '/officially-funny/AfterDARK-officially-funny-icon.png',
   },
 ];
 

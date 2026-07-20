@@ -254,29 +254,34 @@ export default function ComedyChallenge() {
 
       {/* AUDIENCE TICKETS */}
       <section className="cc-tickets section" id="tickets">
-        <div className="container">
-          <p className="section-label">For Audiences</p>
-          <span className="gold-line" />
-          <h2 className="cc-section-title">Watch Live</h2>
-          <p className="text-dim cc-tickets__note">
-            Audience tickets are sold separately from comedian registration through Eventbrite.
-          </p>
+        <div className="container cc-tickets__inner">
+          <div>
+            <p className="section-label">For Audiences</p>
+            <span className="gold-line" />
+            <h2 className="cc-section-title">Watch Live</h2>
+            <p className="text-dim cc-tickets__note">
+              Audience tickets are sold separately from comedian registration through Eventbrite.
+            </p>
 
-          <div className="cc-tickets__grid">
-            {AUDIENCE_PRICING.map((t, i) => (
-              <div key={i} className="cc-ticket-card">
-                <h3 className="cc-ticket-card__label">{t.label}</h3>
-                <p className="cc-ticket-card__price">
-                  <span className="text-blue">${t.price}</span>
-                </p>
-                <p className="text-dim">{t.unit}</p>
-              </div>
-            ))}
+            <div className="cc-tickets__grid">
+              {AUDIENCE_PRICING.map((t, i) => (
+                <div key={i} className="cc-ticket-card">
+                  <h3 className="cc-ticket-card__label">{t.label}</h3>
+                  <p className="cc-ticket-card__price">
+                    <span className="text-blue">${t.price}</span>
+                  </p>
+                  <p className="text-dim">{t.unit}</p>
+                </div>
+              ))}
+            </div>
+
+            <a href={AUDIENCE_TICKETS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-blue">
+              Get Audience Tickets ↗
+            </a>
           </div>
-
-          <a href={AUDIENCE_TICKETS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-blue">
-            Get Audience Tickets ↗
-          </a>
+          <div className="cc-tickets__logo">
+            <img src="/officially-funny/Officially-funny-logo.png" alt="Officially Funny" />
+          </div>
         </div>
       </section>
     </div>

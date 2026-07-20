@@ -15,6 +15,17 @@ import {
   PROMOTERS,
 } from '../data/comedyChallenge';
 
+const HERO_BG_IMAGE = '/officially-funny/performance_kool-bubba-ice-officially-funny.jpg';
+
+const HERO_BG_STYLE = {
+  backgroundImage: [
+    'linear-gradient(180deg, rgba(10, 10, 10, 0.6) 0%, rgba(10, 10, 10, 0.82) 55%, rgba(10, 10, 10, 0.96) 100%)',
+    'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(201, 168, 76, 0.14) 0%, transparent 70%)',
+    'radial-gradient(ellipse 40% 50% at 100% 100%, rgba(0, 191, 255, 0.08) 0%, transparent 70%)',
+    `url(${HERO_BG_IMAGE})`,
+  ].join(', '),
+};
+
 export default function ComedyChallenge() {
   return (
     <div className="cc-page">
@@ -26,7 +37,7 @@ export default function ComedyChallenge() {
 
       {/* HERO */}
       <section className="cc-hero">
-        <div className="cc-hero__bg" />
+        <div className="cc-hero__bg" style={HERO_BG_STYLE} />
         <div className="container cc-hero__inner">
           <p className="section-label text-gold">Cool J's Presents</p>
           <h1 className="display cc-hero__title">

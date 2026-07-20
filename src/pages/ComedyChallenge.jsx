@@ -216,46 +216,47 @@ export default function ComedyChallenge() {
         </div>
       </section>
 
-      {/* ENTRY / APPLY */}
-      <section className="cc-entry section" id="apply">
-        <div className="container cc-entry__inner">
-          <div>
-            <p className="section-label">For Comedians</p>
-            <span className="gold-line" />
-            <h2 className="cc-section-title">Enter the Competition</h2>
-            <ul className="cc-entry__list text-dim">
-              <li>Entry fee: ${ENTRY_FEE}, paid at registration</li>
-              <li>Entrants must be 18 years of age or older</li>
-              <li>32 Round 1 spots are awarded through a selection process</li>
-              <li>A 30–60 second video of your comedy performance is required as part of your application</li>
-              <li>Entry fees are non-refundable under all circumstances</li>
-            </ul>
-            <a href={COMEDIAN_APPLICATION_URL} target="_blank" rel="noopener noreferrer" className="btn btn-gold">
-              Apply to Compete ↗
-            </a>
-            <p className="cc-entry__note text-dim">
-              Applications are reviewed privately and are not listed publicly on Eventbrite.
-            </p>
+      {/* ENTRY / APPLY + AUDIENCE TICKETS (share a wrapper so the logo can be
+          centered vertically across both sections) */}
+      <div className="cc-apply-watch">
+        <section className="cc-entry section" id="apply">
+          <div className="container cc-entry__inner">
+            <div>
+              <p className="section-label">For Comedians</p>
+              <span className="gold-line" />
+              <h2 className="cc-section-title">Enter the Competition</h2>
+              <ul className="cc-entry__list text-dim">
+                <li>Entry fee: ${ENTRY_FEE}, paid at registration</li>
+                <li>Entrants must be 18 years of age or older</li>
+                <li>32 Round 1 spots are awarded through a selection process</li>
+                <li>A 30–60 second video of your comedy performance is required as part of your application</li>
+                <li>Entry fees are non-refundable under all circumstances</li>
+              </ul>
+              <a href={COMEDIAN_APPLICATION_URL} target="_blank" rel="noopener noreferrer" className="btn btn-gold">
+                Apply to Compete ↗
+              </a>
+              <p className="cc-entry__note text-dim">
+                Applications are reviewed privately and are not listed publicly on Eventbrite.
+              </p>
+            </div>
+            <div className="cc-entry__rules">
+              <p className="section-label">Full Details</p>
+              <span className="gold-line" />
+              <h3 className="cc-entry__rules-title">Official Rules</h3>
+              <p className="text-dim">
+                Eligibility, judging, code of conduct, media release, and everything else that
+                governs the competition.
+              </p>
+              <a href={RULES_PDF_PATH} target="_blank" rel="noopener noreferrer" className="btn btn-outline-white">
+                Download Official Rules (PDF)
+              </a>
+            </div>
           </div>
-          <div className="cc-entry__rules">
-            <p className="section-label">Full Details</p>
-            <span className="gold-line" />
-            <h3 className="cc-entry__rules-title">Official Rules</h3>
-            <p className="text-dim">
-              Eligibility, judging, code of conduct, media release, and everything else that
-              governs the competition.
-            </p>
-            <a href={RULES_PDF_PATH} target="_blank" rel="noopener noreferrer" className="btn btn-outline-white">
-              Download Official Rules (PDF)
-            </a>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* AUDIENCE TICKETS */}
-      <section className="cc-tickets section" id="tickets">
-        <div className="container cc-tickets__inner">
-          <div>
+        {/* AUDIENCE TICKETS */}
+        <section className="cc-tickets section" id="tickets">
+          <div className="container">
             <p className="section-label">For Audiences</p>
             <span className="gold-line" />
             <h2 className="cc-section-title">Watch Live</h2>
@@ -278,12 +279,19 @@ export default function ComedyChallenge() {
             <a href={AUDIENCE_TICKETS_URL} target="_blank" rel="noopener noreferrer" className="btn btn-blue">
               Get Audience Tickets ↗
             </a>
+
+            <img
+              src="/officially-funny/Officially-funny-logo.png"
+              alt="Officially Funny"
+              className="cc-apply-watch__logo-mobile"
+            />
           </div>
-          <div className="cc-tickets__logo">
-            <img src="/officially-funny/Officially-funny-logo.png" alt="Officially Funny" />
-          </div>
+        </section>
+
+        <div className="cc-apply-watch__logo" aria-hidden="true">
+          <img src="/officially-funny/Officially-funny-logo.png" alt="" />
         </div>
-      </section>
+      </div>
     </div>
   );
 }

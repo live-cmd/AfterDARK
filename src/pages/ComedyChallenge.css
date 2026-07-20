@@ -115,6 +115,38 @@
   filter: drop-shadow(0 4px 12px rgba(201, 168, 76, 0.35));
 }
 
+/* ── GALLERY ── */
+.cc-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cc-gallery__item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 4 / 3;
+}
+
+.cc-gallery__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.cc-gallery__item:hover .cc-gallery__img {
+  transform: scale(1.06);
+}
+
+@media (max-width: 768px) {
+  .cc-gallery__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── SHARED SECTION TITLE ── */
 .cc-section-title {
   font-family: var(--font-heading);

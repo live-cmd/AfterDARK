@@ -167,3 +167,11 @@ export const PROMOTERS = [
   { name: 'Rani Daze Brings Laughter', logo: '/partners/rani-daze.png' },
   { name: "Zeola's Comedy Room", logo: '/partners/zeolas-comedy-room.png', url: 'https://zeolascomedyroom.com' },
 ];
+
+// Live-show photos from Cool J's After Dark, shown in a gallery strip on
+// the page to give it some energy/atmosphere.
+export const GALLERY = [
+  { src: '/officially-funny/performance_kareem-green-wide-1.jpg', alt: "Comedian performing to a packed room at Cool J's After Dark" },
+  { src: '/officially-funny/performance_kool-bubba-ice-2.jpg', alt: "Comedian on stage under blue lights at Cool J's After Dark" },
+  { src: '/officially-funny/performance_open-mic-speaker-2.jpg', alt: "Comedian mid-set with the crowd at Cool J's After Dark" },
+];

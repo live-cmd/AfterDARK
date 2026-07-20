@@ -35,6 +35,15 @@ const SCHEDULE_BG_STYLE = {
   ].join(', '),
 };
 
+const JUDGING_BG_IMAGE = '/officially-funny/performance_standup-orange-room-officicialy-funny.jpg';
+
+const JUDGING_BG_STYLE = {
+  backgroundImage: [
+    'linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8))',
+    `url(${JUDGING_BG_IMAGE})`,
+  ].join(', '),
+};
+
 export default function ComedyChallenge() {
   return (
     <div className="cc-page">
@@ -159,7 +168,8 @@ export default function ComedyChallenge() {
 
       {/* JUDGING CRITERIA */}
       <section className="cc-judging section">
-        <div className="container">
+        <div className="cc-judging__bg" style={JUDGING_BG_STYLE} />
+        <div className="container cc-judging__inner">
           <p className="section-label">How Winners Are Chosen</p>
           <span className="gold-line" />
           <h2 className="cc-section-title">Judging Criteria</h2>

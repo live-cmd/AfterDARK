@@ -283,6 +283,24 @@
 }
 
 /* ── JUDGING ── */
+.cc-judging {
+  position: relative;
+  overflow: hidden;
+}
+
+.cc-judging__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+}
+
+.cc-judging__inner {
+  position: relative;
+  z-index: 1;
+}
+
 .cc-judging__note {
   max-width: 600px;
   margin-bottom: 32px;

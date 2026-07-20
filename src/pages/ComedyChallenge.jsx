@@ -57,9 +57,8 @@ export default function ComedyChallenge() {
       <section className="cc-hero">
         <div className="cc-hero__bg" style={HERO_BG_STYLE} />
         <div className="container cc-hero__inner">
-          <p className="section-label text-gold">Cool J's Presents</p>
-          <h1 className="display cc-hero__title">
-            Officially<br /><span className="text-gold">Funny</span>
+          <h1 className="cc-hero__logo">
+            <img src="/officially-funny/Officially-funny-logo.png" alt="Officially Funny" />
           </h1>
           <p className="cc-hero__tagline">Delaware's Stand-Up Comedy Competition</p>
           <p className="cc-hero__stats">32 Comedians. 5 Rounds. 1 Name to Watch.</p>

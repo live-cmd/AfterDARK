@@ -27,9 +27,15 @@
   max-width: 760px;
 }
 
-.cc-hero__title {
-  font-size: clamp(2.75rem, 7vw, 5.5rem);
-  margin: 12px 0 20px;
+.cc-hero__logo {
+  margin: 0 0 20px;
+}
+
+.cc-hero__logo img {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  display: block;
 }
 
 .cc-hero__tagline {

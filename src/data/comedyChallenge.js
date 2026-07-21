@@ -7,7 +7,7 @@
 // Comedian applications go through a PRIVATE (unlisted) Eventbrite event —
 // not publicly listed/searchable on Eventbrite. Share this link only via
 // this page, socials, flyers, etc.
-export const COMEDIAN_APPLICATION_URL = 'https://www.eventbrite.com'; // replace with actual private Eventbrite link
+export const COMEDIAN_APPLICATION_URL = 'https://www.eventbrite.com/e/1994629985982?aff=oddtdtcreator';
 
 // Audience tickets go through a separate PUBLIC Eventbrite event/listing.
 export const AUDIENCE_TICKETS_URL = 'https://www.eventbrite.com'; // replace with actual public Eventbrite link

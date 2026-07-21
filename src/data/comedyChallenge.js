@@ -9,8 +9,10 @@
 // this page, socials, flyers, etc.
 export const COMEDIAN_APPLICATION_URL = 'https://www.eventbrite.com/e/1994629985982?aff=oddtdtcreator';
 
-// Audience tickets go through a separate PUBLIC Eventbrite event/listing.
-export const AUDIENCE_TICKETS_URL = 'https://www.eventbrite.com'; // replace with actual public Eventbrite link
+// Audience tickets: a public Eventbrite Collection page grouping the
+// separate per-venue events (Cool J's, Plated Soul, Milk N Honey) into one
+// shareable link.
+export const AUDIENCE_TICKETS_URL = 'https://www.eventbrite.com/cc/officially-funny-delawares-stand-up-comedy-comp-4857311';
 
 export const ENTRY_FEE = 25;
 

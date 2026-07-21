@@ -161,7 +161,7 @@ export const PRIZES = [
   },
 ];
 
-export const RULES_PDF_PATH = '/cool-js-comedy-challenge-rules.pdf';
+export const RULES_PDF_PATH = '/Officially-Funny-Official-Rules.pdf';
 
 // Shown as a logo strip near the top of the page. Venue partners (Plated
 // Soul, Milk N Honey) also get recognition contextually on their own round

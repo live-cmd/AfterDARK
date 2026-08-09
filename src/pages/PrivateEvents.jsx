@@ -113,7 +113,14 @@ export default function PrivateEvents() {
       });
       const verifyData = await verifyRes.json();
 
-      if (!verifyData.success) {
+      // Only fake a success screen when reCAPTCHA actually ran and scored this
+      // visitor as bot-like. If verification itself failed to produce a score —
+      // missing/misconfigured secret key, network hiccup, Google API error — we
+      // don't want a real customer's inquiry silently dropped over a config issue.
+      const hasScore = verifyData.score !== null && verifyData.score !== undefined;
+      const isConfirmedBot = hasScore && !verifyData.success;
+
+      if (isConfirmedBot) {
         setSubmitted(true);
         setForm(EMPTY_FORM);
         setSubmitting(false);

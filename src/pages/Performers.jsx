@@ -29,7 +29,7 @@ export default function Performers() {
 
   function getYouTubeId(url) {
     if (!url) return '';
-    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&?/]+)/);
+    const match = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
     return match ? match[1] : url;
   }
 

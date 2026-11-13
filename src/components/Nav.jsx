@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useCart } from './CartContext';
 import './Nav.css';
 
 const NAV_LINKS = [
@@ -9,6 +10,7 @@ const NAV_LINKS = [
   { to: '/performers',     label: 'Performers' },
   { to: '/tickets',        label: 'Tickets' },
   { to: '/private-events', label: 'Private Events' },
+  { to: '/shop',           label: 'Shop' },
   { to: '/radar',          label: 'AfterDARK Radar' },
   { to: '/about',          label: 'Our Story' },
 ];
@@ -17,6 +19,7 @@ export default function Nav() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const location                  = useLocation();
+  const { count, setOpen }        = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -55,7 +58,7 @@ export default function Nav() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `nav__link${isActive ? ' nav__link--active' : ''}`
+                `nav__link${to === '/' ? ' nav__link--home' : ''}${isActive ? ' nav__link--active' : ''}`
               }
               end={to === '/'}
             >
@@ -68,6 +71,18 @@ export default function Nav() {
         <Link to="/tickets" className="btn btn-blue nav__cta">
           Get Tickets
         </Link>
+
+        {/* Cart */}
+        <button
+          className="nav__cart"
+          onClick={() => setOpen(true)}
+          aria-label={`Open cart${count ? `, ${count} item${count > 1 ? 's' : ''}` : ''}`}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 7h12l-1 13H7L6 7z" /><path d="M9 7a3 3 0 0 1 6 0" />
+          </svg>
+          {count > 0 && <span className="nav__cart-count">{count}</span>}
+        </button>
 
         {/* Hamburger */}
         <button

@@ -3,6 +3,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import PromoPopup from './components/PromoPopup';
+import CartDrawer from './components/CartDrawer';
+import { CartProvider } from './components/CartContext';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import Performers from './pages/Performers';
@@ -15,6 +17,8 @@ import Admin from './pages/Admin';
 import Menu from './pages/Menu';
 import Vibe from './pages/Vibe';
 import ComedyChallenge from './pages/ComedyChallenge';
+import Shop from './pages/Shop';
+import Product from './pages/Product';
 import './styles/global.css';
 
 function Layout({ children }) {
@@ -26,6 +30,7 @@ function Layout({ children }) {
       </main>
       <Footer />
       <PromoPopup />
+      <CartDrawer />
     </>
   );
 }
@@ -33,6 +38,7 @@ function Layout({ children }) {
 export default function App() {
   return (
     <HelmetProvider>
+      <CartProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout><Home /></Layout>} />
@@ -44,11 +50,14 @@ export default function App() {
           <Route path="/about" element={<Layout><About /></Layout>} />
           <Route path="/submit" element={<Layout><Submit /></Layout>} />
           <Route path="/menu" element={<Layout><Menu /></Layout>} />
+          <Route path="/shop" element={<Layout><Shop /></Layout>} />
+          <Route path="/shop/:handle" element={<Layout><Product /></Layout>} />
           <Route path="/officially-funny" element={<Layout><ComedyChallenge /></Layout>} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/vibe" element={<Vibe />} />
         </Routes>
       </BrowserRouter>
+      </CartProvider>
     </HelmetProvider>
   );
 }
